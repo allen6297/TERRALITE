@@ -1,0 +1,20 @@
+{
+  "id": "stone",
+  "name": "Stone",
+  "voxel": {
+    "solid": true,
+    "translucent": false,
+    "material": "rock"
+  },
+  "render": {
+    "color": [0.60, 0.60, 0.64],
+    "opacity": 1.0,
+    "texture": "textures/blocks/stone.ppm"
+  },
+  "drops": [
+    {
+      "item": "stone",
+      "count": 1
+    }
+  ]
+}

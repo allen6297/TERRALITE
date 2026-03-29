@@ -1,0 +1,7 @@
+{
+  "id": "stone",
+  "name": "Stone",
+  "stackSize": 99,
+  "placeableBlock": "stone",
+  "icon": "textures/items/stone.png"
+}

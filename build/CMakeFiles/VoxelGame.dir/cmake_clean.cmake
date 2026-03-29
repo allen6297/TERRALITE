@@ -1,0 +1,35 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/VoxelGame.dir/src/Math.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/Math.cpp.o.d"
+  "CMakeFiles/VoxelGame.dir/src/Player.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/Player.cpp.o.d"
+  "CMakeFiles/VoxelGame.dir/src/data/GameData.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/data/GameData.cpp.o.d"
+  "CMakeFiles/VoxelGame.dir/src/data/JsonValue.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/data/JsonValue.cpp.o.d"
+  "CMakeFiles/VoxelGame.dir/src/game/Game.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/game/Game.cpp.o.d"
+  "CMakeFiles/VoxelGame.dir/src/main.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/main.cpp.o.d"
+  "CMakeFiles/VoxelGame.dir/src/player/Inventory.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/player/Inventory.cpp.o.d"
+  "CMakeFiles/VoxelGame.dir/src/render/Mesh.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/render/Mesh.cpp.o.d"
+  "CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o.d"
+  "CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.o.d"
+  "CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.o.d"
+  "CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.o.d"
+  "CMakeFiles/VoxelGame.dir/src/world/World.cpp.o"
+  "CMakeFiles/VoxelGame.dir/src/world/World.cpp.o.d"
+  "VoxelGame"
+  "VoxelGame.pdb"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/VoxelGame.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

@@ -1,0 +1,25 @@
+{
+  "id": "grass",
+  "name": "Grass",
+  "voxel": {
+    "solid": true,
+    "translucent": false,
+    "material": "terrain"
+  },
+  "render": {
+    "color": [0.30, 0.73, 0.32],
+    "opacity": 1.0,
+    "texture": {
+      "albedo": "textures/blocks/grass.ppm",
+      "normal": "textures/blocks/grass_normal.ppm",
+      "roughness": "textures/blocks/grass_roughness.ppm",
+      "emissive": "textures/blocks/grass_emissive.ppm"
+    }
+  },
+  "drops": [
+    {
+      "item": "dirt",
+      "count": 1
+    }
+  ]
+}

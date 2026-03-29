@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug)",
+      "Bash(cmake --build build)",
+      "Bash(cmake -S /Users/kalob/Documents/CODE/VoxelGame -B /Users/kalob/Documents/CODE/VoxelGame/build -DCMAKE_BUILD_TYPE=Debug)",
+      "Bash(cmake --build /Users/kalob/Documents/CODE/VoxelGame/build)",
+      "Bash(cmake --build /Users/kalob/Documents/CODE/VoxelGame/cmake-build-debug)"
+    ]
+  }
+}
