@@ -1,0 +1,21 @@
+{
+  "id": "door",
+  "name": "Door",
+  "voxel": {
+    "solid": true,
+    "translucent": false,
+    "material": "terrain"
+  },
+  "render": {
+    "color": [0.55, 0.38, 0.24],
+    "opacity": 1.0,
+    "type": "model",
+    "model": "models/blocks/cube_test.json"
+  },
+  "drops": [
+    {
+      "item": "door",
+      "count": 1
+    }
+  ]
+}

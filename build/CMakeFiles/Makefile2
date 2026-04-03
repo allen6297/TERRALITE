@@ -64,33 +64,207 @@ CMAKE_BINARY_DIR = /Users/kalob/Documents/CODE/VoxelGame/build
 
 # The main recursive "all" target.
 all: CMakeFiles/VoxelGame.dir/all
+all: _deps/rmlui-build/all
 .PHONY : all
 
 # The main recursive "codegen" target.
 codegen: CMakeFiles/VoxelGame.dir/codegen
+codegen: _deps/rmlui-build/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
-preinstall:
+preinstall: _deps/rmlui-build/preinstall
 .PHONY : preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/VoxelGame.dir/clean
+clean: _deps/rmlui-build/clean
 .PHONY : clean
+
+#=============================================================================
+# Directory level rules for directory _deps/rmlui-build
+
+# Recursive "all" directory target.
+_deps/rmlui-build/all: _deps/rmlui-build/Source/all
+_deps/rmlui-build/all: _deps/rmlui-build/Samples/all
+.PHONY : _deps/rmlui-build/all
+
+# Recursive "codegen" directory target.
+_deps/rmlui-build/codegen: _deps/rmlui-build/Source/codegen
+_deps/rmlui-build/codegen: _deps/rmlui-build/Samples/codegen
+.PHONY : _deps/rmlui-build/codegen
+
+# Recursive "preinstall" directory target.
+_deps/rmlui-build/preinstall: _deps/rmlui-build/Source/preinstall
+_deps/rmlui-build/preinstall: _deps/rmlui-build/Samples/preinstall
+.PHONY : _deps/rmlui-build/preinstall
+
+# Recursive "clean" directory target.
+_deps/rmlui-build/clean: _deps/rmlui-build/Source/clean
+_deps/rmlui-build/clean: _deps/rmlui-build/Samples/clean
+.PHONY : _deps/rmlui-build/clean
+
+#=============================================================================
+# Directory level rules for directory _deps/rmlui-build/Samples
+
+# Recursive "all" directory target.
+_deps/rmlui-build/Samples/all:
+.PHONY : _deps/rmlui-build/Samples/all
+
+# Recursive "codegen" directory target.
+_deps/rmlui-build/Samples/codegen:
+.PHONY : _deps/rmlui-build/Samples/codegen
+
+# Recursive "preinstall" directory target.
+_deps/rmlui-build/Samples/preinstall:
+.PHONY : _deps/rmlui-build/Samples/preinstall
+
+# Recursive "clean" directory target.
+_deps/rmlui-build/Samples/clean:
+.PHONY : _deps/rmlui-build/Samples/clean
+
+#=============================================================================
+# Directory level rules for directory _deps/rmlui-build/Source
+
+# Recursive "all" directory target.
+_deps/rmlui-build/Source/all: _deps/rmlui-build/Source/Core/all
+_deps/rmlui-build/Source/all: _deps/rmlui-build/Source/Debugger/all
+.PHONY : _deps/rmlui-build/Source/all
+
+# Recursive "codegen" directory target.
+_deps/rmlui-build/Source/codegen: _deps/rmlui-build/Source/Core/codegen
+_deps/rmlui-build/Source/codegen: _deps/rmlui-build/Source/Debugger/codegen
+.PHONY : _deps/rmlui-build/Source/codegen
+
+# Recursive "preinstall" directory target.
+_deps/rmlui-build/Source/preinstall: _deps/rmlui-build/Source/Core/preinstall
+_deps/rmlui-build/Source/preinstall: _deps/rmlui-build/Source/Debugger/preinstall
+.PHONY : _deps/rmlui-build/Source/preinstall
+
+# Recursive "clean" directory target.
+_deps/rmlui-build/Source/clean: _deps/rmlui-build/Source/Core/clean
+_deps/rmlui-build/Source/clean: _deps/rmlui-build/Source/Debugger/clean
+.PHONY : _deps/rmlui-build/Source/clean
+
+#=============================================================================
+# Directory level rules for directory _deps/rmlui-build/Source/Core
+
+# Recursive "all" directory target.
+_deps/rmlui-build/Source/Core/all: _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/all
+_deps/rmlui-build/Source/Core/all: _deps/rmlui-build/Source/Core/Elements/all
+_deps/rmlui-build/Source/Core/all: _deps/rmlui-build/Source/Core/Layout/all
+_deps/rmlui-build/Source/Core/all: _deps/rmlui-build/Source/Core/FontEngineDefault/all
+.PHONY : _deps/rmlui-build/Source/Core/all
+
+# Recursive "codegen" directory target.
+_deps/rmlui-build/Source/Core/codegen: _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/codegen
+_deps/rmlui-build/Source/Core/codegen: _deps/rmlui-build/Source/Core/Elements/codegen
+_deps/rmlui-build/Source/Core/codegen: _deps/rmlui-build/Source/Core/Layout/codegen
+_deps/rmlui-build/Source/Core/codegen: _deps/rmlui-build/Source/Core/FontEngineDefault/codegen
+.PHONY : _deps/rmlui-build/Source/Core/codegen
+
+# Recursive "preinstall" directory target.
+_deps/rmlui-build/Source/Core/preinstall: _deps/rmlui-build/Source/Core/Elements/preinstall
+_deps/rmlui-build/Source/Core/preinstall: _deps/rmlui-build/Source/Core/Layout/preinstall
+_deps/rmlui-build/Source/Core/preinstall: _deps/rmlui-build/Source/Core/FontEngineDefault/preinstall
+.PHONY : _deps/rmlui-build/Source/Core/preinstall
+
+# Recursive "clean" directory target.
+_deps/rmlui-build/Source/Core/clean: _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/clean
+_deps/rmlui-build/Source/Core/clean: _deps/rmlui-build/Source/Core/Elements/clean
+_deps/rmlui-build/Source/Core/clean: _deps/rmlui-build/Source/Core/Layout/clean
+_deps/rmlui-build/Source/Core/clean: _deps/rmlui-build/Source/Core/FontEngineDefault/clean
+.PHONY : _deps/rmlui-build/Source/Core/clean
+
+#=============================================================================
+# Directory level rules for directory _deps/rmlui-build/Source/Core/Elements
+
+# Recursive "all" directory target.
+_deps/rmlui-build/Source/Core/Elements/all:
+.PHONY : _deps/rmlui-build/Source/Core/Elements/all
+
+# Recursive "codegen" directory target.
+_deps/rmlui-build/Source/Core/Elements/codegen:
+.PHONY : _deps/rmlui-build/Source/Core/Elements/codegen
+
+# Recursive "preinstall" directory target.
+_deps/rmlui-build/Source/Core/Elements/preinstall:
+.PHONY : _deps/rmlui-build/Source/Core/Elements/preinstall
+
+# Recursive "clean" directory target.
+_deps/rmlui-build/Source/Core/Elements/clean:
+.PHONY : _deps/rmlui-build/Source/Core/Elements/clean
+
+#=============================================================================
+# Directory level rules for directory _deps/rmlui-build/Source/Core/FontEngineDefault
+
+# Recursive "all" directory target.
+_deps/rmlui-build/Source/Core/FontEngineDefault/all:
+.PHONY : _deps/rmlui-build/Source/Core/FontEngineDefault/all
+
+# Recursive "codegen" directory target.
+_deps/rmlui-build/Source/Core/FontEngineDefault/codegen:
+.PHONY : _deps/rmlui-build/Source/Core/FontEngineDefault/codegen
+
+# Recursive "preinstall" directory target.
+_deps/rmlui-build/Source/Core/FontEngineDefault/preinstall:
+.PHONY : _deps/rmlui-build/Source/Core/FontEngineDefault/preinstall
+
+# Recursive "clean" directory target.
+_deps/rmlui-build/Source/Core/FontEngineDefault/clean:
+.PHONY : _deps/rmlui-build/Source/Core/FontEngineDefault/clean
+
+#=============================================================================
+# Directory level rules for directory _deps/rmlui-build/Source/Core/Layout
+
+# Recursive "all" directory target.
+_deps/rmlui-build/Source/Core/Layout/all:
+.PHONY : _deps/rmlui-build/Source/Core/Layout/all
+
+# Recursive "codegen" directory target.
+_deps/rmlui-build/Source/Core/Layout/codegen:
+.PHONY : _deps/rmlui-build/Source/Core/Layout/codegen
+
+# Recursive "preinstall" directory target.
+_deps/rmlui-build/Source/Core/Layout/preinstall:
+.PHONY : _deps/rmlui-build/Source/Core/Layout/preinstall
+
+# Recursive "clean" directory target.
+_deps/rmlui-build/Source/Core/Layout/clean:
+.PHONY : _deps/rmlui-build/Source/Core/Layout/clean
+
+#=============================================================================
+# Directory level rules for directory _deps/rmlui-build/Source/Debugger
+
+# Recursive "all" directory target.
+_deps/rmlui-build/Source/Debugger/all: _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/all
+.PHONY : _deps/rmlui-build/Source/Debugger/all
+
+# Recursive "codegen" directory target.
+_deps/rmlui-build/Source/Debugger/codegen: _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/codegen
+.PHONY : _deps/rmlui-build/Source/Debugger/codegen
+
+# Recursive "preinstall" directory target.
+_deps/rmlui-build/Source/Debugger/preinstall:
+.PHONY : _deps/rmlui-build/Source/Debugger/preinstall
+
+# Recursive "clean" directory target.
+_deps/rmlui-build/Source/Debugger/clean: _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/clean
+.PHONY : _deps/rmlui-build/Source/Debugger/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/VoxelGame.dir
 
 # All Build rule for target.
-CMakeFiles/VoxelGame.dir/all:
+CMakeFiles/VoxelGame.dir/all: _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14 "Built target VoxelGame"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Built target VoxelGame"
 .PHONY : CMakeFiles/VoxelGame.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/VoxelGame.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles 14
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles 95
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/VoxelGame.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles 0
 .PHONY : CMakeFiles/VoxelGame.dir/rule
@@ -102,13 +276,77 @@ VoxelGame: CMakeFiles/VoxelGame.dir/rule
 # codegen rule for target.
 CMakeFiles/VoxelGame.dir/codegen:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/codegen
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14 "Finished codegen for target VoxelGame"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8 "Finished codegen for target VoxelGame"
 .PHONY : CMakeFiles/VoxelGame.dir/codegen
 
 # clean rule for target.
 CMakeFiles/VoxelGame.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/clean
 .PHONY : CMakeFiles/VoxelGame.dir/clean
+
+#=============================================================================
+# Target rules for target _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir
+
+# All Build rule for target.
+_deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/all:
+	$(MAKE) $(MAKESILENT) -f _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/build.make _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/depend
+	$(MAKE) $(MAKESILENT) -f _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/build.make _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95 "Built target rmlui_core"
+.PHONY : _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/all
+
+# Build rule for subdir invocation for target.
+_deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles 87
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles 0
+.PHONY : _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/rule
+
+# Convenience name for target.
+rmlui_core: _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/rule
+.PHONY : rmlui_core
+
+# codegen rule for target.
+_deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/build.make _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95 "Finished codegen for target rmlui_core"
+.PHONY : _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/codegen
+
+# clean rule for target.
+_deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/clean:
+	$(MAKE) $(MAKESILENT) -f _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/build.make _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/clean
+.PHONY : _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/clean
+
+#=============================================================================
+# Target rules for target _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir
+
+# All Build rule for target.
+_deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/all: _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/all
+	$(MAKE) $(MAKESILENT) -f _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/build.make _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/depend
+	$(MAKE) $(MAKESILENT) -f _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/build.make _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=96,97,98,99,100 "Built target rmlui_debugger"
+.PHONY : _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/all
+
+# Build rule for subdir invocation for target.
+_deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles 92
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles 0
+.PHONY : _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/rule
+
+# Convenience name for target.
+rmlui_debugger: _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/rule
+.PHONY : rmlui_debugger
+
+# codegen rule for target.
+_deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/build.make _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/codegen
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=96,97,98,99,100 "Finished codegen for target rmlui_debugger"
+.PHONY : _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/codegen
+
+# clean rule for target.
+_deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/clean:
+	$(MAKE) $(MAKESILENT) -f _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/build.make _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/clean
+.PHONY : _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

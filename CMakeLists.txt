@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 project(VoxelGame LANGUAGES CXX)
+include(FetchContent)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,10 +10,28 @@ if(APPLE)
     list(APPEND CMAKE_PREFIX_PATH
         "/opt/homebrew"
         "/opt/homebrew/opt/glfw"
+        "/opt/homebrew/opt/freetype"
         "/usr/local"
         "/usr/local/opt/glfw"
+        "/usr/local/opt/freetype"
     )
 endif()
+
+# ── FreeType (required by RmlUI font engine) ──────────────────────────────────
+find_package(Freetype REQUIRED)
+
+# ── RmlUI ─────────────────────────────────────────────────────────────────────
+set(BUILD_SHARED_LIBS          OFF CACHE BOOL "" FORCE)
+set(RMLUI_SAMPLES              OFF CACHE BOOL "" FORCE)
+set(RMLUI_TESTS                OFF CACHE BOOL "" FORCE)
+set(RMLUI_THIRDPARTY_CONTAINERS OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+    RmlUi
+    GIT_REPOSITORY https://github.com/mikke89/RmlUi.git
+    GIT_TAG        6.0
+    GIT_SHALLOW    TRUE
+)
+FetchContent_MakeAvailable(RmlUi)
 
 find_package(glfw3 CONFIG QUIET)
 
@@ -59,14 +78,25 @@ add_executable(VoxelGame
     src/Math.cpp
     src/player/Inventory.cpp
     src/render/Mesh.cpp
+    src/render/ModelManager.cpp
     src/Player.cpp
     src/render/Renderer.cpp
     src/render/ShaderProgram.cpp
     src/render/TextureManager.cpp
+    src/ui/GameUI.cpp
+    src/world/BiomeDefinition.cpp
     src/world/TerrainGenerator.cpp
     src/world/World.cpp
+    # RmlUI GL2 + GLFW backends (local copies with macOS fixes)
+    src/ui/RmlUi_Renderer_GL2.cpp
+    src/ui/RmlUi_Platform_GLFW.cpp
 )
-target_include_directories(VoxelGame PRIVATE include third_party)
+target_include_directories(VoxelGame PRIVATE
+    include
+    third_party
+    ${rmlui_SOURCE_DIR}/Include
+    ${rmlui_SOURCE_DIR}/Backends
+)
 target_compile_features(VoxelGame PRIVATE cxx_std_20)
 target_link_libraries(VoxelGame PRIVATE
     ${GLFW_TARGET}
@@ -74,6 +104,17 @@ target_link_libraries(VoxelGame PRIVATE
     ${COCOA_FRAMEWORK}
     ${IOKIT_FRAMEWORK}
     ${COREVIDEO_FRAMEWORK}
+    RmlUi::Core
+)
+
+# Copy the bundled Lato font from RmlUI samples so there's no manual setup
+add_custom_command(TARGET VoxelGame POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        "${CMAKE_SOURCE_DIR}/assets/ui/fonts"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${rmlui_SOURCE_DIR}/Samples/assets/LatoLatin-Regular.ttf"
+        "${CMAKE_SOURCE_DIR}/assets/ui/fonts/LatoLatin-Regular.ttf"
+    COMMENT "Copying RmlUI sample font to assets/ui/fonts/"
 )
 
 if(APPLE)

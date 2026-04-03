@@ -85,6 +85,51 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/opt/homebrew/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/opt/homebrew/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles /Users/kalob/Documents/CODE/VoxelGame/build//CMakeFiles/progress.marks
@@ -128,6 +173,32 @@ VoxelGame: cmake_check_build_system
 VoxelGame/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/build
 .PHONY : VoxelGame/fast
+
+#=============================================================================
+# Target rules for targets named rmlui_core
+
+# Build rule for target.
+rmlui_core: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rmlui_core
+.PHONY : rmlui_core
+
+# fast build rule for target.
+rmlui_core/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/build.make _deps/rmlui-build/Source/Core/CMakeFiles/rmlui_core.dir/build
+.PHONY : rmlui_core/fast
+
+#=============================================================================
+# Target rules for targets named rmlui_debugger
+
+# Build rule for target.
+rmlui_debugger: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 rmlui_debugger
+.PHONY : rmlui_debugger
+
+# fast build rule for target.
+rmlui_debugger/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/build.make _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/build
+.PHONY : rmlui_debugger/fast
 
 src/Math.o: src/Math.cpp.o
 .PHONY : src/Math.o
@@ -321,6 +392,30 @@ src/render/Mesh.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/render/Mesh.cpp.s
 .PHONY : src/render/Mesh.cpp.s
 
+src/render/ModelManager.o: src/render/ModelManager.cpp.o
+.PHONY : src/render/ModelManager.o
+
+# target to build an object file
+src/render/ModelManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.o
+.PHONY : src/render/ModelManager.cpp.o
+
+src/render/ModelManager.i: src/render/ModelManager.cpp.i
+.PHONY : src/render/ModelManager.i
+
+# target to preprocess a source file
+src/render/ModelManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.i
+.PHONY : src/render/ModelManager.cpp.i
+
+src/render/ModelManager.s: src/render/ModelManager.cpp.s
+.PHONY : src/render/ModelManager.s
+
+# target to generate assembly for a file
+src/render/ModelManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.s
+.PHONY : src/render/ModelManager.cpp.s
+
 src/render/Renderer.o: src/render/Renderer.cpp.o
 .PHONY : src/render/Renderer.o
 
@@ -393,6 +488,102 @@ src/render/TextureManager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.s
 .PHONY : src/render/TextureManager.cpp.s
 
+src/ui/GameUI.o: src/ui/GameUI.cpp.o
+.PHONY : src/ui/GameUI.o
+
+# target to build an object file
+src/ui/GameUI.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.o
+.PHONY : src/ui/GameUI.cpp.o
+
+src/ui/GameUI.i: src/ui/GameUI.cpp.i
+.PHONY : src/ui/GameUI.i
+
+# target to preprocess a source file
+src/ui/GameUI.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.i
+.PHONY : src/ui/GameUI.cpp.i
+
+src/ui/GameUI.s: src/ui/GameUI.cpp.s
+.PHONY : src/ui/GameUI.s
+
+# target to generate assembly for a file
+src/ui/GameUI.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.s
+.PHONY : src/ui/GameUI.cpp.s
+
+src/ui/RmlUi_Platform_GLFW.o: src/ui/RmlUi_Platform_GLFW.cpp.o
+.PHONY : src/ui/RmlUi_Platform_GLFW.o
+
+# target to build an object file
+src/ui/RmlUi_Platform_GLFW.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.o
+.PHONY : src/ui/RmlUi_Platform_GLFW.cpp.o
+
+src/ui/RmlUi_Platform_GLFW.i: src/ui/RmlUi_Platform_GLFW.cpp.i
+.PHONY : src/ui/RmlUi_Platform_GLFW.i
+
+# target to preprocess a source file
+src/ui/RmlUi_Platform_GLFW.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.i
+.PHONY : src/ui/RmlUi_Platform_GLFW.cpp.i
+
+src/ui/RmlUi_Platform_GLFW.s: src/ui/RmlUi_Platform_GLFW.cpp.s
+.PHONY : src/ui/RmlUi_Platform_GLFW.s
+
+# target to generate assembly for a file
+src/ui/RmlUi_Platform_GLFW.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.s
+.PHONY : src/ui/RmlUi_Platform_GLFW.cpp.s
+
+src/ui/RmlUi_Renderer_GL2.o: src/ui/RmlUi_Renderer_GL2.cpp.o
+.PHONY : src/ui/RmlUi_Renderer_GL2.o
+
+# target to build an object file
+src/ui/RmlUi_Renderer_GL2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.o
+.PHONY : src/ui/RmlUi_Renderer_GL2.cpp.o
+
+src/ui/RmlUi_Renderer_GL2.i: src/ui/RmlUi_Renderer_GL2.cpp.i
+.PHONY : src/ui/RmlUi_Renderer_GL2.i
+
+# target to preprocess a source file
+src/ui/RmlUi_Renderer_GL2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.i
+.PHONY : src/ui/RmlUi_Renderer_GL2.cpp.i
+
+src/ui/RmlUi_Renderer_GL2.s: src/ui/RmlUi_Renderer_GL2.cpp.s
+.PHONY : src/ui/RmlUi_Renderer_GL2.s
+
+# target to generate assembly for a file
+src/ui/RmlUi_Renderer_GL2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.s
+.PHONY : src/ui/RmlUi_Renderer_GL2.cpp.s
+
+src/world/BiomeDefinition.o: src/world/BiomeDefinition.cpp.o
+.PHONY : src/world/BiomeDefinition.o
+
+# target to build an object file
+src/world/BiomeDefinition.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.o
+.PHONY : src/world/BiomeDefinition.cpp.o
+
+src/world/BiomeDefinition.i: src/world/BiomeDefinition.cpp.i
+.PHONY : src/world/BiomeDefinition.i
+
+# target to preprocess a source file
+src/world/BiomeDefinition.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.i
+.PHONY : src/world/BiomeDefinition.cpp.i
+
+src/world/BiomeDefinition.s: src/world/BiomeDefinition.cpp.s
+.PHONY : src/world/BiomeDefinition.s
+
+# target to generate assembly for a file
+src/world/BiomeDefinition.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.s
+.PHONY : src/world/BiomeDefinition.cpp.s
+
 src/world/TerrainGenerator.o: src/world/TerrainGenerator.cpp.o
 .PHONY : src/world/TerrainGenerator.o
 
@@ -448,8 +639,14 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... VoxelGame"
+	@echo "... rmlui_core"
+	@echo "... rmlui_debugger"
 	@echo "... src/Math.o"
 	@echo "... src/Math.i"
 	@echo "... src/Math.s"
@@ -474,6 +671,9 @@ help:
 	@echo "... src/render/Mesh.o"
 	@echo "... src/render/Mesh.i"
 	@echo "... src/render/Mesh.s"
+	@echo "... src/render/ModelManager.o"
+	@echo "... src/render/ModelManager.i"
+	@echo "... src/render/ModelManager.s"
 	@echo "... src/render/Renderer.o"
 	@echo "... src/render/Renderer.i"
 	@echo "... src/render/Renderer.s"
@@ -483,6 +683,18 @@ help:
 	@echo "... src/render/TextureManager.o"
 	@echo "... src/render/TextureManager.i"
 	@echo "... src/render/TextureManager.s"
+	@echo "... src/ui/GameUI.o"
+	@echo "... src/ui/GameUI.i"
+	@echo "... src/ui/GameUI.s"
+	@echo "... src/ui/RmlUi_Platform_GLFW.o"
+	@echo "... src/ui/RmlUi_Platform_GLFW.i"
+	@echo "... src/ui/RmlUi_Platform_GLFW.s"
+	@echo "... src/ui/RmlUi_Renderer_GL2.o"
+	@echo "... src/ui/RmlUi_Renderer_GL2.i"
+	@echo "... src/ui/RmlUi_Renderer_GL2.s"
+	@echo "... src/world/BiomeDefinition.o"
+	@echo "... src/world/BiomeDefinition.i"
+	@echo "... src/world/BiomeDefinition.s"
 	@echo "... src/world/TerrainGenerator.o"
 	@echo "... src/world/TerrainGenerator.i"
 	@echo "... src/world/TerrainGenerator.s"

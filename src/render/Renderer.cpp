@@ -152,51 +152,38 @@ std::string formatFloat(const float value) {
 }
 
 std::optional<FaceQuad> hoveredFaceQuad(const RaycastHit& hit) {
-    const Int3 delta {
-        hit.previousEmpty.x - hit.block.x,
-        hit.previousEmpty.y - hit.block.y,
-        hit.previousEmpty.z - hit.block.z
-    };
-    const float x = static_cast<float>(hit.block.x);
-    const float y = static_cast<float>(hit.block.y);
-    const float z = static_cast<float>(hit.block.z);
+    const float bx = static_cast<float>(hit.block.x);
+    const float by = static_cast<float>(hit.block.y);
+    const float bz = static_cast<float>(hit.block.z);
     constexpr float kInset = 0.0025f;
 
-    if (delta.x == -1 && delta.y == 0 && delta.z == 0) {
-        return FaceQuad {
-            {-1.0f, 0.0f, 0.0f},
-            {{{x - kInset, y, z}, {x - kInset, y, z + 1.0f}, {x - kInset, y + 1.0f, z + 1.0f}, {x - kInset, y + 1.0f, z}}}
-        };
+    // World-space bounds of the specific collision box that was hit
+    const float minX = bx + hit.hitBox.minX;
+    const float maxX = bx + hit.hitBox.maxX;
+    const float minY = by + hit.hitBox.minY;
+    const float maxY = by + hit.hitBox.maxY;
+    const float minZ = bz + hit.hitBox.minZ;
+    const float maxZ = bz + hit.hitBox.maxZ;
+
+    const Vec3& n = hit.hitNormal;
+
+    if (n.x < -0.5f) {
+        return FaceQuad{n, {{{minX-kInset, minY, minZ}, {minX-kInset, minY, maxZ}, {minX-kInset, maxY, maxZ}, {minX-kInset, maxY, minZ}}}};
     }
-    if (delta.x == 1 && delta.y == 0 && delta.z == 0) {
-        return FaceQuad {
-            {1.0f, 0.0f, 0.0f},
-            {{{x + 1.0f + kInset, y, z + 1.0f}, {x + 1.0f + kInset, y, z}, {x + 1.0f + kInset, y + 1.0f, z}, {x + 1.0f + kInset, y + 1.0f, z + 1.0f}}}
-        };
+    if (n.x > 0.5f) {
+        return FaceQuad{n, {{{maxX+kInset, minY, maxZ}, {maxX+kInset, minY, minZ}, {maxX+kInset, maxY, minZ}, {maxX+kInset, maxY, maxZ}}}};
     }
-    if (delta.x == 0 && delta.y == -1 && delta.z == 0) {
-        return FaceQuad {
-            {0.0f, -1.0f, 0.0f},
-            {{{x, y - kInset, z + 1.0f}, {x + 1.0f, y - kInset, z + 1.0f}, {x + 1.0f, y - kInset, z}, {x, y - kInset, z}}}
-        };
+    if (n.y < -0.5f) {
+        return FaceQuad{n, {{{minX, minY-kInset, maxZ}, {maxX, minY-kInset, maxZ}, {maxX, minY-kInset, minZ}, {minX, minY-kInset, minZ}}}};
     }
-    if (delta.x == 0 && delta.y == 1 && delta.z == 0) {
-        return FaceQuad {
-            {0.0f, 1.0f, 0.0f},
-            {{{x, y + 1.0f + kInset, z}, {x + 1.0f, y + 1.0f + kInset, z}, {x + 1.0f, y + 1.0f + kInset, z + 1.0f}, {x, y + 1.0f + kInset, z + 1.0f}}}
-        };
+    if (n.y > 0.5f) {
+        return FaceQuad{n, {{{minX, maxY+kInset, minZ}, {maxX, maxY+kInset, minZ}, {maxX, maxY+kInset, maxZ}, {minX, maxY+kInset, maxZ}}}};
     }
-    if (delta.x == 0 && delta.y == 0 && delta.z == -1) {
-        return FaceQuad {
-            {0.0f, 0.0f, -1.0f},
-            {{{x + 1.0f, y, z - kInset}, {x, y, z - kInset}, {x, y + 1.0f, z - kInset}, {x + 1.0f, y + 1.0f, z - kInset}}}
-        };
+    if (n.z < -0.5f) {
+        return FaceQuad{n, {{{maxX, minY, minZ-kInset}, {minX, minY, minZ-kInset}, {minX, maxY, minZ-kInset}, {maxX, maxY, minZ-kInset}}}};
     }
-    if (delta.x == 0 && delta.y == 0 && delta.z == 1) {
-        return FaceQuad {
-            {0.0f, 0.0f, 1.0f},
-            {{{x, y, z + 1.0f + kInset}, {x + 1.0f, y, z + 1.0f + kInset}, {x + 1.0f, y + 1.0f, z + 1.0f + kInset}, {x, y + 1.0f, z + 1.0f + kInset}}}
-        };
+    if (n.z > 0.5f) {
+        return FaceQuad{n, {{{minX, minY, maxZ+kInset}, {maxX, minY, maxZ+kInset}, {maxX, maxY, maxZ+kInset}, {minX, maxY, maxZ+kInset}}}};
     }
 
     return std::nullopt;
@@ -306,11 +293,7 @@ void renderMeshWireframe(const ChunkMesh& mesh, const bool translucentOnly) {
     glEnable(GL_CULL_FACE);
 }
 
-void drawHoveredFaceOverlay(const RaycastHit& hit, const TextureManager& textures, const std::string& texturePath) {
-    const TextureResource* texture = textures.find(texturePath);
-    if (texture == nullptr) {
-        return;
-    }
+void drawHoveredFaceOverlay(const RaycastHit& hit) {
     const auto quad = hoveredFaceQuad(hit);
     if (!quad.has_value()) {
         return;
@@ -318,25 +301,22 @@ void drawHoveredFaceOverlay(const RaycastHit& hit, const TextureManager& texture
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture->glId);
+    glDisable(GL_TEXTURE_2D);
     glDisable(GL_CULL_FACE);
     glEnable(GL_POLYGON_OFFSET_FILL);
     glPolygonOffset(-1.0f, -1.0f);
-    glColor4f(1.0f, 1.0f, 1.0f, 0.82f);
+    glColor4f(1.0f, 1.0f, 1.0f, 0.75f);
 
     glBegin(GL_QUADS);
     glNormal3f(quad->normal.x, quad->normal.y, quad->normal.z);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(quad->corners[0].x, quad->corners[0].y, quad->corners[0].z);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(quad->corners[1].x, quad->corners[1].y, quad->corners[1].z);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(quad->corners[2].x, quad->corners[2].y, quad->corners[2].z);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(quad->corners[3].x, quad->corners[3].y, quad->corners[3].z);
+    glVertex3f(quad->corners[0].x, quad->corners[0].y, quad->corners[0].z);
+    glVertex3f(quad->corners[1].x, quad->corners[1].y, quad->corners[1].z);
+    glVertex3f(quad->corners[2].x, quad->corners[2].y, quad->corners[2].z);
+    glVertex3f(quad->corners[3].x, quad->corners[3].y, quad->corners[3].z);
     glEnd();
 
     glDisable(GL_POLYGON_OFFSET_FILL);
     glEnable(GL_CULL_FACE);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDisable(GL_TEXTURE_2D);
     glDisable(GL_BLEND);
 }
 
@@ -384,10 +364,10 @@ void drawDebugOverlay(const int width, const int height, const DebugOverlayData&
 
     glColor4f(0.96f, 0.95f, 0.90f, 0.85f);
     glBegin(GL_QUADS);
-    glVertex2f(12.0f, 12.0f);
+    glVertex2f(12.0f,  12.0f);
     glVertex2f(360.0f, 12.0f);
-    glVertex2f(360.0f, 168.0f);
-    glVertex2f(12.0f, 168.0f);
+    glVertex2f(360.0f, 246.0f);
+    glVertex2f(12.0f,  246.0f);
     glEnd();
 
     drawText("DEBUG", 24.0f, 24.0f, 2.0f);
@@ -405,10 +385,20 @@ void drawDebugOverlay(const int width, const int height, const DebugOverlayData&
 
     drawText("CHUNK " + std::to_string(data.chunkX) + ", " + std::to_string(data.chunkY) + ", " +
              std::to_string(data.chunkZ), 24.0f, 84.0f, 2.0f);
-    drawText("LOADED " + std::to_string(data.loadedChunks), 24.0f, 102.0f, 2.0f);
-    drawText("BLOCKS " + std::to_string(data.solidBlocks), 24.0f, 120.0f, 2.0f);
-    drawText("FACES " + std::to_string(data.visibleFaces), 24.0f, 138.0f, 2.0f);
-    drawText("TRIS " + std::to_string(data.triangleCount), 200.0f, 138.0f, 2.0f);
+    drawText("LOADED " + std::to_string(data.loadedChunks) + "  BLOCKS " + std::to_string(data.solidBlocks),
+             24.0f, 102.0f, 2.0f);
+    drawText("FACES " + std::to_string(data.visibleFaces) + "  TRIS " + std::to_string(data.triangleCount),
+             24.0f, 120.0f, 2.0f);
+
+    // Biome debug section
+    drawText("BIOME " + (data.biomeName.empty() ? "NONE" : data.biomeName), 24.0f, 144.0f, 2.0f);
+    drawText("TEMP "  + formatFloat(data.temperature) + "  HUM "  + formatFloat(data.humidity),
+             24.0f, 162.0f, 2.0f);
+    drawText("RAIN "  + formatFloat(data.rainfall)    + "  ELEV " + formatFloat(data.elevation),
+             24.0f, 180.0f, 2.0f);
+    drawText("DRAIN " + formatFloat(data.drainage)    + "  WTBL " + formatFloat(data.waterTable),
+             24.0f, 198.0f, 2.0f);
+    drawText("F5 RELOAD DATA", 24.0f, 222.0f, 2.0f);
 
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);

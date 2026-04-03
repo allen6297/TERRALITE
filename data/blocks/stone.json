@@ -9,6 +9,7 @@
   "render": {
     "color": [0.60, 0.60, 0.64],
     "opacity": 1.0,
+    "model": "models/blocks/stone.json",
     "texture": "textures/blocks/stone.ppm"
   },
   "drops": [

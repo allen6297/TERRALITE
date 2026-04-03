@@ -33,10 +33,20 @@ struct ChunkCoordHash {
     }
 };
 
-using ChunkBlocks = std::array<std::array<std::array<std::uint8_t, kChunkZ>, kChunkY>, kChunkX>;
+using ChunkBlocks     = std::array<std::array<std::array<std::uint16_t, kChunkZ>, kChunkY>, kChunkX>;
+using ChunkTintColors = std::array<std::array<std::array<float, 3>, kChunkZ>, kChunkX>;
 
 struct Chunk {
-    ChunkCoord coord;
-    ChunkBlocks blocks {};
+    ChunkCoord    coord;
+    ChunkBlocks   blocks {};
+    // Per-column blended biome tint color [lx][lz], filled by TerrainGenerator.
+    // Defaults to white so untinted blocks render unmodified.
+    ChunkTintColors tintColors;
+
+    Chunk() {
+        for (auto& row : tintColors)
+            for (auto& cell : row)
+                cell = {1.0f, 1.0f, 1.0f};
+    }
 };
 }  // namespace voxel

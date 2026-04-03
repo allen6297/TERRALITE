@@ -885,6 +885,9 @@ CMakeFiles/VoxelGame.dir/src/render/Mesh.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/erase_if_container.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__iterator/ranges_iterator_traits.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__node_handle \
+  /Users/kalob/Documents/CODE/VoxelGame/include/world/BiomeDefinition.hpp \
+  /Users/kalob/Documents/CODE/VoxelGame/include/render/ModelManager.hpp \
+  /Users/kalob/Documents/CODE/VoxelGame/include/render/BlockModel.hpp \
   /Users/kalob/Documents/CODE/VoxelGame/include/render/Renderer.hpp \
   /Users/kalob/Documents/CODE/VoxelGame/include/Player.hpp \
   /opt/homebrew/include/GLFW/glfw3.h \

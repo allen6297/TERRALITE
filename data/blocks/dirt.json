@@ -9,6 +9,7 @@
   "render": {
     "color": [0.55, 0.38, 0.24],
     "opacity": 1.0,
+    "model": "models/blocks/dirt.json",
     "texture": "textures/blocks/dirt.ppm"
   },
   "drops": [

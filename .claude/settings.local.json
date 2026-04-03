@@ -6,7 +6,16 @@
       "Bash(cmake --build build)",
       "Bash(cmake -S /Users/kalob/Documents/CODE/VoxelGame -B /Users/kalob/Documents/CODE/VoxelGame/build -DCMAKE_BUILD_TYPE=Debug)",
       "Bash(cmake --build /Users/kalob/Documents/CODE/VoxelGame/build)",
-      "Bash(cmake --build /Users/kalob/Documents/CODE/VoxelGame/cmake-build-debug)"
+      "Bash(cmake --build /Users/kalob/Documents/CODE/VoxelGame/cmake-build-debug)",
+      "Bash(ls /Users/kalob/Desktop/*.png /Users/kalob/Desktop/*.jpg /Users/kalob/Desktop/*.jpeg)",
+      "Bash(sort -t_ -k1)",
+      "Bash(brew install:*)",
+      "Bash(cmake -B build)",
+      "Bash(cmake -B /Users/kalob/Documents/CODE/VoxelGame/build)",
+      "Bash(find /Users/kalob/Documents/CODE/VoxelGame/build -name CMakeTargets* -o -name RmlCore*)",
+      "Bash(ls /Users/kalob/Desktop/*.png)",
+      "Bash(ls -t /Users/kalob/Desktop/*.png)",
+      "Bash(make VoxelGame)"
     ]
   }
 }

@@ -41,7 +41,7 @@ const Chunk& getChunk(const World& world, const ChunkCoord& coord) {
     return world.chunks.at(coord);
 }
 
-std::uint8_t getBlock(const World& world, const int x, const int y, const int z) {
+std::uint16_t getBlock(const World& world, const int x, const int y, const int z) {
     if (!isYInBounds(y)) {
         return 0;
     }
@@ -54,7 +54,7 @@ std::uint8_t getBlock(const World& world, const int x, const int y, const int z)
     return it->second.blocks[local.x][local.y][local.z];
 }
 
-void setBlock(World& world, const int x, const int y, const int z, const std::uint8_t block) {
+void setBlock(World& world, const int x, const int y, const int z, const std::uint16_t block) {
     if (!isYInBounds(y)) {
         return;
     }
@@ -76,37 +76,123 @@ bool isOccupied(const World& world, const int x, const int y, const int z) {
     return getBlock(world, x, y, z) != 0;
 }
 
+bool isObstructedByModel(const World& world, const GameData& gameData, const Int3& target) {
+    // Target block occupies [target, target+1] in each axis.
+    const float tMinX = static_cast<float>(target.x);
+    const float tMaxX = tMinX + 1.0f;
+    const float tMinY = static_cast<float>(target.y);
+    const float tMaxY = tMinY + 1.0f;
+    const float tMinZ = static_cast<float>(target.z);
+    const float tMaxZ = tMinZ + 1.0f;
+
+    // Expand search by collisionSearchExpansion so oversized model elements
+    // that extend beyond their block's unit cube are caught.
+    const int exp = gameData.collisionSearchExpansion;
+    for (int x = target.x - exp; x <= target.x + exp; ++x) {
+        for (int y = target.y - exp; y <= target.y + exp; ++y) {
+            for (int z = target.z - exp; z <= target.z + exp; ++z) {
+                if (x == target.x && y == target.y && z == target.z) continue;
+                const std::uint16_t stateId = getBlock(world, x, y, z);
+                if (stateId == 0) continue;
+                const BlockDefinition* def = findBlockDefinitionForBlockType(gameData, stateId);
+                // Blocks without model collision boxes are full cubes — they
+                // can't overhang into a neighboring position.
+                if (def == nullptr || def->collisionBoxes.empty()) continue;
+                const float bx = static_cast<float>(x);
+                const float by = static_cast<float>(y);
+                const float bz = static_cast<float>(z);
+                for (const auto& box : def->collisionBoxes) {
+                    if (bx + box.maxX > tMinX && bx + box.minX < tMaxX &&
+                        by + box.maxY > tMinY && by + box.minY < tMaxY &&
+                        bz + box.maxZ > tMinZ && bz + box.minZ < tMaxZ) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
 std::optional<RaycastHit> raycastWorld(const World& world, const GameData& gameData, const Vec3& origin, const Vec3& direction) {
-    Vec3 previous = origin;
+    static const std::vector<CollisionBox> kFullBox{{0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f}};
+
+    float bestT = kReach + 1.0f;
+    std::optional<RaycastHit> bestHit;
+    const int exp = gameData.collisionSearchExpansion;
 
     for (float distance = 0.0f; distance <= kReach; distance += kRayStep) {
-        const Vec3 point = origin + (direction * distance);
-        const Int3 block {
-            static_cast<int>(std::floor(point.x)),
-            static_cast<int>(std::floor(point.y)),
-            static_cast<int>(std::floor(point.z))
-        };
+        const Vec3 point = origin + direction * distance;
+        const int px = static_cast<int>(std::floor(point.x));
+        const int py = static_cast<int>(std::floor(point.y));
+        const int pz = static_cast<int>(std::floor(point.z));
 
-        if (!isYInBounds(block.y)) {
-            previous = point;
-            continue;
+        for (int nx = px - exp; nx <= px + exp; ++nx) {
+            for (int ny = py - exp; ny <= py + exp; ++ny) {
+                for (int nz = pz - exp; nz <= pz + exp; ++nz) {
+                    if (!isYInBounds(ny)) continue;
+                    const std::uint16_t stateId = getBlock(world, nx, ny, nz);
+                    if (stateId == 0 || !gameData.solidByRuntimeId[stateId]) continue;
+
+                    const BlockDefinition* def = findBlockDefinitionForBlockType(gameData, stateId);
+                    const std::vector<CollisionBox>& boxes =
+                        (def && !def->collisionBoxes.empty()) ? def->collisionBoxes : kFullBox;
+
+                    const float bx = static_cast<float>(nx);
+                    const float by = static_cast<float>(ny);
+                    const float bz = static_cast<float>(nz);
+
+                    for (const auto& box : boxes) {
+                        const Vec3 boxMin{bx + box.minX, by + box.minY, bz + box.minZ};
+                        const Vec3 boxMax{bx + box.maxX, by + box.maxY, bz + box.maxZ};
+
+                        // Ray-AABB slab intersection
+                        float tmin = 1e-4f, tmax = 1e30f;
+                        Vec3 normal{0.0f, 0.0f, 0.0f};
+                        bool hit = true;
+
+                        auto testAxis = [&](float orig, float d, float bmin, float bmax, Vec3 nFace) {
+                            if (std::abs(d) < 1e-8f) {
+                                if (orig < bmin || orig > bmax) hit = false;
+                                return;
+                            }
+                            float t0 = (bmin - orig) / d;
+                            float t1 = (bmax - orig) / d;
+                            if (t0 > t1) { std::swap(t0, t1); nFace = {-nFace.x, -nFace.y, -nFace.z}; }
+                            if (t0 > tmin) { tmin = t0; normal = nFace; }
+                            if (t1 < tmax) tmax = t1;
+                        };
+
+                        testAxis(origin.x, direction.x, boxMin.x, boxMax.x, {-1.0f, 0.0f, 0.0f});
+                        testAxis(origin.y, direction.y, boxMin.y, boxMax.y, {0.0f, -1.0f, 0.0f});
+                        testAxis(origin.z, direction.z, boxMin.z, boxMax.z, {0.0f, 0.0f, -1.0f});
+
+                        if (!hit || tmin > tmax || tmax < 0.0f || tmin >= bestT || tmin > kReach) continue;
+
+                        bestT = tmin;
+                        const Vec3 hitPoint = origin + direction * tmin;
+                        auto snapOut = [](float pos, float n) -> int {
+                            if (n > 0.5f)  return static_cast<int>(std::floor(pos + 0.5f));
+                            if (n < -0.5f) return static_cast<int>(std::floor(pos - 0.5f));
+                            return static_cast<int>(std::floor(pos));
+                        };
+                        bestHit = RaycastHit{
+                            {nx, ny, nz},
+                            {
+                                snapOut(hitPoint.x, normal.x),
+                                snapOut(hitPoint.y, normal.y),
+                                snapOut(hitPoint.z, normal.z)
+                            },
+                            stateId,
+                            normal,
+                            box
+                        };
+                    }
+                }
+            }
         }
-
-        if (isSolid(world, gameData, block.x, block.y, block.z)) {
-            return RaycastHit {
-                block,
-                {
-                    static_cast<int>(std::floor(previous.x)),
-                    static_cast<int>(std::floor(previous.y)),
-                    static_cast<int>(std::floor(previous.z))
-                },
-                getBlock(world, block.x, block.y, block.z)
-            };
-        }
-
-        previous = point;
     }
 
-    return std::nullopt;
+    return bestHit;
 }
 }  // namespace voxel

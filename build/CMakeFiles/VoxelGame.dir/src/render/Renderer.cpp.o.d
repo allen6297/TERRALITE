@@ -885,6 +885,7 @@ CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/sys/_types/_fsfilcnt_t.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_types/_nl_item.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstdarg \
+  /Users/kalob/Documents/CODE/VoxelGame/include/world/BiomeDefinition.hpp \
   /Users/kalob/Documents/CODE/VoxelGame/include/Player.hpp \
   /opt/homebrew/include/GLFW/glfw3.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/gl.h \
@@ -975,5 +976,7 @@ CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/print \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/unistd.h \
   /Users/kalob/Documents/CODE/VoxelGame/include/render/Mesh.hpp \
+  /Users/kalob/Documents/CODE/VoxelGame/include/render/ModelManager.hpp \
+  /Users/kalob/Documents/CODE/VoxelGame/include/render/BlockModel.hpp \
   /Users/kalob/Documents/CODE/VoxelGame/include/render/ShaderProgram.hpp \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework/Headers/glext.h

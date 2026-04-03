@@ -33,11 +33,11 @@ struct InputState {
     std::array<bool, kInventorySlots> slotHeld {};
 };
 
+bool playerCollidesAt(const World& world, const GameData& gameData, const Vec3& position);
 Vec3 getLookDirection(const Player& player);
 Vec3 getEyePosition(const Player& player);
 void updateMouseLook(GLFWwindow* window, Player& player);
 void updateInput(GLFWwindow* window, InputState& input);
 void jump(Player& player, const InputState& input);
 void updateMovement(GLFWwindow* window, const World& world, const GameData& gameData, Player& player, float deltaTime);
-bool blockWouldIntersectPlayer(const Int3& block, const Player& player);
 }  // namespace voxel

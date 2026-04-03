@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "data/GameData.hpp"
+#include "render/ModelManager.hpp"
 #include "render/Renderer.hpp"
 #include "world/World.hpp"
 
@@ -34,7 +35,7 @@ struct ChunkMesh {
     int triangleCount = 0;
 };
 
-ChunkMesh buildChunkMesh(const World& world, const ChunkCoord& coord, const GameData& gameData);
+ChunkMesh buildChunkMesh(const World& world, const ChunkCoord& coord, const GameData& gameData, const ModelManager& modelManager);
 void uploadChunkMesh(ChunkMesh& mesh);
 void destroyChunkMesh(ChunkMesh& mesh);
 }  // namespace voxel

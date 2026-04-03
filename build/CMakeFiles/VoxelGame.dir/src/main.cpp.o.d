@@ -985,7 +985,20 @@ CMakeFiles/VoxelGame.dir/src/main.cpp.o: \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__filesystem/u8path.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/iostream \
   /Users/kalob/Documents/CODE/VoxelGame/include/data/GameData.hpp \
+  /Users/kalob/Documents/CODE/VoxelGame/include/world/BiomeDefinition.hpp \
   /Users/kalob/Documents/CODE/VoxelGame/include/game/Game.hpp \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/future \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/thread.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/sstream \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/thread \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/this_thread.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__thread/jthread.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__stop_token/stop_source.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__stop_token/intrusive_shared_ptr.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__stop_token/stop_state.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__stop_token/atomic_unique_lock.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__stop_token/intrusive_list_view.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__stop_token/stop_token.h \
   /Users/kalob/Documents/CODE/VoxelGame/include/Player.hpp \
   /Users/kalob/Documents/CODE/VoxelGame/include/Math.hpp \
   /Users/kalob/Documents/CODE/VoxelGame/include/player/Inventory.hpp \
@@ -993,6 +1006,135 @@ CMakeFiles/VoxelGame.dir/src/main.cpp.o: \
   /Users/kalob/Documents/CODE/VoxelGame/include/world/Chunk.hpp \
   /Users/kalob/Documents/CODE/VoxelGame/include/world/Config.hpp \
   /Users/kalob/Documents/CODE/VoxelGame/include/render/Mesh.hpp \
+  /Users/kalob/Documents/CODE/VoxelGame/include/render/ModelManager.hpp \
+  /Users/kalob/Documents/CODE/VoxelGame/include/render/BlockModel.hpp \
   /Users/kalob/Documents/CODE/VoxelGame/include/render/Renderer.hpp \
   /Users/kalob/Documents/CODE/VoxelGame/include/render/TextureManager.hpp \
-  /Users/kalob/Documents/CODE/VoxelGame/include/world/TerrainGenerator.hpp
+  /Users/kalob/Documents/CODE/VoxelGame/include/world/TerrainGenerator.hpp \
+  /Users/kalob/Documents/CODE/VoxelGame/include/ui/GameUI.hpp \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Animation.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/ID.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Tween.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Header.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Platform.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Types.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/../Config/Config.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/list \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/map \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__tree \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/set \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/unordered_set \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Traits.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Debug.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Colour.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Colour.inl \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Matrix4.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Math.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Vector4.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Vector3.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Vector3.inl \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Vector4.inl \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Matrix4.inl \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/ObserverPtr.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Rectangle.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Vector2.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Vector2.inl \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Span.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Box.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/CallbackTexture.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/UniqueRenderResource.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/CompiledFilterShader.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/ComputedValues.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Element.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Core.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Event.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Dictionary.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Variant.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/TypeConverter.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Log.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/StringUtilities.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/TypeConverter.inl \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Variant.inl \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/ScriptInterface.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/StyleTypes.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Property.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/NumericValue.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Unit.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/ScrollTypes.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Transform.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/TransformPrimitive.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Element.inl \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cfloat \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/float.h \
+  /Library/Developer/CommandLineTools/usr/lib/clang/17/include/float.h \
+  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/float.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Context.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Input.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/ContextInstancer.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/ConvolutionFilter.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/DataModelHandle.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/DataStructHandle.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/DataTypeRegister.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/DataTypes.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/DataVariable.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/DecorationTypes.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Decorator.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/EffectSpecification.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/PropertySpecification.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/PropertyIdSet.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/PropertyDictionary.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Texture.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/ElementDocument.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/ElementInstancer.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Profiling.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/ElementScroll.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/ElementText.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Geometry.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Mesh.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Vertex.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/ElementUtilities.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/RenderManager.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/RenderInterface.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/StableVector.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/EventInstancer.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/EventListener.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/EventListenerInstancer.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Factory.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/XMLParser.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/BaseXMLParser.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/FileInterface.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Filter.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/FontEffect.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/FontGlyph.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/FontEffectInstancer.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/FontEngineInterface.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/FontMetrics.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/TextShapingContext.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/MeshUtilities.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Plugin.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/PropertiesIteratorView.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/PropertyDefinition.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/PropertyParser.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Spritesheet.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/StyleSheet.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/StyleSheetTypes.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Utilities.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/StyleSheetContainer.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/StyleSheetSpecification.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/SystemInterface.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/XMLNodeHandler.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/ElementForm.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/../Element.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/../Header.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/ElementFormControl.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/ElementFormControlInput.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/ElementFormControlSelect.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/ElementFormControlTextArea.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/ElementProgress.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/../Geometry.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/../Spritesheet.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/../Texture.h \
+  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/ElementTabSet.h \
+  /Users/kalob/Documents/CODE/VoxelGame/include/ui/RmlUi_Platform_GLFW.h \
+  /Users/kalob/Documents/CODE/VoxelGame/include/ui/RmlUi_Renderer_GL2.h

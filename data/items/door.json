@@ -1,0 +1,7 @@
+{
+  "id": "door",
+  "name": "Door",
+  "stackSize": 99,
+  "placeableBlock": "door",
+  "icon": "textures/items/dirt.png"
+}

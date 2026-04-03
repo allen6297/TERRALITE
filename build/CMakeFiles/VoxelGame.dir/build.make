@@ -170,10 +170,24 @@ CMakeFiles/VoxelGame.dir/src/render/Mesh.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/VoxelGame.dir/src/render/Mesh.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/kalob/Documents/CODE/VoxelGame/src/render/Mesh.cpp -o CMakeFiles/VoxelGame.dir/src/render/Mesh.cpp.s
 
+CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.o: CMakeFiles/VoxelGame.dir/flags.make
+CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.o: /Users/kalob/Documents/CODE/VoxelGame/src/render/ModelManager.cpp
+CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.o: CMakeFiles/VoxelGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.o -MF CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.o.d -o CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.o -c /Users/kalob/Documents/CODE/VoxelGame/src/render/ModelManager.cpp
+
+CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/kalob/Documents/CODE/VoxelGame/src/render/ModelManager.cpp > CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.i
+
+CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/kalob/Documents/CODE/VoxelGame/src/render/ModelManager.cpp -o CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.s
+
 CMakeFiles/VoxelGame.dir/src/Player.cpp.o: CMakeFiles/VoxelGame.dir/flags.make
 CMakeFiles/VoxelGame.dir/src/Player.cpp.o: /Users/kalob/Documents/CODE/VoxelGame/src/Player.cpp
 CMakeFiles/VoxelGame.dir/src/Player.cpp.o: CMakeFiles/VoxelGame.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/VoxelGame.dir/src/Player.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/VoxelGame.dir/src/Player.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/VoxelGame.dir/src/Player.cpp.o -MF CMakeFiles/VoxelGame.dir/src/Player.cpp.o.d -o CMakeFiles/VoxelGame.dir/src/Player.cpp.o -c /Users/kalob/Documents/CODE/VoxelGame/src/Player.cpp
 
 CMakeFiles/VoxelGame.dir/src/Player.cpp.i: cmake_force
@@ -187,7 +201,7 @@ CMakeFiles/VoxelGame.dir/src/Player.cpp.s: cmake_force
 CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o: CMakeFiles/VoxelGame.dir/flags.make
 CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o: /Users/kalob/Documents/CODE/VoxelGame/src/render/Renderer.cpp
 CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o: CMakeFiles/VoxelGame.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o -MF CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o.d -o CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o -c /Users/kalob/Documents/CODE/VoxelGame/src/render/Renderer.cpp
 
 CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.i: cmake_force
@@ -201,7 +215,7 @@ CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.s: cmake_force
 CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.o: CMakeFiles/VoxelGame.dir/flags.make
 CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.o: /Users/kalob/Documents/CODE/VoxelGame/src/render/ShaderProgram.cpp
 CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.o: CMakeFiles/VoxelGame.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.o -MF CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.o.d -o CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.o -c /Users/kalob/Documents/CODE/VoxelGame/src/render/ShaderProgram.cpp
 
 CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.i: cmake_force
@@ -215,7 +229,7 @@ CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.s: cmake_force
 CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.o: CMakeFiles/VoxelGame.dir/flags.make
 CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.o: /Users/kalob/Documents/CODE/VoxelGame/src/render/TextureManager.cpp
 CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.o: CMakeFiles/VoxelGame.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.o -MF CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.o.d -o CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.o -c /Users/kalob/Documents/CODE/VoxelGame/src/render/TextureManager.cpp
 
 CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.i: cmake_force
@@ -226,10 +240,38 @@ CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/kalob/Documents/CODE/VoxelGame/src/render/TextureManager.cpp -o CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.s
 
+CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.o: CMakeFiles/VoxelGame.dir/flags.make
+CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.o: /Users/kalob/Documents/CODE/VoxelGame/src/ui/GameUI.cpp
+CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.o: CMakeFiles/VoxelGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.o -MF CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.o.d -o CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.o -c /Users/kalob/Documents/CODE/VoxelGame/src/ui/GameUI.cpp
+
+CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/kalob/Documents/CODE/VoxelGame/src/ui/GameUI.cpp > CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.i
+
+CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/kalob/Documents/CODE/VoxelGame/src/ui/GameUI.cpp -o CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.s
+
+CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.o: CMakeFiles/VoxelGame.dir/flags.make
+CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.o: /Users/kalob/Documents/CODE/VoxelGame/src/world/BiomeDefinition.cpp
+CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.o: CMakeFiles/VoxelGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.o -MF CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.o.d -o CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.o -c /Users/kalob/Documents/CODE/VoxelGame/src/world/BiomeDefinition.cpp
+
+CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/kalob/Documents/CODE/VoxelGame/src/world/BiomeDefinition.cpp > CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.i
+
+CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/kalob/Documents/CODE/VoxelGame/src/world/BiomeDefinition.cpp -o CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.s
+
 CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.o: CMakeFiles/VoxelGame.dir/flags.make
 CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.o: /Users/kalob/Documents/CODE/VoxelGame/src/world/TerrainGenerator.cpp
 CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.o: CMakeFiles/VoxelGame.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.o -MF CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.o.d -o CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.o -c /Users/kalob/Documents/CODE/VoxelGame/src/world/TerrainGenerator.cpp
 
 CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.i: cmake_force
@@ -243,7 +285,7 @@ CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.s: cmake_force
 CMakeFiles/VoxelGame.dir/src/world/World.cpp.o: CMakeFiles/VoxelGame.dir/flags.make
 CMakeFiles/VoxelGame.dir/src/world/World.cpp.o: /Users/kalob/Documents/CODE/VoxelGame/src/world/World.cpp
 CMakeFiles/VoxelGame.dir/src/world/World.cpp.o: CMakeFiles/VoxelGame.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/VoxelGame.dir/src/world/World.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/VoxelGame.dir/src/world/World.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/VoxelGame.dir/src/world/World.cpp.o -MF CMakeFiles/VoxelGame.dir/src/world/World.cpp.o.d -o CMakeFiles/VoxelGame.dir/src/world/World.cpp.o -c /Users/kalob/Documents/CODE/VoxelGame/src/world/World.cpp
 
 CMakeFiles/VoxelGame.dir/src/world/World.cpp.i: cmake_force
@@ -254,6 +296,34 @@ CMakeFiles/VoxelGame.dir/src/world/World.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/VoxelGame.dir/src/world/World.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/kalob/Documents/CODE/VoxelGame/src/world/World.cpp -o CMakeFiles/VoxelGame.dir/src/world/World.cpp.s
 
+CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.o: CMakeFiles/VoxelGame.dir/flags.make
+CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.o: /Users/kalob/Documents/CODE/VoxelGame/src/ui/RmlUi_Renderer_GL2.cpp
+CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.o: CMakeFiles/VoxelGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.o -MF CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.o.d -o CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.o -c /Users/kalob/Documents/CODE/VoxelGame/src/ui/RmlUi_Renderer_GL2.cpp
+
+CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/kalob/Documents/CODE/VoxelGame/src/ui/RmlUi_Renderer_GL2.cpp > CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.i
+
+CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/kalob/Documents/CODE/VoxelGame/src/ui/RmlUi_Renderer_GL2.cpp -o CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.s
+
+CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.o: CMakeFiles/VoxelGame.dir/flags.make
+CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.o: /Users/kalob/Documents/CODE/VoxelGame/src/ui/RmlUi_Platform_GLFW.cpp
+CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.o: CMakeFiles/VoxelGame.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.o -MF CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.o.d -o CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.o -c /Users/kalob/Documents/CODE/VoxelGame/src/ui/RmlUi_Platform_GLFW.cpp
+
+CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/kalob/Documents/CODE/VoxelGame/src/ui/RmlUi_Platform_GLFW.cpp > CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.i
+
+CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/kalob/Documents/CODE/VoxelGame/src/ui/RmlUi_Platform_GLFW.cpp -o CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.s
+
 # Object files for target VoxelGame
 VoxelGame_OBJECTS = \
 "CMakeFiles/VoxelGame.dir/src/data/GameData.cpp.o" \
@@ -263,12 +333,17 @@ VoxelGame_OBJECTS = \
 "CMakeFiles/VoxelGame.dir/src/Math.cpp.o" \
 "CMakeFiles/VoxelGame.dir/src/player/Inventory.cpp.o" \
 "CMakeFiles/VoxelGame.dir/src/render/Mesh.cpp.o" \
+"CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.o" \
 "CMakeFiles/VoxelGame.dir/src/Player.cpp.o" \
 "CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o" \
 "CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.o" \
 "CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.o" \
+"CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.o" \
+"CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.o" \
 "CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.o" \
-"CMakeFiles/VoxelGame.dir/src/world/World.cpp.o"
+"CMakeFiles/VoxelGame.dir/src/world/World.cpp.o" \
+"CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.o" \
+"CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.o"
 
 # External object files for target VoxelGame
 VoxelGame_EXTERNAL_OBJECTS =
@@ -280,17 +355,27 @@ VoxelGame: CMakeFiles/VoxelGame.dir/src/game/Game.cpp.o
 VoxelGame: CMakeFiles/VoxelGame.dir/src/Math.cpp.o
 VoxelGame: CMakeFiles/VoxelGame.dir/src/player/Inventory.cpp.o
 VoxelGame: CMakeFiles/VoxelGame.dir/src/render/Mesh.cpp.o
+VoxelGame: CMakeFiles/VoxelGame.dir/src/render/ModelManager.cpp.o
 VoxelGame: CMakeFiles/VoxelGame.dir/src/Player.cpp.o
 VoxelGame: CMakeFiles/VoxelGame.dir/src/render/Renderer.cpp.o
 VoxelGame: CMakeFiles/VoxelGame.dir/src/render/ShaderProgram.cpp.o
 VoxelGame: CMakeFiles/VoxelGame.dir/src/render/TextureManager.cpp.o
+VoxelGame: CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.o
+VoxelGame: CMakeFiles/VoxelGame.dir/src/world/BiomeDefinition.cpp.o
 VoxelGame: CMakeFiles/VoxelGame.dir/src/world/TerrainGenerator.cpp.o
 VoxelGame: CMakeFiles/VoxelGame.dir/src/world/World.cpp.o
+VoxelGame: CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.o
+VoxelGame: CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.o
 VoxelGame: CMakeFiles/VoxelGame.dir/build.make
 VoxelGame: /opt/homebrew/lib/libglfw.3.4.dylib
+VoxelGame: _deps/rmlui-build/Source/Core/librmlui.a
+VoxelGame: /opt/homebrew/lib/libfreetype.dylib
 VoxelGame: CMakeFiles/VoxelGame.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX executable VoxelGame"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Linking CXX executable VoxelGame"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/VoxelGame.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold "Copying RmlUI sample font to assets/ui/fonts/"
+	/opt/homebrew/bin/cmake -E make_directory /Users/kalob/Documents/CODE/VoxelGame/assets/ui/fonts
+	/opt/homebrew/bin/cmake -E copy_if_different /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Samples/assets/LatoLatin-Regular.ttf /Users/kalob/Documents/CODE/VoxelGame/assets/ui/fonts/LatoLatin-Regular.ttf
 
 # Rule to build all files generated by this target.
 CMakeFiles/VoxelGame.dir/build: VoxelGame

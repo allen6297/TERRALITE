@@ -7,8 +7,10 @@
     "material": "terrain"
   },
   "render": {
-    "color": [0.30, 0.73, 0.32],
+    "color": [0.45, 0.75, 0.28],
+    "tintKey": true,
     "opacity": 1.0,
+    "model": "models/blocks/grass_block.json",
     "texture": {
       "albedo": "textures/blocks/grass.ppm",
       "normal": "textures/blocks/grass_normal.ppm",
@@ -18,7 +20,7 @@
   },
   "drops": [
     {
-      "item": "dirt",
+      "item": "door",
       "count": 1
     }
   ]

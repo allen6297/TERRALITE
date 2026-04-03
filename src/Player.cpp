@@ -3,13 +3,8 @@
 #include <algorithm>
 
 namespace voxel {
-namespace {
-constexpr float kGravity = 24.0f;
-constexpr float kJumpVelocity = 8.5f;
-constexpr float kMoveSpeed = 5.5f;
-constexpr float kMouseSensitivity = 0.09f;
 
-bool collidesAt(const World& world, const GameData& gameData, const Vec3& position) {
+bool playerCollidesAt(const World& world, const GameData& gameData, const Vec3& position) {
     const float minX = position.x - kPlayerRadius;
     const float maxX = position.x + kPlayerRadius;
     const float minY = position.y;
@@ -24,11 +19,33 @@ bool collidesAt(const World& world, const GameData& gameData, const Vec3& positi
     const int z0 = static_cast<int>(std::floor(minZ));
     const int z1 = static_cast<int>(std::floor(maxZ));
 
-    for (int x = x0; x <= x1; ++x) {
-        for (int y = y0; y <= y1; ++y) {
-            for (int z = z0; z <= z1; ++z) {
-                if (isSolid(world, gameData, x, y, z)) {
+    // Expand the search by the maximum model overhang so blocks with elements
+    // that extend outside their [0,1] unit cube are still tested.
+    // The AABB intersection below rejects any box that doesn't actually overlap.
+    const int exp = gameData.collisionSearchExpansion;
+    for (int x = x0 - exp; x <= x1 + exp; ++x) {
+        for (int y = y0 - exp; y <= y1 + exp; ++y) {
+            for (int z = z0 - exp; z <= z1 + exp; ++z) {
+                const std::uint16_t stateId = getBlock(world, x, y, z);
+                if (stateId == 0 || !gameData.solidByRuntimeId[stateId]) continue;
+
+                const BlockDefinition* def = findBlockDefinitionForBlockType(gameData, stateId);
+
+                // No model collision boxes — treat as full block
+                if (def == nullptr || def->collisionBoxes.empty()) {
                     return true;
+                }
+
+                // Test each model-derived box (values in 0-1 block-local space)
+                const float bx = static_cast<float>(x);
+                const float by = static_cast<float>(y);
+                const float bz = static_cast<float>(z);
+                for (const auto& box : def->collisionBoxes) {
+                    if (minX < bx + box.maxX && maxX > bx + box.minX &&
+                        minY < by + box.maxY && maxY > by + box.minY &&
+                        minZ < bz + box.maxZ && maxZ > bz + box.minZ) {
+                        return true;
+                    }
                 }
             }
         }
@@ -37,11 +54,18 @@ bool collidesAt(const World& world, const GameData& gameData, const Vec3& positi
     return false;
 }
 
+namespace {
+constexpr float kGravity = 24.0f;
+constexpr float kJumpVelocity = 8.5f;
+constexpr float kMoveSpeed = 5.5f;
+constexpr float kMouseSensitivity = 0.09f;
+}  // namespace
+
 void movePlayerAxis(const World& world, const GameData& gameData, Player& player, const float dx, const float dy, const float dz) {
     if (dx != 0.0f) {
         Vec3 next = player.position;
         next.x += dx;
-        if (!collidesAt(world, gameData, next)) {
+        if (!playerCollidesAt(world, gameData, next)) {
             player.position.x = next.x;
         } else {
             player.velocity.x = 0.0f;
@@ -51,7 +75,7 @@ void movePlayerAxis(const World& world, const GameData& gameData, Player& player
     if (dz != 0.0f) {
         Vec3 next = player.position;
         next.z += dz;
-        if (!collidesAt(world, gameData, next)) {
+        if (!playerCollidesAt(world, gameData, next)) {
             player.position.z = next.z;
         } else {
             player.velocity.z = 0.0f;
@@ -61,7 +85,7 @@ void movePlayerAxis(const World& world, const GameData& gameData, Player& player
     if (dy != 0.0f) {
         Vec3 next = player.position;
         next.y += dy;
-        if (!collidesAt(world, gameData, next)) {
+        if (!playerCollidesAt(world, gameData, next)) {
             player.position.y = next.y;
             player.grounded = false;
         } else {
@@ -72,7 +96,6 @@ void movePlayerAxis(const World& world, const GameData& gameData, Player& player
         }
     }
 }
-}  // namespace
 
 Vec3 getLookDirection(const Player& player) {
     const float yawRad = toRadians(player.yaw);
@@ -169,24 +192,4 @@ void updateMovement(GLFWwindow* window, const World& world, const GameData& game
     }
 }
 
-bool blockWouldIntersectPlayer(const Int3& block, const Player& player) {
-    const float blockMinX = static_cast<float>(block.x);
-    const float blockMaxX = blockMinX + 1.0f;
-    const float blockMinY = static_cast<float>(block.y);
-    const float blockMaxY = blockMinY + 1.0f;
-    const float blockMinZ = static_cast<float>(block.z);
-    const float blockMaxZ = blockMinZ + 1.0f;
-
-    const float playerMinX = player.position.x - kPlayerRadius;
-    const float playerMaxX = player.position.x + kPlayerRadius;
-    const float playerMinY = player.position.y;
-    const float playerMaxY = player.position.y + kPlayerHeight;
-    const float playerMinZ = player.position.z - kPlayerRadius;
-    const float playerMaxZ = player.position.z + kPlayerRadius;
-
-    const bool overlapX = playerMinX < blockMaxX && playerMaxX > blockMinX;
-    const bool overlapY = playerMinY < blockMaxY && playerMaxY > blockMinY;
-    const bool overlapZ = playerMinZ < blockMaxZ && playerMaxZ > blockMinZ;
-    return overlapX && overlapY && overlapZ;
-}
 }  // namespace voxel

@@ -9,6 +9,8 @@
 #include "data/GameData.hpp"
 #include "Player.hpp"
 #include "render/Mesh.hpp"
+#include "render/ModelManager.hpp"
+#include "render/Renderer.hpp"
 #include "render/TextureManager.hpp"
 #include "world/TerrainGenerator.hpp"
 #include "world/World.hpp"
@@ -16,14 +18,15 @@
 namespace voxel {
 class Game {
 public:
-    Game(GameData gameData, std::string assetsRoot);
+    Game(GameData gameData, std::string assetsRoot, std::string dataRoot);
     ~Game();
     void update(GLFWwindow* window, float deltaTime);
     void render(int framebufferWidth, int framebufferHeight) const;
+    void renderHotbarIcons(int framebufferWidth, int framebufferHeight);
+    DebugOverlayData getDebugData() const;
+    const Inventory& getInventory() const { return player_.inventory; }
 
 private:
-    static constexpr const char* kHoverFaceTexturePath = "textures/ui/hover_face.ppm";
-
     struct PendingMesh {
         ChunkCoord coord;
         std::future<ChunkMesh> future;
@@ -37,14 +40,20 @@ private:
     void updateLoadedChunks(const ChunkCoord& playerChunk);
     void launchMeshBuild(const ChunkCoord& coord);
     void collectPending();
+    void reloadGameData();
+    void populateFaceTextures();
 
     std::string assetsRoot_;
+    std::string dataRoot_;
+    bool f5WasPressed_ = false;
     GameData gameData_;
     TextureManager textureManager_;
+    ModelManager modelManager_;
     TerrainGenerator terrainGen_;
     World world_;
     std::unordered_map<ChunkCoord, ChunkMesh, ChunkCoordHash> meshes_;
     std::unordered_map<ChunkCoord, std::future<Chunk>, ChunkCoordHash> pendingTerrain_;
+    std::unordered_map<std::string, ChunkMesh> iconMeshes_;  // cached single-block meshes for hotbar icons
     std::vector<PendingMesh> pendingMeshes_;
     Player player_;
     InputState input_;
