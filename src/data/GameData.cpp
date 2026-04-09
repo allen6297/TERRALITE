@@ -94,6 +94,39 @@ std::unordered_map<std::string, BlockProperty> readProperties(const JsonValue::O
     return props;
 }
 
+std::string blockPropertyToString(const BlockProperty& property) {
+    if (std::holds_alternative<bool>(property)) {
+        return std::get<bool>(property) ? "true" : "false";
+    }
+    if (std::holds_alternative<int>(property)) {
+        return std::to_string(std::get<int>(property));
+    }
+    if (std::holds_alternative<float>(property)) {
+        std::ostringstream stream;
+        stream << std::get<float>(property);
+        return stream.str();
+    }
+    return std::get<std::string>(property);
+}
+
+std::string canonicalStateKey(const std::unordered_map<std::string, BlockProperty>& stateValues) {
+    std::vector<std::string> parts;
+    parts.reserve(stateValues.size());
+    for (const auto& [key, value] : stateValues) {
+        parts.push_back(key + "=" + blockPropertyToString(value));
+    }
+    std::sort(parts.begin(), parts.end());
+
+    std::ostringstream joined;
+    for (std::size_t i = 0; i < parts.size(); ++i) {
+        if (i != 0) {
+            joined << ",";
+        }
+        joined << parts[i];
+    }
+    return joined.str();
+}
+
 BlockDefinition parseBlockDefinition(const JsonValue& value) {
     const auto& object = value.asObject();
     const auto& voxel = getRequiredField(object, "voxel").asObject();
@@ -213,6 +246,24 @@ BlockStateDefinition parseBlockStateDefinition(const JsonValue& value) {
         }
         for (auto& [name, propDef] : sorted) {
             stateDef.props.emplace_back(name, std::move(propDef));
+        }
+    }
+
+    const auto variantsIt = object.find("variants");
+    if (variantsIt != object.end() && variantsIt->second.isObject()) {
+        for (const auto& [variantKey, variantValue] : variantsIt->second.asObject()) {
+            if (!variantValue.isObject()) {
+                continue;
+            }
+            const auto& variantObject = variantValue.asObject();
+            BlockStateVariant variant;
+
+            const auto modelIt = variantObject.find("model");
+            if (modelIt != variantObject.end() && modelIt->second.isString()) {
+                variant.modelPath = modelIt->second.asString();
+            }
+
+            stateDef.variants.emplace(variantKey, std::move(variant));
         }
     }
 
@@ -447,6 +498,10 @@ GameData loadGameData(const std::string& dataRoot) {
                 const std::uint16_t stateId = block.runtimeId + static_cast<std::uint16_t>(i);
                 data.blockIdByStateId[stateId] = blockId;
                 data.stateValuesById[stateId]  = states[i];
+                const auto variantIt = stateIt->second.variants.find(canonicalStateKey(states[i]));
+                if (variantIt != stateIt->second.variants.end() && variantIt->second.modelPath.has_value()) {
+                    data.stateModelPathById[stateId] = *variantIt->second.modelPath;
+                }
                 data.solidByRuntimeId[stateId] = block.solid;
                 data.liquidByRuntimeId[stateId] = (block.material == "liquid");
             }
@@ -499,6 +554,49 @@ std::optional<std::uint16_t> blockTypeForItemId(const GameData& gameData, const 
     return block->runtimeId;
 }
 
+std::optional<std::uint16_t> runtimeIdForBlockState(
+    const GameData& gameData,
+    const std::string& blockId,
+    const std::unordered_map<std::string, BlockProperty>& properties
+) {
+    const BlockDefinition* block = findBlockDefinition(gameData, blockId);
+    if (block == nullptr) {
+        return std::nullopt;
+    }
+
+    std::size_t stateCount = 1;
+    if (const auto stateIt = gameData.blockStates.find(blockId); stateIt != gameData.blockStates.end()) {
+        for (const auto& [_, propDef] : stateIt->second.props) {
+            stateCount *= propDef.values.size();
+        }
+    }
+
+    for (std::size_t i = 0; i < stateCount; ++i) {
+        const std::uint16_t stateId = block->runtimeId + static_cast<std::uint16_t>(i);
+        const auto valuesIt = gameData.stateValuesById.find(stateId);
+        if (valuesIt == gameData.stateValuesById.end()) {
+            if (properties.empty()) {
+                return stateId;
+            }
+            continue;
+        }
+
+        bool matches = true;
+        for (const auto& [key, value] : properties) {
+            const auto statePropIt = valuesIt->second.find(key);
+            if (statePropIt == valuesIt->second.end() || statePropIt->second != value) {
+                matches = false;
+                break;
+            }
+        }
+        if (matches) {
+            return stateId;
+        }
+    }
+
+    return std::nullopt;
+}
+
 const std::optional<std::string>& texturePathForType(const BlockDefinition& block, const std::string& textureType) {
     if (textureType == "albedo") {
         return block.textures.albedo;
@@ -534,6 +632,16 @@ std::optional<BlockProperty> getStateProperty(const GameData& gameData, const st
         return std::nullopt;
     }
     return propIt->second;
+}
+
+const std::string* modelPathForState(const GameData& gameData, const std::uint16_t stateId) {
+    const auto it = gameData.stateModelPathById.find(stateId);
+    return it == gameData.stateModelPathById.end() ? nullptr : &it->second;
+}
+
+const std::vector<CollisionBox>* collisionBoxesForState(const GameData& gameData, const std::uint16_t stateId) {
+    const auto it = gameData.stateCollisionBoxesById.find(stateId);
+    return it == gameData.stateCollisionBoxesById.end() ? nullptr : &it->second;
 }
 
 }  // namespace voxel

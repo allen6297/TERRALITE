@@ -1,21 +1,25 @@
 {
-  "id": "dirt",
-  "name": "Dirt",
-  "voxel": {
-    "solid": true,
-    "translucent": false,
-    "material": "terrain"
-  },
-  "render": {
-    "color": [0.55, 0.38, 0.24],
-    "opacity": 1.0,
-    "model": "models/blocks/dirt.json",
-    "texture": "textures/blocks/dirt.ppm"
-  },
-  "drops": [
+  "drops" : [
     {
-      "item": "dirt",
-      "count": 1
+      "count" : 1,
+      "item" : "dirt"
     }
-  ]
+  ],
+  "id" : "dirt",
+  "name" : "Dirt",
+  "render" : {
+    "color" : [
+      0.549,
+      0.3804,
+      0.2157
+    ],
+    "model" : "models\/blocks\/dirt.json",
+    "opacity" : 1,
+    "texture" : "textures\/blocks\/dirt.ppm"
+  },
+  "voxel" : {
+    "material" : "terrain",
+    "solid" : true,
+    "translucent" : false
+  }
 }

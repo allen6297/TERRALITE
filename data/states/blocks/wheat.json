@@ -1,0 +1,26 @@
+{
+  "id": "wheat",
+  "name": "Wheat",
+  "states": {
+    "age": {
+      "default": 0.0,
+      "max": 3.0,
+      "min": 0.0,
+      "type": "int"
+    }
+  },
+  "variants": {
+    "age=0": {
+      "model": "models/blocks/wheat_stage_0.json"
+    },
+    "age=1": {
+      "model": "models/blocks/wheat_stage_1.json"
+    },
+    "age=2": {
+      "model": "models/blocks/wheat_stage_2.json"
+    },
+    "age=3": {
+      "model": "models/blocks/wheat_stage_3.json"
+    }
+  }
+}

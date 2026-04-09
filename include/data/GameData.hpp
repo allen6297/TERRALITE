@@ -20,11 +20,16 @@ struct BlockStatePropDef {
     BlockProperty defaultValue;
 };
 
+struct BlockStateVariant {
+    std::optional<std::string> modelPath;
+};
+
 // Loaded from data/states/blocks/<id>.json — defines what states a block type has
 struct BlockStateDefinition {
     std::string id;  // matches BlockDefinition::id
     // Sorted by name for consistent state ID enumeration across loads
     std::vector<std::pair<std::string, BlockStatePropDef>> props;
+    std::unordered_map<std::string, BlockStateVariant> variants;
 };
 
 struct BlockDrop {
@@ -86,6 +91,12 @@ struct GameData {
     std::unordered_map<std::uint16_t, std::string> blockIdByStateId;
     // State ID → property values for that specific combination (empty = all defaults)
     std::unordered_map<std::uint16_t, std::unordered_map<std::string, BlockProperty>> stateValuesById;
+    // State ID → model override selected from blockstate variants
+    std::unordered_map<std::uint16_t, std::string> stateModelPathById;
+    // State ID → per-face albedo textures resolved from a state-specific model override
+    std::unordered_map<std::uint16_t, std::unordered_map<std::string, std::string>> stateFaceTexturesById;
+    // State ID → collision boxes derived from the state-specific model override
+    std::unordered_map<std::uint16_t, std::vector<CollisionBox>> stateCollisionBoxesById;
 
     // Hot-path flat arrays indexed by state ID (65536 entries)
     std::array<bool, 65536> solidByRuntimeId {};
@@ -102,9 +113,16 @@ const BlockDefinition* findBlockDefinitionForBlockType(const GameData& gameData,
 const ItemDefinition* findItemDefinition(const GameData& gameData, const std::string& itemId);
 const BlockDefinition* findBlockDefinition(const GameData& gameData, const std::string& blockId);
 std::optional<std::uint16_t> blockTypeForItemId(const GameData& gameData, const std::string& itemId);
+std::optional<std::uint16_t> runtimeIdForBlockState(
+    const GameData& gameData,
+    const std::string& blockId,
+    const std::unordered_map<std::string, BlockProperty>& properties
+);
 const std::optional<std::string>& texturePathForType(const BlockDefinition& block, const std::string& textureType);
 bool isLiquidBlockType(const GameData& gameData, std::uint16_t stateId);
 std::optional<BlockProperty> getBlockProperty(const BlockDefinition& def, const std::string& key);
 std::optional<BlockProperty> getStateProperty(const GameData& gameData, std::uint16_t stateId, const std::string& key);
+const std::string* modelPathForState(const GameData& gameData, std::uint16_t stateId);
+const std::vector<CollisionBox>* collisionBoxesForState(const GameData& gameData, std::uint16_t stateId);
 
 }  // namespace voxel

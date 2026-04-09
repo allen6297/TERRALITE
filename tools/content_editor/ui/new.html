@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VoxelGame Content Editor</title>
+    <link rel="stylesheet" href="newstyles.css">
+</head>
+<body>
+<div id="shell">
+    <div class="tab-layout">
+        <!-- ── Tab row 1: top-level category tabs ──────────────────────────── -->
+        <!-- data-tab is read by newapp.js to drive the setTab() state transition. -->
+        <section class="panel tab-panel">
+            <div class="tab-row" id="main-tabs">
+                <p class="tab-row-title">Main</p>
+                <button class="tab-button active" type="button" data-tab="blocks">Blocks</button>
+                <button class="tab-button" type="button" data-tab="items">Items</button>
+                <button class="tab-button" type="button" data-tab="data">Data</button>
+                <div class="tab-row-spacer"></div>
+                <button class="tab-button" type="button" data-tab="settings">Settings</button>
+            </div>
+
+            <!-- Visual divider between the main tab row and the option subtab row. -->
+            <hr>
+
+            <!-- ── Tab row 2: option subtabs ────────────────────────────────── -->
+            <!-- Only the subtab-group whose data-tab-group matches the active tab is shown.
+                 Each button's data-view maps directly to a content-card data-panel below. -->
+
+            <div class="tab-row">
+                <p class="tab-row-title">Options</p>
+                <div class="subtab-groups">
+                    <!-- Shown when the Blocks top-level tab is active. -->
+                    <div class="subtab-group active" data-tab-group="blocks">
+                        <button class="subtab-button active" type="button" data-view="block-data">Block Data</button>
+                        <button class="subtab-button" type="button" data-view="block-states">Block States</button>
+                    </div>
+
+                    <!-- Shown when the Items top-level tab is active. -->
+                    <div class="subtab-group" data-tab-group="items">
+                        <button class="subtab-button active" type="button" data-view="item-data">Item Data</button>
+                        <button class="subtab-button" type="button" data-view="item-icons">Item Icons</button>
+                    </div>
+
+                    <!-- Shown when the Data top-level tab is active. -->
+                    <div class="subtab-group" data-tab-group="data">
+                        <button class="subtab-button active" type="button" data-view="biome-data">Biome Data</button>
+                    </div>
+
+                    <!-- Shown when the Settings top-level tab is active. -->
+                    <div class="subtab-group" data-tab-group="settings">
+                        <button class="subtab-button active" type="button" data-view="world-data">Editor Settings</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connection status and project root path. -->
+            <div class="editor-status">
+                <span id="status-pill" class="status-pill">Connecting…</span>
+                <span id="project-root" class="project-root"></span>
+            </div>
+        </section>
+
+        <!-- ── Workspace row ─────────────────────────────────────────────────── -->
+        <!-- Two-column grid: persistent file dock on the left, content views on the right. -->
+        <section class="workspace-grid">
+
+            <!-- ── Left: file dock ───────────────────────────────────────────── -->
+            <!-- Always visible regardless of which tab/view is active. Contains three
+                 sub-panels (Assets, Models, Textures) switched by the pill tabs below. -->
+            <aside class="panel files-dock">
+                <div class="files-dock-head">
+                    <div>
+                        <div class="content-kicker">Files</div>
+                        <h2>Project Files</h2>
+                    </div>
+                    <!-- Refresh flashes active briefly via the fileDockActions listener. -->
+                    <button class="subtab-button" type="button">Refresh</button>
+                </div>
+
+                <!-- ── Dock panel: Asset browser ─────────────────────────────── -->
+                <!-- Shows a folder tree on the left and a filterable file listing on the right. -->
+                <section class="file-dock-panel active" data-file-dock-panel="asset-browser">
+                    <div class="file-parent-tabs" id="asset-parent-tabs"></div>
+                    <div class="file-browser-layout docked">
+                        <aside class="file-sidebar" id="asset-sidebar">
+                            <div class="file-sidebar-head">Folders</div>
+                        </aside>
+                        <div class="file-main">
+                            <div class="file-toolbar">
+                                <input class="text-input file-search" type="text" placeholder="Search files or paths">
+                            </div>
+                            <!-- File entries: populated from the Qt bridge with real project files. -->
+                            <div class="file-listing" id="asset-file-list"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── Dock panel: Model files ───────────────────────────────── -->
+                <!-- Separate panel focused on JSON model files and their block references. -->
+                <section class="file-dock-panel" data-file-dock-panel="model-files">
+                    <div class="file-parent-tabs" id="model-parent-tabs"></div>
+                    <div class="file-browser-layout docked">
+                        <aside class="file-sidebar" id="model-sidebar">
+                            <div class="file-sidebar-head">Model Folders</div>
+                        </aside>
+                        <div class="file-main">
+                            <div class="file-toolbar">
+                                <input class="text-input file-search" type="text" placeholder="Search model files">
+                            </div>
+                            <div class="file-listing" id="model-file-list"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── Dock panel: Texture files ─────────────────────────────── -->
+                <!-- Grid of texture tiles. Clicking one pushes its info into the
+                     texture-preview workspace card and navigates to it. -->
+                <section class="file-dock-panel" data-file-dock-panel="texture-files">
+                    <div class="file-parent-tabs" id="texture-parent-tabs"></div>
+                    <div class="file-browser-layout docked">
+                        <aside class="file-sidebar" id="texture-sidebar">
+                            <div class="file-sidebar-head">Texture Folders</div>
+                        </aside>
+                        <div class="file-main">
+                            <div class="file-toolbar">
+                                <input class="text-input file-search" type="text" placeholder="Search textures">
+                            </div>
+                            <!-- Texture tiles: populated from the Qt bridge with real texture assets. -->
+                            <div class="texture-grid" id="texture-file-list"></div>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- Drag handle for resizing the file dock against the workspace content. -->
+            <div
+                class="panel-resizer workspace-resizer"
+                data-resize-target="workspace"
+                role="separator"
+                aria-label="Resize file panel"
+                aria-orientation="vertical"
+            ></div>
+
+            <!-- ── Right: content views ──────────────────────────────────────── -->
+            <!-- Replace each placeholder section below with the real editor form/widget
+                 for that view. Only the card whose data-panel matches state.activeView
+                 is shown at a time (controlled by syncPanels() in newapp.js). -->
+            <div class="content-panels">
+
+            <!-- ── View: Block Data ──────────────────────────────────────────── -->
+            <!-- Primary block editor: ID, name, voxel settings, textures, drops. -->
+            <section class="panel content-card active" data-panel="block-data">
+                <div class="content-head">
+                    <div>
+                        <div class="content-kicker">Blocks</div>
+                        <h2 id="block-selection-title">Block Data</h2>
+                    </div>
+                    <div class="content-head-actions">
+                        <button id="block-new-button" class="subtab-button" type="button">New</button>
+                        <button id="block-save-button" class="tab-button" type="button">Save</button>
+                    </div>
+                </div>
+                <!-- Inline filename input shown when New is clicked. -->
+                <div id="block-new-file-row" class="new-file-row" style="display:none">
+                    <input id="block-new-file-input" class="text-input" type="text" placeholder="filename (no .json)">
+                    <button id="block-new-file-confirm" class="icon-button icon-button-confirm" type="button" title="Create">✓</button>
+                    <button id="block-new-file-cancel" class="icon-button icon-button-cancel" type="button" title="Cancel">✕</button>
+                </div>
+                <div class="editor-layout">
+                    <div class="editor-form-col">
+                        <div class="form-grid">
+                            <label class="field">
+                                <span class="field-label">ID</span>
+                                <input id="block-id-input" class="text-input" type="text">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Name</span>
+                                <input id="block-name-input" class="text-input" type="text">
+                            </label>
+                        </div>
+
+                        <div class="section-header">Voxel Properties</div>
+                        <div class="form-grid-3">
+                            <label class="field">
+                                <span class="field-label">Solid</span>
+                                <label class="toggle">
+                                    <input id="voxel-solid-input" type="checkbox">
+                                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                                </label>
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Translucent</span>
+                                <label class="toggle">
+                                    <input id="voxel-translucent-input" type="checkbox">
+                                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                                </label>
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Material</span>
+                                <input id="voxel-material-input" class="text-input" type="text" placeholder="terrain, plant…">
+                            </label>
+                        </div>
+
+                        <div class="section-header">Render</div>
+                        <div class="form-grid">
+                            <label class="field">
+                                <span class="field-label">Model</span>
+                                <input id="render-model-input" class="text-input" type="text" placeholder="models/blocks/…">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Albedo Texture</span>
+                                <input id="render-texture-albedo-input" class="text-input" type="text" placeholder="textures/blocks/…">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Normal Texture</span>
+                                <input id="render-texture-normal-input" class="text-input" type="text" placeholder="textures/blocks/…">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Roughness Texture</span>
+                                <input id="render-texture-roughness-input" class="text-input" type="text" placeholder="textures/blocks/…">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Emissive Texture</span>
+                                <input id="render-texture-emissive-input" class="text-input" type="text" placeholder="textures/blocks/…">
+                            </label>
+                            <div class="field">
+                                <span class="field-label">Color (r,g,b 0–1)</span>
+                                <div class="color-row">
+                                    <div id="render-color-swatch" class="color-swatch"></div>
+                                    <input id="render-color-input" class="text-input" type="text" placeholder="0.55,0.38,0.24">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-header">Drops</div>
+                        <label class="field">
+                            <span class="field-label">One entry per line: item,count</span>
+                            <textarea id="drops-input" class="text-area" rows="5" placeholder="dirt,1"></textarea>
+                        </label>
+                    </div>
+                    <div
+                        class="panel-resizer editor-resizer"
+                        data-resize-target="editor-preview"
+                        role="separator"
+                        aria-label="Resize editor preview"
+                        aria-orientation="vertical"
+                    ></div>
+                    <div class="editor-preview-col">
+                        <div class="preview-stack">
+                            <div class="preview-frame">
+                                <img id="block-preview-image" class="preview-img" alt="Block preview">
+                                <div id="block-preview-color" class="preview-color-block"></div>
+                                <div id="block-preview-empty" class="preview-empty">No preview available</div>
+                            </div>
+                            <div class="preview-meta-card">
+                                <div class="preview-kicker">Selection Details</div>
+                                <div id="block-preview-meta" class="preview-meta"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── View: Block States ────────────────────────────────────────── -->
+            <!-- State/variant editor: state keys and model mappings per variant. -->
+            <section class="panel content-card" data-panel="block-states">
+                <div class="content-head">
+                    <div>
+                        <div class="content-kicker">Blocks</div>
+                        <h2 id="bs-selection-title">Block States</h2>
+                    </div>
+                    <div class="content-head-actions">
+                        <button id="bs-new-button" class="subtab-button" type="button">New</button>
+                        <button id="bs-save-button" class="tab-button" type="button">Save</button>
+                    </div>
+                </div>
+                <!-- Inline filename input shown when New is clicked. -->
+                <div id="bs-new-file-row" class="new-file-row" style="display:none">
+                    <input id="bs-new-file-input" class="text-input" type="text" placeholder="filename (no .json)">
+                    <button id="bs-new-file-confirm" class="icon-button icon-button-confirm" type="button" title="Create">✓</button>
+                    <button id="bs-new-file-cancel" class="icon-button icon-button-cancel" type="button" title="Cancel">✕</button>
+                </div>
+                <div class="editor-layout">
+                    <div class="editor-form-col">
+                        <div class="section-header">Raw JSON</div>
+                        <textarea id="bs-json-input" class="text-area code-view code-editor" spellcheck="false"></textarea>
+                    </div>
+                    <div
+                        class="panel-resizer editor-resizer"
+                        data-resize-target="editor-preview"
+                        role="separator"
+                        aria-label="Resize editor preview"
+                        aria-orientation="vertical"
+                    ></div>
+                    <div class="editor-preview-col">
+                        <div class="preview-stack">
+                            <div class="preview-frame">
+                                <img id="bs-preview-image" class="preview-img" alt="Block states preview">
+                                <div id="bs-preview-color" class="preview-color-block"></div>
+                                <div id="bs-preview-empty" class="preview-empty">No preview available</div>
+                            </div>
+                            <div class="preview-meta-card">
+                                <div class="preview-kicker">Selection Details</div>
+                                <div id="bs-preview-meta" class="preview-meta"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── View: Item Data ───────────────────────────────────────────── -->
+            <!-- Item editor: ID, name, stack size, placeable block link, icon. -->
+            <section class="panel content-card" data-panel="item-data">
+                <div class="content-head">
+                    <div>
+                        <div class="content-kicker">Items</div>
+                        <h2 id="item-selection-title">Item Data</h2>
+                    </div>
+                    <div class="content-head-actions">
+                        <button id="item-new-button" class="subtab-button" type="button">New</button>
+                        <button id="item-save-button" class="tab-button" type="button">Save</button>
+                    </div>
+                </div>
+                <!-- Inline filename input shown when New is clicked. -->
+                <div id="item-new-file-row" class="new-file-row" style="display:none">
+                    <input id="item-new-file-input" class="text-input" type="text" placeholder="filename (no .json)">
+                    <button id="item-new-file-confirm" class="icon-button icon-button-confirm" type="button" title="Create">✓</button>
+                    <button id="item-new-file-cancel" class="icon-button icon-button-cancel" type="button" title="Cancel">✕</button>
+                </div>
+                <div class="editor-layout">
+                    <div class="editor-form-col">
+                        <div class="form-grid">
+                            <label class="field">
+                                <span class="field-label">ID</span>
+                                <input id="item-id-input" class="text-input" type="text">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Name</span>
+                                <input id="item-name-input" class="text-input" type="text">
+                            </label>
+                        </div>
+
+                        <div class="section-header">Item Properties</div>
+                        <div class="form-grid">
+                            <label class="field">
+                                <span class="field-label">Stack Size</span>
+                                <input id="stack-size-input" class="text-input" type="number" min="0">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Placeable Block</span>
+                                <input id="placeable-block-input" class="text-input" type="text">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Icon Path</span>
+                                <input id="icon-input" class="text-input" type="text" placeholder="textures/items/…">
+                            </label>
+                        </div>
+                    </div>
+                    <div
+                        class="panel-resizer editor-resizer"
+                        data-resize-target="editor-preview"
+                        role="separator"
+                        aria-label="Resize editor preview"
+                        aria-orientation="vertical"
+                    ></div>
+                    <div class="editor-preview-col">
+                        <div class="preview-stack">
+                            <div class="preview-frame">
+                                <img id="item-preview-image" class="preview-img" alt="Item preview">
+                                <div id="item-preview-color" class="preview-color-block"></div>
+                                <div id="item-preview-empty" class="preview-empty">No preview available</div>
+                            </div>
+                            <div class="preview-meta-card">
+                                <div class="preview-kicker">Selection Details</div>
+                                <div id="item-preview-meta" class="preview-meta"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── View: Item Icons ──────────────────────────────────────────── -->
+            <!-- Optional icon-focused workflow for browsing texture atlases. -->
+            <section class="panel content-card" data-panel="item-icons">
+                <div class="content-head">
+                    <div>
+                        <div class="content-kicker">Items</div>
+                        <h2>Item Icons</h2>
+                    </div>
+                    <button class="tab-button content-action" type="button">Browse Icons</button>
+                </div>
+                <p>Use this panel if you want a separate icon-focused workflow or atlas browser.</p>
+                <div class="placeholder-grid">
+                    <div class="placeholder-box placeholder-box-tall">
+                        <strong>Icon Browser</strong>
+                        Browse available texture assets and inspect icon candidates.
+                    </div>
+                    <div class="placeholder-stack">
+                        <div class="placeholder-box">
+                            <strong>Preview</strong>
+                            Large icon preview and path selection controls.
+                        </div>
+                        <div class="placeholder-box">
+                            <strong>Assignments</strong>
+                            Track which items currently use each texture.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── View: Biome Data ──────────────────────────────────────────── -->
+            <!-- Biome editor: priority, terrain, surface, atmosphere, colors, climate ranges. -->
+            <section class="panel content-card" data-panel="biome-data">
+                <div class="content-head">
+                    <div>
+                        <div class="content-kicker">Data</div>
+                        <h2 id="biome-selection-title">Biome Data</h2>
+                    </div>
+                    <div class="content-head-actions">
+                        <button id="biome-new-button" class="subtab-button" type="button">New</button>
+                        <button id="biome-save-button" class="tab-button" type="button">Save</button>
+                    </div>
+                </div>
+                <!-- Inline filename input shown when New is clicked. -->
+                <div id="biome-new-file-row" class="new-file-row" style="display:none">
+                    <input id="biome-new-file-input" class="text-input" type="text" placeholder="filename (no .json)">
+                    <button id="biome-new-file-confirm" class="icon-button icon-button-confirm" type="button" title="Create">✓</button>
+                    <button id="biome-new-file-cancel" class="icon-button icon-button-cancel" type="button" title="Cancel">✕</button>
+                </div>
+                <div class="editor-layout">
+                    <div class="editor-form-col">
+                        <div class="form-grid">
+                            <label class="field">
+                                <span class="field-label">ID</span>
+                                <input id="biome-id-input" class="text-input" type="text">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Name</span>
+                                <input id="biome-name-input" class="text-input" type="text">
+                            </label>
+                        </div>
+
+                        <div class="section-header">Properties</div>
+                        <div class="form-grid">
+                            <label class="field">
+                                <span class="field-label">Priority</span>
+                                <input id="biome-priority-input" class="text-input" type="number">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Rarity</span>
+                                <input id="biome-rarity-input" class="text-input" type="number" step="0.01" min="0" max="1">
+                            </label>
+                        </div>
+
+                        <div class="section-header">Terrain</div>
+                        <div class="form-grid">
+                            <label class="field">
+                                <span class="field-label">Base Height</span>
+                                <input id="terrain-base-height-input" class="text-input" type="number">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Height Variation</span>
+                                <input id="terrain-height-variation-input" class="text-input" type="number">
+                            </label>
+                        </div>
+
+                        <div class="section-header">Surface</div>
+                        <div class="form-grid">
+                            <label class="field">
+                                <span class="field-label">Top Block</span>
+                                <input id="surface-top-input" class="text-input" type="text">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Middle Block</span>
+                                <input id="surface-middle-input" class="text-input" type="text">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Middle Depth</span>
+                                <input id="surface-middle-depth-input" class="text-input" type="number">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Base Block</span>
+                                <input id="surface-base-input" class="text-input" type="text">
+                            </label>
+                        </div>
+
+                        <div class="section-header">Atmosphere</div>
+                        <div class="form-grid">
+                            <div class="field">
+                                <span class="field-label">Sky Color</span>
+                                <div class="color-row">
+                                    <div id="atmo-sky-swatch" class="color-swatch"></div>
+                                    <input id="atmo-sky-input" class="text-input" type="text" placeholder="r,g,b">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <span class="field-label">Fog Color</span>
+                                <div class="color-row">
+                                    <div id="atmo-fog-swatch" class="color-swatch"></div>
+                                    <input id="atmo-fog-input" class="text-input" type="text" placeholder="r,g,b">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <span class="field-label">Water Color</span>
+                                <div class="color-row">
+                                    <div id="atmo-water-swatch" class="color-swatch"></div>
+                                    <input id="atmo-water-input" class="text-input" type="text" placeholder="r,g,b">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="section-header">Biome Colors</div>
+                        <div class="form-grid">
+                            <div class="field">
+                                <span class="field-label">Grass</span>
+                                <div class="color-row">
+                                    <div id="color-grass-swatch" class="color-swatch"></div>
+                                    <input id="color-grass-input" class="text-input" type="text" placeholder="r,g,b">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <span class="field-label">Foliage</span>
+                                <div class="color-row">
+                                    <div id="color-foliage-swatch" class="color-swatch"></div>
+                                    <input id="color-foliage-input" class="text-input" type="text" placeholder="r,g,b">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Climate ranges collapsed by default to keep the form compact. -->
+                        <details class="section-details">
+                            <summary class="section-header">Climate Ranges</summary>
+                            <div class="form-grid-4">
+                                <label class="field">
+                                    <span class="field-label">Temp Min</span>
+                                    <input id="climate-temp-min-input" class="text-input" type="number" step="0.01">
+                                </label>
+                                <label class="field">
+                                    <span class="field-label">Temp Max</span>
+                                    <input id="climate-temp-max-input" class="text-input" type="number" step="0.01">
+                                </label>
+                                <label class="field">
+                                    <span class="field-label">Humidity Min</span>
+                                    <input id="climate-humidity-min-input" class="text-input" type="number" step="0.01">
+                                </label>
+                                <label class="field">
+                                    <span class="field-label">Humidity Max</span>
+                                    <input id="climate-humidity-max-input" class="text-input" type="number" step="0.01">
+                                </label>
+                                <label class="field">
+                                    <span class="field-label">Rainfall Min</span>
+                                    <input id="climate-rainfall-min-input" class="text-input" type="number" step="0.01">
+                                </label>
+                                <label class="field">
+                                    <span class="field-label">Rainfall Max</span>
+                                    <input id="climate-rainfall-max-input" class="text-input" type="number" step="0.01">
+                                </label>
+                                <label class="field">
+                                    <span class="field-label">Elevation Min</span>
+                                    <input id="climate-elevation-min-input" class="text-input" type="number" step="0.01">
+                                </label>
+                                <label class="field">
+                                    <span class="field-label">Elevation Max</span>
+                                    <input id="climate-elevation-max-input" class="text-input" type="number" step="0.01">
+                                </label>
+                            </div>
+                        </details>
+                    </div>
+                    <div
+                        class="panel-resizer editor-resizer"
+                        data-resize-target="editor-preview"
+                        role="separator"
+                        aria-label="Resize editor preview"
+                        aria-orientation="vertical"
+                    ></div>
+                    <div class="editor-preview-col">
+                        <div class="preview-stack">
+                            <div class="preview-frame">
+                                <img id="biome-preview-image" class="preview-img" alt="Biome preview">
+                                <div id="biome-preview-color" class="preview-color-block"></div>
+                                <div id="biome-preview-empty" class="preview-empty">No preview available</div>
+                            </div>
+                            <div class="preview-meta-card">
+                                <div class="preview-kicker">Selection Details</div>
+                                <div id="biome-preview-meta" class="preview-meta"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── View: Editor Settings ─────────────────────────────────────── -->
+            <!-- Content editor settings and project script commands. -->
+            <section class="panel content-card" data-panel="world-data">
+                <div class="content-head">
+                    <div>
+                        <div class="content-kicker">Data</div>
+                        <h2 id="project-settings-title">Editor Settings</h2>
+                    </div>
+                    <div class="content-head-actions">
+                        <button id="project-settings-reload-button" class="subtab-button" type="button">Reload</button>
+                        <button id="project-settings-save-button" class="tab-button" type="button">Save</button>
+                    </div>
+                </div>
+                <p>Store editor theme and project script commands in <code>.content_editor/settings.json</code>.</p>
+                <div class="model-workspace-layout">
+                    <div class="placeholder-box placeholder-box-tall">
+                        <strong>Appearance</strong>
+                        <div class="form-grid">
+                            <label class="field">
+                                <span class="field-label">Theme</span>
+                                <div class="select-wrap">
+                                    <select id="settings-theme-select" class="select-input">
+                                        <option value="system">System</option>
+                                        <option value="light">Light</option>
+                                        <option value="dark">Dark</option>
+                                    </select>
+                                </div>
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Texture Editor Path</span>
+                                <input id="settings-texture-editor-path-input" class="text-input" type="text" placeholder="/Users/you/Applications/Aseprite.app">
+                            </label>
+                            <label class="field">
+                                <span class="field-label">Model Editor Path</span>
+                                <input id="settings-model-editor-path-input" class="text-input" type="text" placeholder="/Applications/Blockbench.app">
+                            </label>
+                        </div>
+
+                        <div class="section-header">Project Scripts</div>
+                        <div class="settings-script-grid">
+                            <div class="settings-script-row">
+                                <label class="field settings-script-field">
+                                    <span class="field-label">Build</span>
+                                    <input id="settings-build-script-input" class="text-input" type="text" placeholder="cmake --build build --target VoxelGame">
+                                </label>
+                                <button id="settings-build-script-run" class="subtab-button" type="button">Run</button>
+                            </div>
+                            <div class="settings-script-row">
+                                <label class="field settings-script-field">
+                                    <span class="field-label">Validate</span>
+                                    <input id="settings-validate-script-input" class="text-input" type="text" placeholder="ctest --test-dir build">
+                                </label>
+                                <button id="settings-validate-script-run" class="subtab-button" type="button">Run</button>
+                            </div>
+                            <div class="settings-script-row">
+                                <label class="field settings-script-field">
+                                    <span class="field-label">Export</span>
+                                    <input id="settings-export-script-input" class="text-input" type="text" placeholder="./scripts/export.sh">
+                                </label>
+                                <button id="settings-export-script-run" class="subtab-button" type="button">Run</button>
+                            </div>
+                        </div>
+
+                        <div class="section-header">Command Output</div>
+                        <pre id="project-settings-output" class="code-view settings-output"></pre>
+                    </div>
+                    <div class="placeholder-stack">
+                        <div class="placeholder-box">
+                            <strong>Path</strong>
+                            <span id="project-settings-path">.content_editor/settings.json</span>
+                        </div>
+                        <div class="placeholder-box">
+                            <strong>Status</strong>
+                            <div id="project-settings-meta" class="preview-meta">Not loaded.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── View: Texture preview ─────────────────────────────────────── -->
+            <!-- Navigated to when a texture tile is clicked in the file dock.
+                 The heading, path, and swatch are updated by updateTexturePreview().
+                 The Back button restores the previous view via state.previousView. -->
+            <section class="panel content-card" data-panel="texture-preview">
+                <div class="content-head">
+                    <div>
+                        <div class="content-kicker">Files</div>
+                        <!-- Populated dynamically from the clicked tile's data-texture-name. -->
+                        <h2 id="workspace-texture-name">grass.ppm</h2>
+                    </div>
+                    <button class="tab-button content-action" id="texture-preview-back" type="button">Back</button>
+                </div>
+                <!-- Populated dynamically from the clicked tile's data-texture-path. -->
+                <p id="workspace-texture-path">assets/textures/blocks/grass.ppm</p>
+                <div class="texture-workspace-layout">
+                    <!-- Large checkerboard swatch with a real image layered inside for crisp preview. -->
+                    <div class="texture-workspace-preview">
+                        <div class="texture-workspace-swatch" id="workspace-texture-swatch">
+                            <img id="workspace-texture-image" alt="Selected texture preview">
+                        </div>
+                    </div>
+                    <div class="placeholder-stack">
+                        <div class="placeholder-box">
+                            <strong>Path</strong>
+                            <!-- Mirror of the path paragraph above, kept for copy-to-clipboard use. -->
+                            <span id="workspace-texture-path-copy">assets/textures/blocks/grass.ppm</span>
+                        </div>
+                        <div class="placeholder-box">
+                            <strong>Usage</strong>
+                            Blocks, items, or models that reference the selected texture can surface here.
+                        </div>
+                        <div class="placeholder-box">
+                            <strong>Actions</strong>
+                            <button class="subtab-button external-editor-button" id="texture-open-editor" type="button">
+                                Open in Aseprite
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ── View: Model preview ───────────────────────────────────────── -->
+            <!-- Navigated to when a model file is clicked in the file dock.
+                 The heading, path, and raw JSON are populated by newapp.js. -->
+            <section class="panel content-card" data-panel="model-preview">
+                <div class="content-head">
+                    <div>
+                        <div class="content-kicker">Files</div>
+                        <h2 id="workspace-model-name">cube_all.json</h2>
+                    </div>
+                    <button class="tab-button content-action" id="model-preview-back" type="button">Back</button>
+                </div>
+                <p id="workspace-model-path">assets/models/blocks/cube_all.json</p>
+                <div class="model-workspace-layout">
+                    <div class="placeholder-box placeholder-box-tall model-code-box">
+                        <strong>Raw JSON</strong>
+                        <pre id="workspace-model-json" class="code-view"></pre>
+                    </div>
+                    <div class="placeholder-stack">
+                        <div class="placeholder-box">
+                            <strong>Path</strong>
+                            <span id="workspace-model-path-copy">assets/models/blocks/cube_all.json</span>
+                        </div>
+                        <div class="placeholder-box">
+                            <strong>Actions</strong>
+                            <button class="subtab-button external-editor-button" id="model-open-editor" type="button">
+                                Open in Blockbench
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Liquid glass distortion filter used by .panel::before via CSS filter: url(#glass-distortion). -->
+<svg style="display:none">
+    <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%" filterUnits="objectBoundingBox">
+        <feTurbulence type="fractalNoise" baseFrequency="0.012 0.012" numOctaves="1" seed="5" result="turbulence"/>
+        <feComponentTransfer in="turbulence" result="mapped">
+            <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.5"/>
+            <feFuncG type="gamma" amplitude="0" exponent="1"  offset="0"/>
+            <feFuncB type="gamma" amplitude="0" exponent="1"  offset="0.5"/>
+        </feComponentTransfer>
+        <feGaussianBlur in="turbulence" stdDeviation="3" result="softMap"/>
+        <feSpecularLighting in="softMap" surfaceScale="5" specularConstant="1" specularExponent="100" lighting-color="white" result="specLight">
+            <fePointLight x="-200" y="-200" z="300"/>
+        </feSpecularLighting>
+        <feComposite in="specLight" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litImage"/>
+        <feDisplacementMap in="SourceGraphic" in2="softMap" scale="55" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+</svg>
+
+<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+<script src="color-picker.js"></script>
+<script src="newapp.js"></script>
+</body>
+</html>

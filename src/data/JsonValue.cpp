@@ -1,7 +1,9 @@
 #include "data/JsonValue.hpp"
 
+#include <algorithm>
 #include <cctype>
 #include <stdexcept>
+#include <vector>
 
 namespace voxel {
 bool JsonValue::isObject() const {
@@ -232,5 +234,88 @@ private:
 
 JsonValue parseJson(const std::string& text) {
     return JsonParser(text).parse();
+}
+
+namespace {
+std::string escapeJsonString(const std::string& input) {
+    std::string result;
+    result.reserve(input.size() + 8);
+    for (const char c : input) {
+        switch (c) {
+            case '\\': result += "\\\\"; break;
+            case '"':  result += "\\\""; break;
+            case '\n': result += "\\n"; break;
+            case '\r': result += "\\r"; break;
+            case '\t': result += "\\t"; break;
+            default:   result.push_back(c); break;
+        }
+    }
+    return result;
+}
+
+std::string indentString(const int indent) {
+    return std::string(static_cast<std::size_t>(indent), ' ');
+}
+}  // namespace
+
+std::string serializeJson(const JsonValue& value, const int indent) {
+    if (std::holds_alternative<std::nullptr_t>(value.value)) {
+        return "null";
+    }
+    if (std::holds_alternative<bool>(value.value)) {
+        return std::get<bool>(value.value) ? "true" : "false";
+    }
+    if (std::holds_alternative<double>(value.value)) {
+        std::string text = std::to_string(std::get<double>(value.value));
+        text.erase(text.find_last_not_of('0') + 1);
+        if (!text.empty() && text.back() == '.') {
+            text.push_back('0');
+        }
+        return text;
+    }
+    if (std::holds_alternative<std::string>(value.value)) {
+        return "\"" + escapeJsonString(std::get<std::string>(value.value)) + "\"";
+    }
+    if (std::holds_alternative<JsonValue::Array>(value.value)) {
+        const auto& array = std::get<JsonValue::Array>(value.value);
+        if (array.empty()) {
+            return "[]";
+        }
+        std::string result = "[\n";
+        for (std::size_t i = 0; i < array.size(); ++i) {
+            result += indentString(indent + 2) + serializeJson(array[i], indent + 2);
+            if (i + 1 != array.size()) {
+                result += ",";
+            }
+            result += "\n";
+        }
+        result += indentString(indent) + "]";
+        return result;
+    }
+
+    const auto& object = std::get<JsonValue::Object>(value.value);
+    if (object.empty()) {
+        return "{}";
+    }
+
+    std::vector<std::string> keys;
+    keys.reserve(object.size());
+    for (const auto& [key, _] : object) {
+        keys.push_back(key);
+    }
+    std::sort(keys.begin(), keys.end());
+
+    std::string result = "{\n";
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+        const auto& key = keys[i];
+        result += indentString(indent + 2) + "\"" + escapeJsonString(key) + "\": " +
+                  serializeJson(object.at(key), indent + 2);
+        if (i + 1 != keys.size()) {
+            result += ",";
+        }
+        result += "\n";
+    }
+    result += indentString(indent) + "}";
+    return result;
 }
 }  // namespace voxel

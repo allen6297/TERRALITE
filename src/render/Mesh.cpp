@@ -513,9 +513,11 @@ ChunkMesh buildChunkMesh(
                 if (stateId == 0) continue;
 
                 const BlockDefinition* def = findBlockDefinitionForBlockType(gameData, stateId);
-                if (def == nullptr || def->renderType != "model" || def->modelPath.empty()) continue;
-
-                const BlockModel* model = modelManager.get(def->modelPath);
+                const std::string* stateModelPath = modelPathForState(gameData, stateId);
+                if (def == nullptr || def->renderType != "model" ||
+                    ((stateModelPath == nullptr || stateModelPath->empty()) && def->modelPath.empty())) continue;
+                const std::string& modelPath = (stateModelPath != nullptr) ? *stateModelPath : def->modelPath;
+                const BlockModel* model = modelManager.get(modelPath);
                 if (model == nullptr) continue;
 
                 emitModelBlock(

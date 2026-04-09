@@ -30,9 +30,10 @@ bool playerCollidesAt(const World& world, const GameData& gameData, const Vec3& 
                 if (stateId == 0 || !gameData.solidByRuntimeId[stateId]) continue;
 
                 const BlockDefinition* def = findBlockDefinitionForBlockType(gameData, stateId);
+                const std::vector<CollisionBox>* stateBoxes = collisionBoxesForState(gameData, stateId);
 
                 // No model collision boxes — treat as full block
-                if (def == nullptr || def->collisionBoxes.empty()) {
+                if (def == nullptr || ((stateBoxes == nullptr || stateBoxes->empty()) && def->collisionBoxes.empty())) {
                     return true;
                 }
 
@@ -40,7 +41,9 @@ bool playerCollidesAt(const World& world, const GameData& gameData, const Vec3& 
                 const float bx = static_cast<float>(x);
                 const float by = static_cast<float>(y);
                 const float bz = static_cast<float>(z);
-                for (const auto& box : def->collisionBoxes) {
+                const std::vector<CollisionBox>& boxes =
+                    (stateBoxes != nullptr && !stateBoxes->empty()) ? *stateBoxes : def->collisionBoxes;
+                for (const auto& box : boxes) {
                     if (minX < bx + box.maxX && maxX > bx + box.minX &&
                         minY < by + box.maxY && maxY > by + box.minY &&
                         minZ < bz + box.maxZ && maxZ > bz + box.minZ) {

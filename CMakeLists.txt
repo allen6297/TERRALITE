@@ -11,9 +11,17 @@ if(APPLE)
         "/opt/homebrew"
         "/opt/homebrew/opt/glfw"
         "/opt/homebrew/opt/freetype"
+        "/opt/homebrew/opt/qt"
+        "/opt/homebrew/opt/qt/lib/cmake"
+        "/opt/homebrew/opt/qt@6"
+        "/opt/homebrew/opt/qt@6/lib/cmake"
         "/usr/local"
         "/usr/local/opt/glfw"
         "/usr/local/opt/freetype"
+        "/usr/local/opt/qt"
+        "/usr/local/opt/qt/lib/cmake"
+        "/usr/local/opt/qt@6"
+        "/usr/local/opt/qt@6/lib/cmake"
     )
 endif()
 
@@ -75,6 +83,10 @@ add_executable(VoxelGame
     src/data/JsonValue.cpp
     src/main.cpp
     src/game/Game.cpp
+    src/game/GameBlocks.cpp
+    src/game/GameLifecycle.cpp
+    src/game/GameRender.cpp
+    src/game/GameUpdate.cpp
     src/Math.cpp
     src/player/Inventory.cpp
     src/render/Mesh.cpp
@@ -119,4 +131,33 @@ add_custom_command(TARGET VoxelGame POST_BUILD
 
 if(APPLE)
     target_compile_definitions(VoxelGame PRIVATE GL_SILENCE_DEPRECATION)
+endif()
+
+option(BUILD_CONTENT_EDITOR "Build the standalone Qt content editor if Qt6 Widgets/WebEngine are available" ON)
+
+if(BUILD_CONTENT_EDITOR)
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTORCC ON)
+    set(CMAKE_AUTOUIC ON)
+
+    find_package(Qt6 COMPONENTS Widgets WebEngineWidgets WebChannel QUIET)
+    if(Qt6_FOUND)
+        add_executable(ContentEditor
+            tools/content_editor/main.cpp
+            tools/content_editor/MainWindow.cpp
+            src/data/JsonValue.cpp
+        )
+        target_include_directories(ContentEditor PRIVATE
+            include
+            tools/content_editor
+        )
+        target_link_libraries(ContentEditor PRIVATE
+            Qt6::Widgets
+            Qt6::WebEngineWidgets
+            Qt6::WebChannel
+        )
+        target_compile_features(ContentEditor PRIVATE cxx_std_20)
+    else()
+        message(STATUS "Qt6 Widgets/WebEngine not found; skipping ContentEditor target")
+    endif()
 endif()

@@ -26,4 +26,5 @@ struct JsonValue {
 };
 
 JsonValue parseJson(const std::string& text);
+std::string serializeJson(const JsonValue& value, int indent = 0);
 }  // namespace voxel

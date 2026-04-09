@@ -1,6 +1,8 @@
 #pragma once
 
 #include <future>
+#include <queue>
+#include <random>
 #include <unordered_map>
 #include <vector>
 
@@ -21,8 +23,11 @@ public:
     Game(GameData gameData, std::string assetsRoot, std::string dataRoot);
     ~Game();
     void update(GLFWwindow* window, float deltaTime);
+    void reloadContent();
     void render(int framebufferWidth, int framebufferHeight) const;
     void renderHotbarIcons(int framebufferWidth, int framebufferHeight);
+    void renderBlockPreview(int framebufferWidth, int framebufferHeight,
+                            const std::string& blockId, int x, int y, int width, int height);
     DebugOverlayData getDebugData() const;
     const Inventory& getInventory() const { return player_.inventory; }
 
@@ -31,8 +36,21 @@ private:
         ChunkCoord coord;
         std::future<ChunkMesh> future;
     };
+    struct ScheduledBlockTick {
+        double dueTime = 0.0;
+        Int3 block {0, 0, 0};
+        std::uint32_t generation = 0;
+    };
+    struct ScheduledBlockTickCompare {
+        bool operator()(const ScheduledBlockTick& a, const ScheduledBlockTick& b) const {
+            return a.dueTime > b.dueTime;
+        }
+    };
 
     void simulateLiquids(float deltaTime);
+    void processBlockTicks();
+    void scheduleBlockTick(const Int3& block, std::uint16_t stateId, float delaySeconds);
+    void scheduleChunkBlockTicks(const Chunk& chunk);
     void handleBlockActions();
     void handleInventorySelection(GLFWwindow* window);
     void rebuildChunkMesh(const ChunkCoord& coord);
@@ -58,10 +76,14 @@ private:
     Player player_;
     InputState input_;
     std::optional<RaycastHit> currentHit_;
+    std::priority_queue<ScheduledBlockTick, std::vector<ScheduledBlockTick>, ScheduledBlockTickCompare> blockTicks_;
+    std::unordered_map<std::string, std::uint32_t> blockTickGeneration_;
     float liquidStepAccumulator_ = 0.0f;
+    double gameTimeSeconds_ = 0.0;
     float fpsAccumulator_ = 0.0f;
     int fpsFrameCount_ = 0;
     int fps_ = 0;
     float frameTimeMs_ = 0.0f;
+    std::mt19937 rng_ {std::random_device{}()};
 };
 }  // namespace voxel

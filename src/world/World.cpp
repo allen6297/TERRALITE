@@ -95,13 +95,16 @@ bool isObstructedByModel(const World& world, const GameData& gameData, const Int
                 const std::uint16_t stateId = getBlock(world, x, y, z);
                 if (stateId == 0) continue;
                 const BlockDefinition* def = findBlockDefinitionForBlockType(gameData, stateId);
+                const std::vector<CollisionBox>* stateBoxes = collisionBoxesForState(gameData, stateId);
                 // Blocks without model collision boxes are full cubes — they
                 // can't overhang into a neighboring position.
-                if (def == nullptr || def->collisionBoxes.empty()) continue;
+                if (def == nullptr || ((stateBoxes == nullptr || stateBoxes->empty()) && def->collisionBoxes.empty())) continue;
                 const float bx = static_cast<float>(x);
                 const float by = static_cast<float>(y);
                 const float bz = static_cast<float>(z);
-                for (const auto& box : def->collisionBoxes) {
+                const std::vector<CollisionBox>& boxes =
+                    (stateBoxes != nullptr && !stateBoxes->empty()) ? *stateBoxes : def->collisionBoxes;
+                for (const auto& box : boxes) {
                     if (bx + box.maxX > tMinX && bx + box.minX < tMaxX &&
                         by + box.maxY > tMinY && by + box.minY < tMaxY &&
                         bz + box.maxZ > tMinZ && bz + box.minZ < tMaxZ) {
@@ -132,11 +135,12 @@ std::optional<RaycastHit> raycastWorld(const World& world, const GameData& gameD
                 for (int nz = pz - exp; nz <= pz + exp; ++nz) {
                     if (!isYInBounds(ny)) continue;
                     const std::uint16_t stateId = getBlock(world, nx, ny, nz);
-                    if (stateId == 0 || !gameData.solidByRuntimeId[stateId]) continue;
-
                     const BlockDefinition* def = findBlockDefinitionForBlockType(gameData, stateId);
+                    if (stateId == 0 || def == nullptr || def->material == "liquid") continue;
+                    const std::vector<CollisionBox>* stateBoxes = collisionBoxesForState(gameData, stateId);
                     const std::vector<CollisionBox>& boxes =
-                        (def && !def->collisionBoxes.empty()) ? def->collisionBoxes : kFullBox;
+                        (stateBoxes != nullptr && !stateBoxes->empty()) ? *stateBoxes :
+                        ((def && !def->collisionBoxes.empty()) ? def->collisionBoxes : kFullBox);
 
                     const float bx = static_cast<float>(nx);
                     const float by = static_cast<float>(ny);

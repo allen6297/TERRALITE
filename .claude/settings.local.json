@@ -15,7 +15,11 @@
       "Bash(find /Users/kalob/Documents/CODE/VoxelGame/build -name CMakeTargets* -o -name RmlCore*)",
       "Bash(ls /Users/kalob/Desktop/*.png)",
       "Bash(ls -t /Users/kalob/Desktop/*.png)",
-      "Bash(make VoxelGame)"
+      "Bash(make VoxelGame)",
+      "Bash(cmake --build . --target ContentEditor)",
+      "Bash(grep -iE '\\\\.\\(png|jpg|jpeg|gif|webp\\)$')",
+      "Bash(cmake --build /Users/kalob/Documents/CODE/VoxelGame/build --target ContentEditor)",
+      "Bash(ls ~/Desktop/*.png)"
     ]
   }
 }
