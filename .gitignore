@@ -1,0 +1,63 @@
+# IDE - CLion / IntelliJ IDEA
+.idea/
+cmake-build-*/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
+install_manifest.txt
+Makefile
+
+# Build directories
+build/
+out/
+
+# Compiled Object files
+*.o
+*.obj
+*.slo
+*.lo
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.a
+*.lib
+*.lai
+*.la
+
+# Executables
+*.exe
+*.out
+*.app
+VoxelGame
+
+# Qt deployment
+.qt/
+
+# Dependencies (fetched by CMake)
+_deps/
+
+# Auto-generated files
+*_autogen/
+
+# Generated pack scripts
+src/pack/generated/
+
+# Logs
+*.log
