@@ -3,6 +3,37 @@
 namespace voxel {
 namespace {
 
+void renderRemotePlayerMarker(const RemotePlayerState& player) {
+    glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
+    glPushMatrix();
+    glTranslatef(player.position.x, player.position.y, player.position.z);
+    glRotatef(player.yaw, 0.0f, 1.0f, 0.0f);
+
+    glDisable(GL_TEXTURE_2D);
+    glColor3f(0.1f, 0.35f, 1.0f);
+
+    constexpr float r = kPlayerRadius;
+    constexpr float h = kPlayerHeight;
+    glBegin(GL_QUADS);
+    glVertex3f(-r, 0.0f, -r); glVertex3f( r, 0.0f, -r); glVertex3f( r, h, -r); glVertex3f(-r, h, -r);
+    glVertex3f( r, 0.0f,  r); glVertex3f(-r, 0.0f,  r); glVertex3f(-r, h,  r); glVertex3f( r, h,  r);
+    glVertex3f(-r, 0.0f,  r); glVertex3f(-r, 0.0f, -r); glVertex3f(-r, h, -r); glVertex3f(-r, h,  r);
+    glVertex3f( r, 0.0f, -r); glVertex3f( r, 0.0f,  r); glVertex3f( r, h,  r); glVertex3f( r, h, -r);
+    glVertex3f(-r, h, -r); glVertex3f( r, h, -r); glVertex3f( r, h,  r); glVertex3f(-r, h,  r);
+    glEnd();
+
+    glColor3f(0.04f, 0.08f, 0.18f);
+    glBegin(GL_TRIANGLES);
+    glVertex3f(0.0f, kEyeHeight, -0.58f);
+    glVertex3f(-0.16f, kEyeHeight - 0.1f, -0.28f);
+    glVertex3f(0.16f, kEyeHeight - 0.1f, -0.28f);
+    glEnd();
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glPopMatrix();
+    glPopAttrib();
+}
+
 void renderBlockPreviewMesh(
     const GameData& gameData,
     ModelManager& modelManager,
@@ -118,6 +149,12 @@ void Game::render(const int framebufferWidth, const int framebufferHeight) const
             renderMesh(mesh, textureManager_);
         }
     }
+    if (network_ != nullptr) {
+        for (const auto& [id, remotePlayer] : network_->remotePlayers()) {
+            (void) id;
+            renderRemotePlayerMarker(remotePlayer);
+        }
+    }
     if (const auto it = meshes_.find(playerChunk); it != meshes_.end()) {
         renderMeshWireframe(it->second);
     }
@@ -129,8 +166,8 @@ void Game::render(const int framebufferWidth, const int framebufferHeight) const
 
     const float wx = player_.position.x;
     const float wz = player_.position.z;
-    const ClimatePoint climate = terrainGen_.sampleClimateAt(wx, wz);
-    const BiomeDefinition* biome = terrainGen_.selectBiomeAt(wx, wz, gameData_.biomes);
+    const ClimatePoint climate = simulation_.terrainGenerator().sampleClimateAt(wx, wz);
+    const BiomeDefinition* biome = simulation_.terrainGenerator().selectBiomeAt(wx, wz, gameData_.biomes);
     (void) climate;
     (void) biome;
 }
@@ -147,8 +184,8 @@ DebugOverlayData Game::getDebugData() const {
 
     const float wx = player_.position.x;
     const float wz = player_.position.z;
-    const ClimatePoint climate = terrainGen_.sampleClimateAt(wx, wz);
-    const BiomeDefinition* biome = terrainGen_.selectBiomeAt(wx, wz, gameData_.biomes);
+    const ClimatePoint climate = simulation_.terrainGenerator().sampleClimateAt(wx, wz);
+    const BiomeDefinition* biome = simulation_.terrainGenerator().selectBiomeAt(wx, wz, gameData_.biomes);
 
     return {
         player_.position,

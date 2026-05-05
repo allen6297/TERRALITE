@@ -13,8 +13,16 @@ void Game::handleBlockActions() {
 
     const BlockDefinition* hitDef = findBlockDefinitionForBlockType(gameData_, currentHit_->type);
     if (input_.breakPressed && (hitDef == nullptr || hitDef->material != "liquid")) {
+        if (network_ != nullptr && network_->mode() == NetworkManager::Mode::Client) {
+            network_->publishBlockChange(currentHit_->block, 0);
+            return;
+        }
+
         const BlockDefinition* block = findBlockDefinitionForBlockType(gameData_, currentHit_->type);
-        setBlock(world_, currentHit_->block.x, currentHit_->block.y, currentHit_->block.z, 0);
+        const BlockChangeResult result = simulation_.applyBlockChange(currentHit_->block, 0);
+        if (!result.applied || !result.changed) {
+            return;
+        }
         blockTickGeneration_.erase(game_internal::blockTickKey(currentHit_->block));
         if (block != nullptr) {
             for (const auto& drop : game_internal::cropDropsForState(gameData_, *block, currentHit_->type)) {
@@ -22,6 +30,9 @@ void Game::handleBlockActions() {
             }
         }
         rebuildMeshesAroundBlock(currentHit_->block);
+        if (network_ != nullptr) {
+            network_->publishBlockChange(currentHit_->block, 0);
+        }
     }
 
     if (!input_.placePressed) {
@@ -30,8 +41,8 @@ void Game::handleBlockActions() {
 
     const Int3 target = currentHit_->previousEmpty;
     if (!isYInBounds(target.y)) return;
-    if (isOccupied(world_, target.x, target.y, target.z)) return;
-    if (isObstructedByModel(world_, gameData_, target)) return;
+    if (isOccupied(simulation_.world(), target.x, target.y, target.z)) return;
+    if (isObstructedByModel(simulation_.world(), gameData_, target)) return;
 
     const auto selectedItem = selectedItemId(player_.inventory);
     if (!selectedItem.has_value()) {
@@ -39,19 +50,29 @@ void Game::handleBlockActions() {
     }
 
     if (*selectedItem == game_internal::kWheatSeedsItemId) {
-        const std::uint16_t soil = getBlock(world_, target.x, target.y - 1, target.z);
+        const std::uint16_t soil = getBlock(simulation_.world(), target.x, target.y - 1, target.z);
         if (!game_internal::isCropSoil(gameData_, soil) ||
-            getBlock(world_, target.x, target.y + 1, target.z) != 0) {
+            getBlock(simulation_.world(), target.x, target.y + 1, target.z) != 0) {
             return;
         }
 
         const auto cropType = runtimeIdForBlockState(gameData_, game_internal::kWheatBlockId, {{"age", 0}});
         if (!cropType.has_value()) return;
+        if (network_ != nullptr && network_->mode() == NetworkManager::Mode::Client) {
+            network_->publishBlockChange(target, *cropType);
+            return;
+        }
         if (!removeSelectedItem(player_.inventory, 1)) return;
 
-        setBlock(world_, target.x, target.y, target.z, *cropType);
+        const BlockChangeResult result = simulation_.applyBlockChange(target, *cropType);
+        if (!result.applied || !result.changed) {
+            return;
+        }
         scheduleBlockTick(target, *cropType, 0.0f);
         rebuildMeshesAroundBlock(target);
+        if (network_ != nullptr) {
+            network_->publishBlockChange(target, *cropType);
+        }
         return;
     }
 
@@ -60,15 +81,25 @@ void Game::handleBlockActions() {
         return;
     }
 
-    setBlock(world_, target.x, target.y, target.z, *blockType);
-    const bool wouldCollide = playerCollidesAt(world_, gameData_, player_.position);
-    setBlock(world_, target.x, target.y, target.z, 0);
+    setBlock(simulation_.world(), target.x, target.y, target.z, *blockType);
+    const bool wouldCollide = playerCollidesAt(simulation_.world(), gameData_, player_.position);
+    setBlock(simulation_.world(), target.x, target.y, target.z, 0);
     if (wouldCollide) return;
+    if (network_ != nullptr && network_->mode() == NetworkManager::Mode::Client) {
+        network_->publishBlockChange(target, *blockType);
+        return;
+    }
     if (!removeSelectedItem(player_.inventory, 1)) return;
 
-    setBlock(world_, target.x, target.y, target.z, *blockType);
+    const BlockChangeResult result = simulation_.applyBlockChange(target, *blockType);
+    if (!result.applied || !result.changed) {
+        return;
+    }
     scheduleBlockTick(target, *blockType, 0.0f);
     rebuildMeshesAroundBlock(target);
+    if (network_ != nullptr) {
+        network_->publishBlockChange(target, *blockType);
+    }
 }
 
 void Game::handleInventorySelection(GLFWwindow* window) {
@@ -83,7 +114,7 @@ void Game::handleInventorySelection(GLFWwindow* window) {
 }
 
 void Game::rebuildChunkMesh(const ChunkCoord& coord) {
-    if (!inChunkBounds(coord) || !chunkLoaded(world_, coord)) {
+    if (!inChunkBounds(coord) || !chunkLoaded(simulation_.world(), coord)) {
         return;
     }
 
@@ -97,7 +128,7 @@ void Game::rebuildChunkMesh(const ChunkCoord& coord) {
         destroyChunkMesh(it->second);
     }
 
-    ChunkMesh newMesh = buildChunkMesh(world_, coord, gameData_, modelManager_);
+    ChunkMesh newMesh = buildChunkMesh(simulation_.world(), coord, gameData_, modelManager_);
     uploadChunkMesh(newMesh);
     meshes_[coord] = std::move(newMesh);
 }

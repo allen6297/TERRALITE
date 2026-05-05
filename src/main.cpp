@@ -1,18 +1,31 @@
 #include <GLFW/glfw3.h>
 
 #include <algorithm>
+#include <atomic>
+#include <chrono>
+#include <csignal>
+#include <cstdint>
 #include <filesystem>
 #include <iostream>
 #include <string>
+#include <thread>
 
 #include "data/GameData.hpp"
 #include "game/Game.hpp"
+#include "network/NetworkManager.hpp"
 #include "pack/AssetPackManager.hpp"
 #include "pack/PackManager.hpp"
 #include "pack/ScriptManager.hpp"
 #include "ui/GameUI.hpp"
 
 namespace {
+constexpr std::uint16_t kDefaultMultiplayerPort = 27015;
+std::atomic_bool gServerRunning {true};
+
+void handleServerSignal(int) {
+    gServerRunning = false;
+}
+
 std::filesystem::path findProjectRoot() {
     std::filesystem::path current = std::filesystem::current_path();
 
@@ -28,9 +41,70 @@ std::filesystem::path findProjectRoot() {
 
     throw std::runtime_error("Could not find project root containing packs/");
 }
+
+std::uint16_t parsePort(const char* value) {
+    const int port = std::stoi(value);
+    if (port <= 0 || port > 65535) {
+        throw std::runtime_error("Port must be between 1 and 65535.");
+    }
+    return static_cast<std::uint16_t>(port);
+}
+
+bool isDedicatedServerMode(int argc, char** argv) {
+    for (int i = 1; i < argc; ++i) {
+        const std::string arg = argv[i];
+        if (arg == "--server" || arg == "--dedicated-server") {
+            return true;
+        }
+    }
+    return false;
+}
+
+int runDedicatedServer(int argc, char** argv) {
+    std::uint16_t port = kDefaultMultiplayerPort;
+
+    for (int i = 1; i < argc; ++i) {
+        const std::string arg = argv[i];
+        if (arg == "--server" || arg == "--dedicated-server") {
+            continue;
+        }
+        if (arg == "--port") {
+            if (i + 1 >= argc) {
+                throw std::runtime_error("--port requires a value.");
+            }
+            port = parsePort(argv[++i]);
+            continue;
+        }
+        throw std::runtime_error("Unknown dedicated server argument: " + arg);
+    }
+
+    std::signal(SIGINT, handleServerSignal);
+    std::signal(SIGTERM, handleServerSignal);
+
+    voxel::NetworkManager network;
+    if (!network.startServer(port)) {
+        return 1;
+    }
+
+    std::cout << "VoxelGame dedicated server running on port " << port << ". Press Ctrl+C to stop.\n";
+    while (gServerRunning) {
+        network.poll();
+        std::this_thread::sleep_for(std::chrono::milliseconds(8));
+    }
+    return 0;
+}
 }  // namespace
 
-int main() {
+int main(int argc, char** argv) {
+    try {
+        if (isDedicatedServerMode(argc, argv)) {
+            return runDedicatedServer(argc, argv);
+        }
+    } catch (const std::exception& error) {
+        std::cerr << "Fatal server error: " << error.what() << '\n';
+        return 1;
+    }
+
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW.\n";
         return 1;
@@ -98,7 +172,30 @@ int main() {
         int fbWidth = 0, fbHeight = 0;
         glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
 
-        voxel::Game   game(std::move(gameData), assetsRoot);
+        voxel::NetworkManager network;
+        voxel::NetworkManager* activeNetwork = nullptr;
+        for (int i = 1; i < argc; ++i) {
+            const std::string arg = argv[i];
+            if (arg == "--host") {
+                const std::uint16_t port =
+                    (i + 1 < argc && argv[i + 1][0] != '-') ? parsePort(argv[++i]) : kDefaultMultiplayerPort;
+                if (network.startServer(port)) {
+                    activeNetwork = &network;
+                }
+            } else if (arg == "--connect") {
+                if (i + 1 >= argc) {
+                    throw std::runtime_error("--connect requires a host name or IP address.");
+                }
+                const std::string hostName = argv[++i];
+                const std::uint16_t port =
+                    (i + 1 < argc && argv[i + 1][0] != '-') ? parsePort(argv[++i]) : kDefaultMultiplayerPort;
+                if (network.connectToServer(hostName, port)) {
+                    activeNetwork = &network;
+                }
+            }
+        }
+
+        voxel::Game   game(std::move(gameData), assetsRoot, activeNetwork);
         voxel::GameUI ui(window, fbWidth, fbHeight, assetsRoot);
 
         // Forward GLFW events to RmlUI — use window user pointer so lambdas

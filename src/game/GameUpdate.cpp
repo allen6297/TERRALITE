@@ -24,6 +24,11 @@ bool isWithinUnloadDistance(const ChunkCoord& coord, const ChunkCoord& playerChu
 }  // namespace
 
 void Game::update(GLFWwindow* window, const float deltaTime) {
+    if (network_ != nullptr) {
+        network_->poll();
+        applyNetworkBlockChanges();
+    }
+
     gameTimeSeconds_ += deltaTime;
     frameTimeMs_ = deltaTime * 1000.0f;
     fpsAccumulator_ += deltaTime;
@@ -45,12 +50,16 @@ void Game::update(GLFWwindow* window, const float deltaTime) {
     updateInput(window, input_);
     handleInventorySelection(window);
     jump(player_, input_);
-    updateMovement(window, world_, gameData_, player_, deltaTime);
+    updateMovement(window, simulation_.world(), gameData_, player_, deltaTime);
     simulateLiquids(deltaTime);
     processBlockTicks();
 
-    currentHit_ = raycastWorld(world_, gameData_, getEyePosition(player_), getLookDirection(player_));
+    currentHit_ = raycastWorld(simulation_.world(), gameData_, getEyePosition(player_), getLookDirection(player_));
     handleBlockActions();
+
+    if (network_ != nullptr) {
+        network_->publishLocalPlayer(player_.position, player_.yaw, player_.pitch);
+    }
 
     const bool f5Now = glfwGetKey(window, GLFW_KEY_F5) == GLFW_PRESS;
     if (f5Now && !f5WasPressed_) {
@@ -59,6 +68,41 @@ void Game::update(GLFWwindow* window, const float deltaTime) {
     f5WasPressed_ = f5Now;
 
     updateLoadedChunks(playerChunk);
+}
+
+void Game::applyNetworkBlockChanges() {
+    if (network_ == nullptr) {
+        return;
+    }
+
+    if (network_->mode() == NetworkManager::Mode::Server) {
+        for (const NetworkBlockChange& request : network_->takePendingBlockEditRequests()) {
+            const BlockChangeResult result = simulation_.applyBlockChange(request.block, request.stateId);
+            if (!result.applied || !result.changed) {
+                continue;
+            }
+            if (request.stateId == 0) {
+                blockTickGeneration_.erase(game_internal::blockTickKey(request.block));
+            } else {
+                scheduleBlockTick(request.block, request.stateId, 0.0f);
+            }
+            rebuildMeshesAroundBlock(request.block);
+            network_->publishBlockChange(request.block, request.stateId);
+        }
+    }
+
+    for (const NetworkBlockChange& change : network_->takePendingBlockChanges()) {
+        const BlockChangeResult result = simulation_.applyBlockChange(change.block, change.stateId);
+        if (!result.applied || !result.changed) {
+            continue;
+        }
+        if (change.stateId == 0) {
+            blockTickGeneration_.erase(game_internal::blockTickKey(change.block));
+        } else {
+            scheduleBlockTick(change.block, change.stateId, 0.0f);
+        }
+        rebuildMeshesAroundBlock(change.block);
+    }
 }
 
 void Game::collectPending(const ChunkCoord& playerChunk) {
@@ -73,8 +117,8 @@ void Game::collectPending(const ChunkCoord& playerChunk) {
             Chunk chunk = it->second.get();
             it = pendingTerrain_.erase(it);
             if (shouldKeep) {
-                world_.chunks[coord] = std::move(chunk);
-                scheduleChunkBlockTicks(world_.chunks[coord]);
+                simulation_.world().chunks[coord] = std::move(chunk);
+                scheduleChunkBlockTicks(simulation_.world().chunks[coord]);
                 launchMeshBuild(coord);
                 ++terrainIntegrations;
             }
@@ -87,7 +131,7 @@ void Game::collectPending(const ChunkCoord& playerChunk) {
     for (auto it = pendingMeshes_.begin(); it != pendingMeshes_.end();) {
         if (it->future.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
             const ChunkCoord coord = it->coord;
-            const bool shouldUpload = chunkLoaded(world_, coord) && isWithinUnloadDistance(coord, playerChunk);
+            const bool shouldUpload = chunkLoaded(simulation_.world(), coord) && isWithinUnloadDistance(coord, playerChunk);
             if (shouldUpload && meshUploads >= kMaxMeshUploadsPerFrame) {
                 break;
             }
@@ -111,7 +155,7 @@ void Game::collectPending(const ChunkCoord& playerChunk) {
     for (auto it = queuedMeshBuilds_.begin(); it != queuedMeshBuilds_.end() && pendingMeshes_.size() < kMaxMeshJobs;) {
         const ChunkCoord coord = *it;
         it = queuedMeshBuilds_.erase(it);
-        if (chunkLoaded(world_, coord) && isWithinUnloadDistance(coord, playerChunk)) {
+        if (chunkLoaded(simulation_.world(), coord) && isWithinUnloadDistance(coord, playerChunk)) {
             launchMeshBuild(coord);
         }
     }
@@ -135,7 +179,7 @@ void Game::processBlockTicks() {
             continue;
         }
 
-        const std::uint16_t stateId = getBlock(world_, tick.block.x, tick.block.y, tick.block.z);
+        const std::uint16_t stateId = getBlock(simulation_.world(), tick.block.x, tick.block.y, tick.block.z);
         const BlockDefinition* def = findBlockDefinitionForBlockType(gameData_, stateId);
         if (stateId == 0 || def == nullptr) {
             blockTickGeneration_.erase(key);
@@ -143,12 +187,12 @@ void Game::processBlockTicks() {
         }
 
         if (game_internal::isCropBlock(*def)) {
-            const std::uint16_t soil = getBlock(world_, tick.block.x, tick.block.y - 1, tick.block.z);
+            const std::uint16_t soil = getBlock(simulation_.world(), tick.block.x, tick.block.y - 1, tick.block.z);
             const bool supported = game_internal::isCropSoil(gameData_, soil);
-            const bool blockedAbove = getBlock(world_, tick.block.x, tick.block.y + 1, tick.block.z) != 0;
+            const bool blockedAbove = getBlock(simulation_.world(), tick.block.x, tick.block.y + 1, tick.block.z) != 0;
 
             if (!supported || blockedAbove) {
-                setBlock(world_, tick.block.x, tick.block.y, tick.block.z, 0);
+                setBlock(simulation_.world(), tick.block.x, tick.block.y, tick.block.z, 0);
                 for (const auto& drop : game_internal::cropDropsForState(gameData_, *def, stateId)) {
                     addItem(player_.inventory, gameData_, drop.item, drop.count);
                 }
@@ -163,14 +207,14 @@ void Game::processBlockTicks() {
                 if (chance(rng_) <= 0.18f) {
                     const auto nextId = runtimeIdForBlockState(gameData_, def->id, {{"age", currentAge + 1}});
                     if (nextId.has_value()) {
-                        setBlock(world_, tick.block.x, tick.block.y, tick.block.z, *nextId);
+                        setBlock(simulation_.world(), tick.block.x, tick.block.y, tick.block.z, *nextId);
                         rebuildMeshesAroundBlock(tick.block);
                     }
                 }
             }
         }
 
-        const std::uint16_t nextStateId = getBlock(world_, tick.block.x, tick.block.y, tick.block.z);
+        const std::uint16_t nextStateId = getBlock(simulation_.world(), tick.block.x, tick.block.y, tick.block.z);
         scheduleBlockTick(tick.block, nextStateId, 0.0f);
     }
 }
@@ -236,8 +280,8 @@ void Game::launchMeshBuild(const ChunkCoord& coord) {
             ChunkCoord{coord.x, coord.y + 1, coord.z},
             ChunkCoord{coord.x, coord.y, coord.z - 1},
             ChunkCoord{coord.x, coord.y, coord.z + 1}}) {
-        const auto it = world_.chunks.find(c);
-        if (it != world_.chunks.end()) {
+        const auto it = simulation_.world().chunks.find(c);
+        if (it != simulation_.world().chunks.end()) {
             snap.chunks[c] = it->second;
         }
     }
@@ -266,7 +310,7 @@ void Game::simulateLiquids(const float deltaTime) {
     std::vector<LiquidMove> moves;
     moves.reserve(64);
 
-    for (const auto& [coord, chunk] : world_.chunks) {
+    for (const auto& [coord, chunk] : simulation_.world().chunks) {
         const int baseX = coord.x * kChunkX;
         const int baseY = coord.y * kChunkY;
         const int baseZ = coord.z * kChunkZ;
@@ -283,7 +327,7 @@ void Game::simulateLiquids(const float deltaTime) {
                     if (blockType == 0 || !isLiquidBlockType(gameData_, blockType)) {
                         continue;
                     }
-                    if (isOccupied(world_, wx, wy - 1, wz)) {
+                    if (isOccupied(simulation_.world(), wx, wy - 1, wz)) {
                         continue;
                     }
                     moves.push_back({{wx, wy, wz}, {wx, wy - 1, wz}, blockType});
@@ -306,15 +350,15 @@ void Game::simulateLiquids(const float deltaTime) {
     };
 
     for (const auto& move : moves) {
-        if (getBlock(world_, move.from.x, move.from.y, move.from.z) != move.blockType) {
+        if (getBlock(simulation_.world(), move.from.x, move.from.y, move.from.z) != move.blockType) {
             continue;
         }
-        if (isOccupied(world_, move.to.x, move.to.y, move.to.z)) {
+        if (isOccupied(simulation_.world(), move.to.x, move.to.y, move.to.z)) {
             continue;
         }
 
-        setBlock(world_, move.from.x, move.from.y, move.from.z, 0);
-        setBlock(world_, move.to.x, move.to.y, move.to.z, move.blockType);
+        setBlock(simulation_.world(), move.from.x, move.from.y, move.from.z, 0);
+        setBlock(simulation_.world(), move.to.x, move.to.y, move.to.z, move.blockType);
         markDirty(move.from);
         markDirty(move.to);
     }
@@ -333,10 +377,10 @@ void Game::updateLoadedChunks(const ChunkCoord& playerChunk) {
                     break;
                 }
                 const ChunkCoord coord {playerChunk.x + dx, cy, playerChunk.z + dz};
-                if (chunkLoaded(world_, coord)) continue;
+                if (chunkLoaded(simulation_.world(), coord)) continue;
                 if (pendingTerrain_.find(coord) != pendingTerrain_.end()) continue;
 
-                const TerrainGenerator gen = terrainGen_;
+                const TerrainGenerator gen = simulation_.terrainGenerator();
                 pendingTerrain_[coord] = std::async(std::launch::async,
                     [coord, gen, &gd = gameData_]() {
                         return gen.generateChunk(coord, gd);
@@ -349,7 +393,7 @@ void Game::updateLoadedChunks(const ChunkCoord& playerChunk) {
 
     const int unloadDist = kViewDistance + 2;
     std::vector<ChunkCoord> toUnload;
-    for (const auto& [coord, chunk] : world_.chunks) {
+    for (const auto& [coord, chunk] : simulation_.world().chunks) {
         if (std::abs(coord.x - playerChunk.x) > unloadDist ||
             std::abs(coord.z - playerChunk.z) > unloadDist) {
             toUnload.push_back(coord);
@@ -360,7 +404,7 @@ void Game::updateLoadedChunks(const ChunkCoord& playerChunk) {
             std::remove(queuedMeshBuilds_.begin(), queuedMeshBuilds_.end(), coord),
             queuedMeshBuilds_.end()
         );
-        world_.chunks.erase(coord);
+        simulation_.world().chunks.erase(coord);
         const auto it = meshes_.find(coord);
         if (it != meshes_.end()) {
             destroyChunkMesh(it->second);

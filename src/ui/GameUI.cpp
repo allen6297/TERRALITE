@@ -84,9 +84,6 @@ void GameUI::update() {
     ImGui::SetNextWindowBgAlpha(0.6f);
     ImGui::Begin("##debug", nullptr,
         ImGuiWindowFlags_NoDecoration  |
-        ImGuiWindowFlags_NoMove        |
-        ImGuiWindowFlags_NoNav         |
-        ImGuiWindowFlags_NoInputs      |
         ImGuiWindowFlags_AlwaysAutoResize);
 
     ImGui::Text("POS    %.1f  %.1f  %.1f",

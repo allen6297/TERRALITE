@@ -109,8 +109,12 @@ void Game::populateFaceTextures() {
     }
 }
 
-Game::Game(GameData gameData, std::string assetsRoot)
-    : assetsRoot_(std::move(assetsRoot)), gameData_(std::move(gameData)) {
+Game::Game(GameData gameData, std::string assetsRoot, NetworkManager* network)
+    : assetsRoot_(std::move(assetsRoot)), gameData_(std::move(gameData)), network_(network) {
+    if (network_ != nullptr && network_->mode() == NetworkManager::Mode::Server) {
+        network_->setExternalBlockAuthority(true);
+    }
+
     for (const auto& [blockId, block] : gameData_.blocks) {
         if (!block.modelPath.empty()) {
             modelManager_.load(block.modelPath, assetsRoot_);

@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 project(VoxelGame LANGUAGES CXX)
 include(FetchContent)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # Allow older third-party CMakeLists (e.g. miniz) that declare cmake_minimum < 3.5
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 
@@ -37,6 +39,14 @@ FetchContent_Declare(
     GIT_SHALLOW    TRUE
 )
 FetchContent_MakeAvailable(miniz)
+
+FetchContent_Declare(
+    enet
+    GIT_REPOSITORY https://github.com/lsalzman/enet.git
+    GIT_TAG        v1.3.18
+    GIT_SHALLOW    TRUE
+)
+FetchContent_MakeAvailable(enet)
 
 # ── FreeType (required by RmlUI font engine) ──────────────────────────────────
 find_package(Freetype QUIET)
@@ -173,6 +183,7 @@ add_executable(VoxelGame
     src/game/GameRender.cpp
     src/game/GameUpdate.cpp
     src/Math.cpp
+    src/network/NetworkManager.cpp
     src/player/Inventory.cpp
     src/render/Mesh.cpp
     src/render/ModelManager.cpp
@@ -183,6 +194,7 @@ add_executable(VoxelGame
     src/ui/GameUI.cpp
     src/world/BiomeDefinition.cpp
     src/world/TerrainGenerator.cpp
+    src/world/WorldSimulation.cpp
     src/world/World.cpp
     ${rmlui_SOURCE_DIR}/Backends/RmlUi_Platform_GLFW.cpp
     ${rmlui_SOURCE_DIR}/Backends/RmlUi_Renderer_GL2.cpp
@@ -191,7 +203,8 @@ add_executable(VoxelGame
 )
 target_include_directories(VoxelGame PRIVATE
     include
-    third_party
+        libraries
+    ${enet_SOURCE_DIR}/include
     ${quickjs_SOURCE_DIR}
     ${rmlui_SOURCE_DIR}/Include
     ${rmlui_SOURCE_DIR}/Backends
@@ -200,6 +213,7 @@ target_include_directories(VoxelGame PRIVATE
 )
 target_compile_features(VoxelGame PRIVATE cxx_std_20)
 target_link_libraries(VoxelGame PRIVATE
+    enet
     miniz
     qjs
     ${GLFW_TARGET}
@@ -207,6 +221,23 @@ target_link_libraries(VoxelGame PRIVATE
     RmlUi::Core
     Freetype::Freetype
 )
+if(WIN32)
+    target_link_libraries(VoxelGame PRIVATE ws2_32 winmm)
+endif()
+
+add_executable(VoxelServer
+    src/server/ServerMain.cpp
+    src/network/NetworkManager.cpp
+)
+target_include_directories(VoxelServer PRIVATE
+    include
+    ${enet_SOURCE_DIR}/include
+)
+target_compile_features(VoxelServer PRIVATE cxx_std_20)
+target_link_libraries(VoxelServer PRIVATE enet)
+if(WIN32)
+    target_link_libraries(VoxelServer PRIVATE ws2_32 winmm)
+endif()
 
 # ── Code generation ───────────────────────────────────────────────────────────
 find_program(NODEJS node)

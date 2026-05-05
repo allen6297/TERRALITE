@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 
 #include "data/GameData.hpp"
+#include "network/NetworkManager.hpp"
 #include "Player.hpp"
 #include "render/Mesh.hpp"
 #include "render/ModelManager.hpp"
@@ -16,11 +17,12 @@
 #include "render/TextureManager.hpp"
 #include "world/TerrainGenerator.hpp"
 #include "world/World.hpp"
+#include "world/WorldSimulation.hpp"
 
 namespace voxel {
 class Game {
 public:
-    Game(GameData gameData, std::string assetsRoot);
+    Game(GameData gameData, std::string assetsRoot, NetworkManager* network = nullptr);
     ~Game();
     void update(GLFWwindow* window, float deltaTime);
     void reloadContent();
@@ -58,6 +60,7 @@ private:
     void updateLoadedChunks(const ChunkCoord& playerChunk);
     void launchMeshBuild(const ChunkCoord& coord);
     void collectPending(const ChunkCoord& playerChunk);
+    void applyNetworkBlockChanges();
     void reloadGameData();
     void populateFaceTextures();
 
@@ -66,8 +69,8 @@ private:
     GameData gameData_;
     TextureManager textureManager_;
     ModelManager modelManager_;
-    TerrainGenerator terrainGen_;
-    World world_;
+    NetworkManager* network_ = nullptr;
+    WorldSimulation simulation_;
     std::unordered_map<ChunkCoord, ChunkMesh, ChunkCoordHash> meshes_;
     std::unordered_map<ChunkCoord, std::future<Chunk>, ChunkCoordHash> pendingTerrain_;
     std::unordered_map<std::string, ChunkMesh> iconMeshes_;  // cached single-block meshes for hotbar icons
