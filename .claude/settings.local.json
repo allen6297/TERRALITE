@@ -26,7 +26,22 @@
       "Bash(find /Users/kalob/Documents/CODE/VoxelGame/src -type f \\\\\\(-name *.cpp -o -name *.hpp -o -name *.h \\\\\\))",
       "Bash(cmake --build /Users/kalob/Documents/CODE/VoxelGame/build --parallel 8)",
       "Bash(ls -t ~/Desktop/*.png)",
-      "Bash(cmake --build build --target VoxelGame)"
+      "Bash(cmake --build build --target VoxelGame)",
+      "Bash(find /Users/kalob/Documents/CODE/VoxelGame/src/data -name *.cpp -o -name *.hpp)",
+      "Bash(grep -E \"\\\\.\\(md|MD\\)$\")",
+      "Bash(ls -la /Users/kalob/Documents/CODE/VoxelGame/cmake-build-debug*)",
+      "Bash(du:*)",
+      "Bash(git:*)",
+      "Bash(/dev/null echo:*)",
+      "Bash(head -20 echo \"---\" grep -n \"dataRoot_\\\\|dataRoot\" /Users/kalob/Documents/CODE/VoxelGame/include/game/Game.hpp)",
+      "Bash(grep:*)",
+      "Bash(python3:*)",
+      "Bash(ls -t ~/Desktop/*.png ~/Desktop/*.jpg)",
+      "Bash(for dir:*)",
+      "Bash(do echo:*)",
+      "Read(//Users/kalob/Documents/CODE/VoxelGame/**)",
+      "Bash(done)",
+      "Bash(wc:*)"
     ]
   }
 }

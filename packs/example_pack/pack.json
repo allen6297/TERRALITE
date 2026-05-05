@@ -1,0 +1,7 @@
+{
+  "name": "Example Pack",
+  "version": "0.1.0",
+  "description": "A minimal example mod demonstrating the pack scripting API.",
+  "game_version": "0.1.0",
+  "dependencies": ["base"]
+}

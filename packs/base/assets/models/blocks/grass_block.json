@@ -1,0 +1,7 @@
+{
+    "parent": "models/blocks/cube_column.json",
+    "textures": {
+        "end":  "textures/blocks/dirt.ppm",
+        "side": "textures/blocks/grass.ppm"
+    }
+}

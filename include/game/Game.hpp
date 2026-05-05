@@ -20,7 +20,7 @@
 namespace voxel {
 class Game {
 public:
-    Game(GameData gameData, std::string assetsRoot, std::string dataRoot);
+    Game(GameData gameData, std::string assetsRoot);
     ~Game();
     void update(GLFWwindow* window, float deltaTime);
     void reloadContent();
@@ -62,7 +62,6 @@ private:
     void populateFaceTextures();
 
     std::string assetsRoot_;
-    std::string dataRoot_;
     bool f5WasPressed_ = false;
     GameData gameData_;
     TextureManager textureManager_;

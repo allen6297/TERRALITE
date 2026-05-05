@@ -1,0 +1,30 @@
+StartupEvents.registry('item', event => {
+  event.create('base:dirt')
+    .displayName('Dirt')
+    .stackSize(99)
+    .placesBlock('base:dirt')
+    .icon('textures/items/dirt.png')
+
+  event.create('base:stone')
+    .displayName('Stone')
+    .stackSize(99)
+    .placesBlock('base:stone')
+    .icon('textures/items/stone.png')
+
+  event.create('base:wheat')
+    .displayName('Wheat')
+    .stackSize(99)
+    .icon('textures/blocks/wheat_stage_3.ppm')
+
+  event.create('base:wheat_seeds')
+    .displayName('Wheat Seeds')
+    .stackSize(99)
+    .placesBlock('base:wheat')
+    .icon('textures/blocks/wheat_stage_0.ppm')
+
+  event.create('base:door')
+    .displayName('Door')
+    .stackSize(99)
+    .placesBlock('base:door')
+    .icon('textures/items/dirt.png')
+})

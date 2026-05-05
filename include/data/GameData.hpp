@@ -86,6 +86,15 @@ struct TagDefinition {
     std::string description;  // optional human-readable note
 };
 
+struct RecipeDefinition
+{
+    std::string id;
+    std::string type;
+    std::string output;
+    int count = 1;
+    std::vector<std::string> ingredients;
+};
+
 struct GameData {
     std::unordered_map<std::string, BlockDefinition> blocks;
     std::unordered_map<std::string, ItemDefinition> items;
@@ -112,8 +121,6 @@ struct GameData {
     // Recomputed from model extents after models are loaded; minimum 1.
     int collisionSearchExpansion = 1;
 };
-
-GameData loadGameData(const std::string& dataRoot);
 
 // Assigns state IDs, populates derived look-up tables, and fills the flat
 // solid/liquid arrays.  Call after blocks/items/biomes/blockStates are populated.

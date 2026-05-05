@@ -98,7 +98,7 @@ int main() {
         int fbWidth = 0, fbHeight = 0;
         glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
 
-        voxel::Game   game(std::move(gameData), assetsRoot, "");
+        voxel::Game   game(std::move(gameData), assetsRoot);
         voxel::GameUI ui(window, fbWidth, fbHeight, assetsRoot);
 
         // Forward GLFW events to RmlUI — use window user pointer so lambdas

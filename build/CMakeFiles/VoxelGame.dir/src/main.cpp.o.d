@@ -1217,5 +1217,5 @@ CMakeFiles/VoxelGame.dir/src/main.cpp.o: \
   /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/../Spritesheet.h \
   /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/../Texture.h \
   /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Include/RmlUi/Core/Elements/ElementTabSet.h \
-  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Backends/RmlUi_Platform_GLFW.h \
-  /Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-src/Backends/RmlUi_Renderer_GL2.h
+  /Users/kalob/Documents/CODE/VoxelGame/include/ui/RmlUi_Platform_GLFW.h \
+  /Users/kalob/Documents/CODE/VoxelGame/include/ui/RmlUi_Renderer_GL2.h

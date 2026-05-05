@@ -1,0 +1,7 @@
+{
+  "name": "Base",
+  "version": "0.1.0",
+  "description": "Base game content",
+  "game_version": "0.1.0",
+  "dependencies": []
+}

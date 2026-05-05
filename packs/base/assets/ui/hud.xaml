@@ -1,0 +1,121 @@
+<Grid xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Grid.Resources>
+    <Style x:Key="DebugText" TargetType="TextBlock">
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Margin" Value="0,1"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+
+    <Style x:Key="SlotBorder" TargetType="Border">
+      <Setter Property="Width" Value="48"/>
+      <Setter Property="Height" Value="48"/>
+      <Setter Property="Margin" Value="2,0"/>
+      <Setter Property="Background" Value="#99000000"/>
+      <Setter Property="BorderBrush" Value="#66FFFFFF"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="4"/>
+    </Style>
+
+    <Style x:Key="SlotBorderSelected" TargetType="Border"
+           BasedOn="{StaticResource SlotBorder}">
+      <Setter Property="BorderBrush" Value="White"/>
+      <Setter Property="BorderThickness" Value="2"/>
+    </Style>
+  </Grid.Resources>
+
+  <!-- Debug overlay (top-left) -->
+  <Border HorizontalAlignment="Left" VerticalAlignment="Top"
+          Margin="8" Padding="6,4"
+          Background="#99000000" CornerRadius="4">
+    <StackPanel>
+      <TextBlock x:Name="dbg_pos"    Style="{StaticResource DebugText}" Text="pos: —"/>
+      <TextBlock x:Name="dbg_target" Style="{StaticResource DebugText}" Text="target: —"/>
+      <TextBlock x:Name="dbg_fps"    Style="{StaticResource DebugText}" Text="fps: —"/>
+      <TextBlock x:Name="dbg_chunk"  Style="{StaticResource DebugText}" Text="chunk: —"/>
+      <TextBlock x:Name="dbg_chunks" Style="{StaticResource DebugText}" Text="loaded: —"/>
+      <TextBlock x:Name="dbg_solid"  Style="{StaticResource DebugText}" Text="solid: —"/>
+      <TextBlock x:Name="dbg_faces"  Style="{StaticResource DebugText}" Text="faces: —"/>
+      <TextBlock x:Name="dbg_tris"   Style="{StaticResource DebugText}" Text="tris: —"/>
+      <TextBlock x:Name="dbg_biome"  Style="{StaticResource DebugText}" Text="biome: —"/>
+      <TextBlock x:Name="dbg_temp"   Style="{StaticResource DebugText}" Text="temp: —"/>
+      <TextBlock x:Name="dbg_hum"    Style="{StaticResource DebugText}" Text="hum: —"/>
+      <TextBlock x:Name="dbg_rain"   Style="{StaticResource DebugText}" Text="rain: —"/>
+      <TextBlock x:Name="dbg_elev"   Style="{StaticResource DebugText}" Text="elev: —"/>
+      <TextBlock x:Name="dbg_drain"  Style="{StaticResource DebugText}" Text="drain: —"/>
+      <TextBlock x:Name="dbg_wtbl"   Style="{StaticResource DebugText}" Text="wtbl: —"/>
+    </StackPanel>
+  </Border>
+
+  <!-- Hotbar (bottom-center) -->
+  <StackPanel HorizontalAlignment="Center" VerticalAlignment="Bottom"
+              Orientation="Horizontal" Margin="0,0,0,12">
+
+    <Border x:Name="slot_0" Style="{StaticResource SlotBorder}">
+      <Grid>
+        <TextBlock x:Name="slot_0_count" Foreground="White" FontSize="10"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2"/>
+      </Grid>
+    </Border>
+
+    <Border x:Name="slot_1" Style="{StaticResource SlotBorder}">
+      <Grid>
+        <TextBlock x:Name="slot_1_count" Foreground="White" FontSize="10"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2"/>
+      </Grid>
+    </Border>
+
+    <Border x:Name="slot_2" Style="{StaticResource SlotBorder}">
+      <Grid>
+        <TextBlock x:Name="slot_2_count" Foreground="White" FontSize="10"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2"/>
+      </Grid>
+    </Border>
+
+    <Border x:Name="slot_3" Style="{StaticResource SlotBorder}">
+      <Grid>
+        <TextBlock x:Name="slot_3_count" Foreground="White" FontSize="10"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2"/>
+      </Grid>
+    </Border>
+
+    <Border x:Name="slot_4" Style="{StaticResource SlotBorder}">
+      <Grid>
+        <TextBlock x:Name="slot_4_count" Foreground="White" FontSize="10"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2"/>
+      </Grid>
+    </Border>
+
+    <Border x:Name="slot_5" Style="{StaticResource SlotBorder}">
+      <Grid>
+        <TextBlock x:Name="slot_5_count" Foreground="White" FontSize="10"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2"/>
+      </Grid>
+    </Border>
+
+    <Border x:Name="slot_6" Style="{StaticResource SlotBorder}">
+      <Grid>
+        <TextBlock x:Name="slot_6_count" Foreground="White" FontSize="10"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2"/>
+      </Grid>
+    </Border>
+
+    <Border x:Name="slot_7" Style="{StaticResource SlotBorder}">
+      <Grid>
+        <TextBlock x:Name="slot_7_count" Foreground="White" FontSize="10"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2"/>
+      </Grid>
+    </Border>
+
+    <Border x:Name="slot_8" Style="{StaticResource SlotBorder}">
+      <Grid>
+        <TextBlock x:Name="slot_8_count" Foreground="White" FontSize="10"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="2"/>
+      </Grid>
+    </Border>
+
+  </StackPanel>
+
+</Grid>

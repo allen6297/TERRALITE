@@ -70,6 +70,7 @@ set(IMGUI_SOURCES
     ${imgui_SOURCE_DIR}/imgui_widgets.cpp
     ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
     ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl2.cpp
+        src/pack/ScriptBindingCustom.cpp
 )
 
 find_package(glfw3 CONFIG QUIET)
@@ -157,6 +158,7 @@ add_executable(VoxelGame
     ${rmlui_SOURCE_DIR}/Backends/RmlUi_Platform_GLFW.cpp
     ${rmlui_SOURCE_DIR}/Backends/RmlUi_Renderer_GL2.cpp
     ${IMGUI_SOURCES}
+        src/pack/ScriptBindingCustom.cpp
 )
 target_include_directories(VoxelGame PRIVATE
     include

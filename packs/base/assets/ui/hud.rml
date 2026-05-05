@@ -1,0 +1,23 @@
+<rml>
+<head>
+    <title>HUD</title>
+    <link type="text/rcss" href="hud.rcss"/>
+</head>
+<body>
+
+    <!-- Hotbar -->
+    <div id="hotbar">
+        <div class="hb-slot" id="slot-0"><div class="hb-bg" id="slot-0-bg"></div><span class="hb-count" id="slot-0-count"></span></div>
+        <div class="hb-slot" id="slot-1"><div class="hb-bg" id="slot-1-bg"></div><span class="hb-count" id="slot-1-count"></span></div>
+        <div class="hb-slot" id="slot-2"><div class="hb-bg" id="slot-2-bg"></div><span class="hb-count" id="slot-2-count"></span></div>
+        <div class="hb-slot" id="slot-3"><div class="hb-bg" id="slot-3-bg"></div><span class="hb-count" id="slot-3-count"></span></div>
+        <div class="hb-slot" id="slot-4"><div class="hb-bg" id="slot-4-bg"></div><span class="hb-count" id="slot-4-count"></span></div>
+        <div class="hb-slot" id="slot-5"><div class="hb-bg" id="slot-5-bg"></div><span class="hb-count" id="slot-5-count"></span></div>
+        <div class="hb-slot" id="slot-6"><div class="hb-bg" id="slot-6-bg"></div><span class="hb-count" id="slot-6-count"></span></div>
+        <div class="hb-slot" id="slot-7"><div class="hb-bg" id="slot-7-bg"></div><span class="hb-count" id="slot-7-count"></span></div>
+        <div class="hb-slot" id="slot-8"><div class="hb-bg" id="slot-8-bg"></div><span class="hb-count" id="slot-8-count"></span></div>
+    </div>
+
+
+</body>
+</rml>
