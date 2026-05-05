@@ -1,14 +1,15 @@
 #include <GLFW/glfw3.h>
 
 #include <algorithm>
-#include <cstdlib>
 #include <filesystem>
 #include <iostream>
 #include <string>
-#include <vector>
 
 #include "data/GameData.hpp"
 #include "game/Game.hpp"
+#include "pack/AssetPackManager.hpp"
+#include "pack/PackManager.hpp"
+#include "pack/ScriptManager.hpp"
 #include "ui/GameUI.hpp"
 
 namespace {
@@ -16,56 +17,16 @@ std::filesystem::path findProjectRoot() {
     std::filesystem::path current = std::filesystem::current_path();
 
     while (!current.empty()) {
-        const auto dataDir = current / "data";
-        const auto assetsDir = current / "assets";
-        if (std::filesystem::exists(dataDir) && std::filesystem::exists(assetsDir)) {
+        if (std::filesystem::exists(current / "packs")) {
             return current;
         }
 
         const auto parent = current.parent_path();
-        if (parent == current) {
-            break;
-        }
+        if (parent == current) break;
         current = parent;
     }
 
-    throw std::runtime_error("Could not find project root containing data/ and assets/");
-}
-
-std::filesystem::path findContentEditorExecutable(const std::filesystem::path& projectRoot) {
-    const std::vector<std::filesystem::path> candidates = {
-        projectRoot / "build" / "ContentEditor",
-        projectRoot / "cmake-build-debug" / "ContentEditor",
-        projectRoot / "cmake-build-release" / "ContentEditor",
-        projectRoot / "out" / "build" / "ContentEditor"
-    };
-
-    for (const auto& candidate : candidates) {
-        if (std::filesystem::exists(candidate) && std::filesystem::is_regular_file(candidate)) {
-            return candidate;
-        }
-    }
-
-    return {};
-}
-
-bool launchContentEditor(const std::filesystem::path& projectRoot) {
-    const std::filesystem::path editorExecutable = findContentEditorExecutable(projectRoot);
-    if (editorExecutable.empty()) {
-        std::cerr << "Standalone ContentEditor executable not found. "
-                     "Build the ContentEditor target first.\n";
-        return false;
-    }
-
-    const std::string command =
-        "cd '" + projectRoot.string() + "' && '" + editorExecutable.string() + "' >/dev/null 2>&1 &";
-    const int result = std::system(command.c_str());
-    if (result != 0) {
-        std::cerr << "Failed to launch ContentEditor from " << editorExecutable << ".\n";
-        return false;
-    }
-
-    return true;
+    throw std::runtime_error("Could not find project root containing packs/");
 }
 }  // namespace
 
@@ -80,8 +41,8 @@ int main() {
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
     glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
-    GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
-    const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
+    GLFWmonitor*       primaryMonitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode           = glfwGetVideoMode(primaryMonitor);
     glfwWindowHint(GLFW_RED_BITS,     mode->redBits);
     glfwWindowHint(GLFW_GREEN_BITS,   mode->greenBits);
     glfwWindowHint(GLFW_BLUE_BITS,    mode->blueBits);
@@ -90,13 +51,12 @@ int main() {
     GLFWwindow* window = glfwCreateWindow(
         mode->width, mode->height, "Voxel Game", nullptr, nullptr);
     if (window == nullptr) {
-        std::cerr << "Failed to create the window. Make sure GLFW is installed with Homebrew.\n";
+        std::cerr << "Failed to create the window. Make sure GLFW and an OpenGL driver are installed.\n";
         glfwTerminate();
         return 1;
     }
 
-    int monitorX = 0;
-    int monitorY = 0;
+    int monitorX = 0, monitorY = 0;
     glfwGetMonitorPos(primaryMonitor, &monitorX, &monitorY);
     glfwSetWindowPos(window, monitorX, monitorY);
 
@@ -111,21 +71,35 @@ int main() {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    voxel::GameData gameData;
     try {
+        // ── Pack system ───────────────────────────────────────────────────────
         const std::filesystem::path projectRoot = findProjectRoot();
-        const std::filesystem::path dataRoot = projectRoot / "data";
-        const std::filesystem::path assetsRoot = projectRoot / "assets";
+        const std::filesystem::path packsDir    = projectRoot / "packs";
 
-        gameData = voxel::loadGameData(dataRoot.string());
-        std::cout << "Loaded " << gameData.blocks.size() << " blocks and "
-                  << gameData.items.size() << " items.\n";
+        voxel::PackManager packManager;
+        packManager.discover(packsDir);
 
+        const voxel::Pack* basePack = packManager.findPack("base");
+        if (!basePack) throw std::runtime_error("Required 'base' pack not found in packs/");
+
+        voxel::AssetPackManager assetManager(packManager);
+
+        // Derive legacy path strings from the base pack for Game and GameUI.
+        // These will be replaced with AssetPackManager calls when ScriptManager
+        // is integrated and the internals of Game/GameUI are migrated.
+        const std::string assetsRoot = (basePack->path() / "assets").string();
+
+        // ── Game data ─────────────────────────────────────────────────────────
+        voxel::ScriptManager scriptManager;
+        voxel::GameData gameData = scriptManager.loadGameData(
+            packManager, projectRoot / "engine" / "scripts");
+
+        // ── Game & UI ─────────────────────────────────────────────────────────
         int fbWidth = 0, fbHeight = 0;
         glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
 
-        voxel::Game   game(std::move(gameData), assetsRoot.string(), dataRoot.string());
-        voxel::GameUI ui(window, fbWidth, fbHeight, assetsRoot.string(), dataRoot.string());
+        voxel::Game   game(std::move(gameData), assetsRoot, "");
+        voxel::GameUI ui(window, fbWidth, fbHeight, assetsRoot);
 
         // Forward GLFW events to RmlUI — use window user pointer so lambdas
         // need no captures (required for GLFW's C-style callback signature).
@@ -157,52 +131,41 @@ int main() {
             static_cast<voxel::GameUI*>(glfwGetWindowUserPointer(w))->onScroll(xoff, yoff);
         });
 
-        float lastTime = static_cast<float>(glfwGetTime());
-        bool f6WasPressed = false;
+        float lastTime   = static_cast<float>(glfwGetTime());
+        bool  escWasDown = false;
 
         while (!glfwWindowShouldClose(window)) {
             const float currentTime = static_cast<float>(glfwGetTime());
-            const float deltaTime = std::min(currentTime - lastTime, 0.05f);
+            const float deltaTime   = std::min(currentTime - lastTime, 0.05f);
             lastTime = currentTime;
 
-            const bool f6Pressed = glfwGetKey(window, GLFW_KEY_F6) == GLFW_PRESS;
-            if (f6Pressed && !f6WasPressed) {
-                launchContentEditor(projectRoot);
+            // ESC edge-triggers cursor capture toggle
+            const bool escDown = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+            if (escDown && !escWasDown) {
+                const bool captured =
+                    glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
+                glfwSetInputMode(window, GLFW_CURSOR,
+                    captured ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+                if (!captured && glfwRawMouseMotionSupported())
+                    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
             }
-            f6WasPressed = f6Pressed;
+            escWasDown = escDown;
 
-            if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS && !ui.editorOpen()) {
-                glfwSetWindowShouldClose(window, GLFW_TRUE);
-            }
-
-            if (!ui.editorOpen()) {
-                game.update(window, deltaTime);
-            }
+            game.update(window, deltaTime);
             ui.setDebugData(game.getDebugData());
             ui.setInventory(game.getInventory());
             ui.update();
-            if (ui.consumeReloadRequested()) {
-                game.reloadContent();
-            }
 
             glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
             game.render(fbWidth, fbHeight);
             game.renderHotbarIcons(fbWidth, fbHeight);
-            ui.render();  // drawn on top of the 3D scene
-            if (ui.editorOpen()) {
-                int px = 0, py = 0, pw = 0, ph = 0;
-                if (ui.editorPreviewRect(px, py, pw, ph)) {
-                    if (const auto previewBlockId = ui.editorPreviewBlockId(); previewBlockId.has_value()) {
-                        game.renderBlockPreview(fbWidth, fbHeight, *previewBlockId, px, py, pw, ph);
-                    }
-                }
-            }
+            ui.render();
 
             glfwSwapBuffers(window);
             glfwPollEvents();
         }
     } catch (const std::exception& error) {
-        std::cerr << "Failed to load game data: " << error.what() << '\n';
+        std::cerr << "Fatal error: " << error.what() << '\n';
         glfwDestroyWindow(window);
         glfwTerminate();
         return 1;

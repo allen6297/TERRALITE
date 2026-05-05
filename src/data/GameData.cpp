@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <map>
 #include <sstream>
 #include <stdexcept>
@@ -12,10 +13,10 @@
 namespace voxel {
 namespace {
 constexpr std::array<const char*, 4> kPreferredBlockOrder = {
-    "grass",
-    "dirt",
-    "water",
-    "stone"
+    "base:grass",
+    "base:dirt",
+    "base:water",
+    "base:stone"
 };
 
 const JsonValue& getRequiredField(const JsonValue::Object& object, const std::string& key) {
@@ -443,27 +444,13 @@ std::vector<std::unordered_map<std::string, BlockProperty>> enumerateStates(
 
 }  // namespace
 
-GameData loadGameData(const std::string& dataRoot) {
-    GameData data;
-    const std::filesystem::path root(dataRoot);
-
-    if (!std::filesystem::exists(root)) {
-        throw std::runtime_error("Data root does not exist: " + root.string());
-    }
-
-    loadDefinitions<BlockDefinition>(root / "blocks", data.blocks, parseBlockDefinition);
-    loadDefinitions<ItemDefinition>(root / "items", data.items, parseItemDefinition);
-    loadDefinitions<BlockStateDefinition>(root / "states" / "blocks", data.blockStates, parseBlockStateDefinition);
-    loadDefinitions<BiomeDefinition>(root / "biomes", data.biomes, parseBiomeDefinition);
-
+void finalizeGameData(GameData& data) {
     // Assign state ID ranges — preferred blocks get lower IDs
     std::map<std::string, std::uint16_t> defaultStateIds;
     std::uint16_t nextId = 1;
 
     const auto assignBlock = [&](const std::string& blockId) {
-        if (defaultStateIds.contains(blockId)) {
-            return;
-        }
+        if (defaultStateIds.contains(blockId)) return;
         std::size_t count = 1;
         const auto stateIt = data.blockStates.find(blockId);
         if (stateIt != data.blockStates.end()) {
@@ -479,9 +466,7 @@ GameData loadGameData(const std::string& dataRoot) {
     };
 
     for (const char* preferredId : kPreferredBlockOrder) {
-        if (data.blocks.contains(preferredId)) {
-            assignBlock(preferredId);
-        }
+        if (data.blocks.contains(preferredId)) assignBlock(preferredId);
     }
     for (const auto& [blockId, _] : data.blocks) {
         assignBlock(blockId);
@@ -502,16 +487,34 @@ GameData loadGameData(const std::string& dataRoot) {
                 if (variantIt != stateIt->second.variants.end() && variantIt->second.modelPath.has_value()) {
                     data.stateModelPathById[stateId] = *variantIt->second.modelPath;
                 }
-                data.solidByRuntimeId[stateId] = block.solid;
+                data.solidByRuntimeId[stateId]  = block.solid;
                 data.liquidByRuntimeId[stateId] = (block.material == "liquid");
             }
         } else {
             data.blockIdByStateId[block.runtimeId] = blockId;
-            data.solidByRuntimeId[block.runtimeId] = block.solid;
+            data.solidByRuntimeId[block.runtimeId]  = block.solid;
             data.liquidByRuntimeId[block.runtimeId] = (block.material == "liquid");
         }
     }
+}
 
+GameData loadGameData(const std::string& dataRoot) {
+    GameData data;
+
+    if (dataRoot.empty()) return data;
+
+    const std::filesystem::path root(dataRoot);
+    if (!std::filesystem::exists(root)) {
+        std::cerr << "loadGameData: data root not found: " << root << " (skipping)\n";
+        return data;
+    }
+
+    loadDefinitions<BlockDefinition>(root / "blocks", data.blocks, parseBlockDefinition);
+    loadDefinitions<ItemDefinition>(root / "items", data.items, parseItemDefinition);
+    loadDefinitions<BlockStateDefinition>(root / "states" / "blocks", data.blockStates, parseBlockStateDefinition);
+    loadDefinitions<BiomeDefinition>(root / "biomes", data.biomes, parseBiomeDefinition);
+
+    finalizeGameData(data);
     return data;
 }
 

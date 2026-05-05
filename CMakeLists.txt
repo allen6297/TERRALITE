@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.20)
 project(VoxelGame LANGUAGES CXX)
 include(FetchContent)
 
+# Allow older third-party CMakeLists (e.g. miniz) that declare cmake_minimum < 3.5
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -11,19 +14,29 @@ if(APPLE)
         "/opt/homebrew"
         "/opt/homebrew/opt/glfw"
         "/opt/homebrew/opt/freetype"
-        "/opt/homebrew/opt/qt"
-        "/opt/homebrew/opt/qt/lib/cmake"
-        "/opt/homebrew/opt/qt@6"
-        "/opt/homebrew/opt/qt@6/lib/cmake"
         "/usr/local"
         "/usr/local/opt/glfw"
         "/usr/local/opt/freetype"
-        "/usr/local/opt/qt"
-        "/usr/local/opt/qt/lib/cmake"
-        "/usr/local/opt/qt@6"
-        "/usr/local/opt/qt@6/lib/cmake"
     )
 endif()
+
+# ── QuickJS-NG (JavaScript engine for ScriptManager) ─────────────────────────
+FetchContent_Declare(
+    quickjs
+    GIT_REPOSITORY https://github.com/quickjs-ng/quickjs.git
+    GIT_TAG        v0.9.0
+    GIT_SHALLOW    TRUE
+)
+FetchContent_MakeAvailable(quickjs)
+
+# ── miniz (zip reading for pack system) ──────────────────────────────────────
+FetchContent_Declare(
+    miniz
+    GIT_REPOSITORY https://github.com/richgel999/miniz.git
+    GIT_TAG        3.0.2
+    GIT_SHALLOW    TRUE
+)
+FetchContent_MakeAvailable(miniz)
 
 # ── FreeType (required by RmlUI font engine) ──────────────────────────────────
 find_package(Freetype REQUIRED)
@@ -41,6 +54,24 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(RmlUi)
 
+# ── Dear ImGui (debug overlay) ────────────────────────────────────────────────
+FetchContent_Declare(
+    imgui
+    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    GIT_TAG        v1.91.0
+    GIT_SHALLOW    TRUE
+)
+FetchContent_MakeAvailable(imgui)
+
+set(IMGUI_SOURCES
+    ${imgui_SOURCE_DIR}/imgui.cpp
+    ${imgui_SOURCE_DIR}/imgui_draw.cpp
+    ${imgui_SOURCE_DIR}/imgui_tables.cpp
+    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl2.cpp
+)
+
 find_package(glfw3 CONFIG QUIET)
 
 if(TARGET glfw)
@@ -54,6 +85,8 @@ else()
             /opt/homebrew/opt/glfw/include
             /usr/local/include
             /usr/local/opt/glfw/include
+            "C:/Program Files/GLFW/include"
+            "C:/glfw/include"
         REQUIRED
     )
     find_library(GLFW_LIBRARY glfw
@@ -62,6 +95,8 @@ else()
             /opt/homebrew/opt/glfw/lib
             /usr/local/lib
             /usr/local/opt/glfw/lib
+            "C:/Program Files/GLFW/lib"
+            "C:/glfw/lib"
         REQUIRED
     )
 
@@ -73,14 +108,34 @@ else()
     set(GLFW_TARGET glfw_manual)
 endif()
 
-find_library(OPENGL_FRAMEWORK OpenGL REQUIRED)
-find_library(COCOA_FRAMEWORK Cocoa REQUIRED)
-find_library(IOKIT_FRAMEWORK IOKit REQUIRED)
-find_library(COREVIDEO_FRAMEWORK CoreVideo REQUIRED)
+# ── Platform-specific OpenGL and windowing libraries ──────────────────────────
+if(APPLE)
+    find_library(OPENGL_FRAMEWORK OpenGL REQUIRED)
+    find_library(COCOA_FRAMEWORK   Cocoa REQUIRED)
+    find_library(IOKIT_FRAMEWORK   IOKit REQUIRED)
+    find_library(COREVIDEO_FRAMEWORK CoreVideo REQUIRED)
+    set(PLATFORM_LIBS
+        ${OPENGL_FRAMEWORK}
+        ${COCOA_FRAMEWORK}
+        ${IOKIT_FRAMEWORK}
+        ${COREVIDEO_FRAMEWORK}
+    )
+elseif(WIN32)
+    set(PLATFORM_LIBS opengl32)
+else()  # Linux / BSD
+    find_package(OpenGL REQUIRED)
+    set(PLATFORM_LIBS OpenGL::GL dl)
+endif()
 
 add_executable(VoxelGame
     src/data/GameData.cpp
     src/data/JsonValue.cpp
+    src/pack/Pack.cpp
+    src/pack/PackManager.cpp
+    src/pack/AssetPackManager.cpp
+    src/pack/ScriptManager.cpp
+    src/pack/ScriptBindingsCustom.cpp
+    src/pack/generated/ParseBindings.cpp
     src/main.cpp
     src/game/Game.cpp
     src/game/GameBlocks.cpp
@@ -99,65 +154,72 @@ add_executable(VoxelGame
     src/world/BiomeDefinition.cpp
     src/world/TerrainGenerator.cpp
     src/world/World.cpp
-    # RmlUI GL2 + GLFW backends (local copies with macOS fixes)
-    src/ui/RmlUi_Renderer_GL2.cpp
-    src/ui/RmlUi_Platform_GLFW.cpp
+    ${rmlui_SOURCE_DIR}/Backends/RmlUi_Platform_GLFW.cpp
+    ${rmlui_SOURCE_DIR}/Backends/RmlUi_Renderer_GL2.cpp
+    ${IMGUI_SOURCES}
 )
 target_include_directories(VoxelGame PRIVATE
     include
     third_party
+    ${quickjs_SOURCE_DIR}
     ${rmlui_SOURCE_DIR}/Include
     ${rmlui_SOURCE_DIR}/Backends
+    ${imgui_SOURCE_DIR}
+    ${imgui_SOURCE_DIR}/backends
 )
 target_compile_features(VoxelGame PRIVATE cxx_std_20)
 target_link_libraries(VoxelGame PRIVATE
+    miniz
+    qjs
     ${GLFW_TARGET}
-    ${OPENGL_FRAMEWORK}
-    ${COCOA_FRAMEWORK}
-    ${IOKIT_FRAMEWORK}
-    ${COREVIDEO_FRAMEWORK}
+    ${PLATFORM_LIBS}
     RmlUi::Core
+    Freetype::Freetype
 )
 
-# Copy the bundled Lato font from RmlUI samples so there's no manual setup
-add_custom_command(TARGET VoxelGame POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E make_directory
-        "${CMAKE_SOURCE_DIR}/assets/ui/fonts"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${rmlui_SOURCE_DIR}/Samples/assets/LatoLatin-Regular.ttf"
-        "${CMAKE_SOURCE_DIR}/assets/ui/fonts/LatoLatin-Regular.ttf"
-    COMMENT "Copying RmlUI sample font to assets/ui/fonts/"
-)
+# ── Code generation ───────────────────────────────────────────────────────────
+find_program(NODEJS node)
+if(NODEJS)
+    add_custom_target(generate_bindings
+        COMMAND ${NODEJS} ${CMAKE_SOURCE_DIR}/tools/codegen/generate.js
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        SOURCES
+            ${CMAKE_SOURCE_DIR}/tools/codegen/generate.js
+            ${CMAKE_SOURCE_DIR}/tools/codegen/schema/block.js
+            ${CMAKE_SOURCE_DIR}/tools/codegen/schema/item.js
+            ${CMAKE_SOURCE_DIR}/tools/codegen/schema/biome.js
+        COMMENT "Regenerating parse bindings and voxel.d.ts from schema (cmake --build . --target generate_bindings)"
+    )
+else()
+    message(STATUS "Node.js not found — using pre-generated bindings (run node tools/codegen/generate.js to regenerate)")
+endif()
 
 if(APPLE)
     target_compile_definitions(VoxelGame PRIVATE GL_SILENCE_DEPRECATION)
 endif()
 
-option(BUILD_CONTENT_EDITOR "Build the standalone Qt content editor if Qt6 Widgets/WebEngine are available" ON)
 
-if(BUILD_CONTENT_EDITOR)
-    set(CMAKE_AUTOMOC ON)
-    set(CMAKE_AUTORCC ON)
-    set(CMAKE_AUTOUIC ON)
+# ── Install & CPack (distributable package) ───────────────────────────────────
+install(TARGETS VoxelGame
+    RUNTIME DESTINATION .   # Windows/Linux: place exe at package root
+    BUNDLE  DESTINATION .   # macOS: place .app at package root
+)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/packs/ DESTINATION packs)
 
-    find_package(Qt6 COMPONENTS Widgets WebEngineWidgets WebChannel QUIET)
-    if(Qt6_FOUND)
-        add_executable(ContentEditor
-            tools/content_editor/main.cpp
-            tools/content_editor/MainWindow.cpp
-            src/data/JsonValue.cpp
-        )
-        target_include_directories(ContentEditor PRIVATE
-            include
-            tools/content_editor
-        )
-        target_link_libraries(ContentEditor PRIVATE
-            Qt6::Widgets
-            Qt6::WebEngineWidgets
-            Qt6::WebChannel
-        )
-        target_compile_features(ContentEditor PRIVATE cxx_std_20)
-    else()
-        message(STATUS "Qt6 Widgets/WebEngine not found; skipping ContentEditor target")
-    endif()
+set(CPACK_PACKAGE_NAME        "VoxelGame")
+set(CPACK_PACKAGE_VERSION     "0.1.0")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "A voxel survival game")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY   "VoxelGame")
+
+if(APPLE)
+    set(CPACK_GENERATOR "DragNDrop")
+elseif(WIN32)
+    # Produces both a ZIP and an NSIS installer (NSIS must be installed)
+    set(CPACK_GENERATOR "ZIP;NSIS")
+    set(CPACK_NSIS_DISPLAY_NAME "VoxelGame")
+    set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL ON)
+else()
+    set(CPACK_GENERATOR "TGZ")
 endif()
+
+include(CPack)

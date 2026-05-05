@@ -1,7 +1,0 @@
-{
-  "icon": "textures/items/dirt.png",
-  "id": "dirt",
-  "name": "Dirt",
-  "placeableBlock": "dirt",
-  "stackSize": 99.0
-}

@@ -14,9 +14,25 @@
 # EXTERNAL cache entries
 ########################
 
+//Amalgamate sources into miniz.h/c
+AMALGAMATE_SOURCES:BOOL=OFF
+
 //Build the standalone Qt content editor if Qt6 Widgets/WebEngine
 // are available
 BUILD_CONTENT_EDITOR:BOOL=ON
+
+//Build examples
+BUILD_EXAMPLES:BOOL=OFF
+
+//Build fuzz targets
+BUILD_FUZZERS:BOOL=OFF
+
+//Build a header-only version
+BUILD_HEADER_ONLY:BOOL=OFF
+
+BUILD_QJS_CLI:BOOL=OFF
+
+BUILD_QJS_COMPILER:BOOL=OFF
 
 //CMake standard option. Choose whether to build shared RmlUi libraries.
 BUILD_SHARED_LIBS:BOOL=OFF
@@ -292,8 +308,29 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 //Path to a library.
 COCOA_FRAMEWORK:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Cocoa.framework
 
+//Test COMPILER_SUPPORTS_Wformat=2
+COMPILER_SUPPORTS_Wformat:UNINITIALIZED=2:INTERNAL=1
+
 //Path to a library.
 COREVIDEO_FRAMEWORK:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/CoreVideo.framework
+
+//Enable to build RPM source packages
+CPACK_SOURCE_RPM:BOOL=OFF
+
+//Enable to build TBZ2 source packages
+CPACK_SOURCE_TBZ2:BOOL=ON
+
+//Enable to build TGZ source packages
+CPACK_SOURCE_TGZ:BOOL=ON
+
+//Enable to build TXZ source packages
+CPACK_SOURCE_TXZ:BOOL=ON
+
+//Enable to build TZ source packages
+CPACK_SOURCE_TZ:BOOL=ON
+
+//Enable to build ZIP source packages
+CPACK_SOURCE_ZIP:BOOL=OFF
 
 //Path to a file.
 CUPS_INCLUDE_DIR:PATH=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include
@@ -312,11 +349,32 @@ FETCHCONTENT_FULLY_DISCONNECTED:BOOL=OFF
 FETCHCONTENT_QUIET:BOOL=ON
 
 //When not empty, overrides where to find pre-populated content
+// for imgui
+FETCHCONTENT_SOURCE_DIR_IMGUI:PATH=
+
+//When not empty, overrides where to find pre-populated content
+// for miniz
+FETCHCONTENT_SOURCE_DIR_MINIZ:PATH=
+
+//When not empty, overrides where to find pre-populated content
+// for quickjs
+FETCHCONTENT_SOURCE_DIR_QUICKJS:PATH=
+
+//When not empty, overrides where to find pre-populated content
 // for RmlUi
 FETCHCONTENT_SOURCE_DIR_RMLUI:PATH=
 
 //Enables UPDATE_DISCONNECTED behavior for all content population
 FETCHCONTENT_UPDATES_DISCONNECTED:BOOL=OFF
+
+//Enables UPDATE_DISCONNECTED behavior just for population of imgui
+FETCHCONTENT_UPDATES_DISCONNECTED_IMGUI:BOOL=OFF
+
+//Enables UPDATE_DISCONNECTED behavior just for population of miniz
+FETCHCONTENT_UPDATES_DISCONNECTED_MINIZ:BOOL=OFF
+
+//Enables UPDATE_DISCONNECTED behavior just for population of quickjs
+FETCHCONTENT_UPDATES_DISCONNECTED_QUICKJS:BOOL=OFF
 
 //Enables UPDATE_DISCONNECTED behavior just for population of RmlUi
 FETCHCONTENT_UPDATES_DISCONNECTED_RMLUI:BOOL=OFF
@@ -336,11 +394,20 @@ FREETYPE_LIBRARY_RELEASE:FILEPATH=/opt/homebrew/lib/libfreetype.dylib
 //Git command line client
 GIT_EXECUTABLE:FILEPATH=/usr/bin/git
 
+//Install project
+INSTALL_PROJECT:BOOL=OFF
+
 //Path to a library.
 IOKIT_FRAMEWORK:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/IOKit.framework
 
 //Path to a program.
 MACDEPLOYQT_EXECUTABLE:FILEPATH=/opt/homebrew/bin/macdeployqt
+
+//Path to a library.
+M_LIBRARIES:FILEPATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/libm.tbd
+
+//Path to a program.
+NODEJS:FILEPATH=/opt/homebrew/bin/node
 
 //Path to a library.
 OPENGL_FRAMEWORK:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework
@@ -356,6 +423,33 @@ OPENGL_gl_LIBRARY:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/S
 
 //OpenGL GLU library
 OPENGL_glu_LIBRARY:FILEPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework
+
+//Build a static qjs executable
+QJS_BUILD_CLI_STATIC:BOOL=OFF
+
+//Build the qjs executable with mimalloc
+QJS_BUILD_CLI_WITH_MIMALLOC:BOOL=OFF
+
+//Build the qjs executable with mimalloc (statically linked)
+QJS_BUILD_CLI_WITH_STATIC_MIMALLOC:BOOL=OFF
+
+//Build examples
+QJS_BUILD_EXAMPLES:BOOL=OFF
+
+//Build standard library modules as part of the library
+QJS_BUILD_LIBC:BOOL=OFF
+
+//Enable AddressSanitizer (ASan)
+QJS_ENABLE_ASAN:BOOL=OFF
+
+//Enable MemorySanitizer (MSan)
+QJS_ENABLE_MSAN:BOOL=OFF
+
+//Enable ThreadSanitizer (TSan)
+QJS_ENABLE_TSAN:BOOL=OFF
+
+//Enable UndefinedBehaviorSanitizer (UBSan)
+QJS_ENABLE_UBSAN:BOOL=OFF
 
 //Additional directories where find(Qt6 ...) host Qt components
 // are searched
@@ -552,6 +646,27 @@ Vulkan_LIBRARY:FILEPATH=Vulkan_LIBRARY-NOTFOUND
 //The directory containing a CMake configuration file for glfw3.
 glfw3_DIR:PATH=/opt/homebrew/lib/cmake/glfw3
 
+//Value Computed by CMake
+miniz_BINARY_DIR:STATIC=/Users/kalob/Documents/CODE/VoxelGame/build/_deps/miniz-build
+
+//Value Computed by CMake
+miniz_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+miniz_SOURCE_DIR:STATIC=/Users/kalob/Documents/CODE/VoxelGame/build/_deps/miniz-src
+
+//Dependencies for the target
+qjs_LIB_DEPENDS:STATIC=general;m;
+
+//Value Computed by CMake
+quickjs_BINARY_DIR:STATIC=/Users/kalob/Documents/CODE/VoxelGame/build/_deps/quickjs-build
+
+//Value Computed by CMake
+quickjs_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+quickjs_SOURCE_DIR:STATIC=/Users/kalob/Documents/CODE/VoxelGame/build/_deps/quickjs-src
+
 
 ########################
 # INTERNAL cache entries
@@ -687,7 +802,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=9
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=11
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -732,6 +847,60 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//Compiler support for a deprecated attribute
+COMPILER_HAS_DEPRECATED:INTERNAL=1
+//Test COMPILER_HAS_DEPRECATED_ATTR
+COMPILER_HAS_DEPRECATED_ATTR:INTERNAL=1
+//Test COMPILER_HAS_HIDDEN_INLINE_VISIBILITY
+COMPILER_HAS_HIDDEN_INLINE_VISIBILITY:INTERNAL=1
+//Test COMPILER_HAS_HIDDEN_VISIBILITY
+COMPILER_HAS_HIDDEN_VISIBILITY:INTERNAL=1
+//Test COMPILER_SUPPORTS_/Od
+COMPILER_SUPPORTS_/Od:INTERNAL=
+//Test COMPILER_SUPPORTS_O0
+COMPILER_SUPPORTS_O0:INTERNAL=1
+//Test COMPILER_SUPPORTS_Wall
+COMPILER_SUPPORTS_Wall:INTERNAL=1
+//Test COMPILER_SUPPORTS_Werror
+COMPILER_SUPPORTS_Werror:INTERNAL=1
+//Test COMPILER_SUPPORTS_Wextra
+COMPILER_SUPPORTS_Wextra:INTERNAL=1
+//Test COMPILER_SUPPORTS_Wformat=2
+COMPILER_SUPPORTS_Wformat=2:INTERNAL=1
+//Test COMPILER_SUPPORTS_Wnoarraybounds
+COMPILER_SUPPORTS_Wnoarraybounds:INTERNAL=1
+//Test COMPILER_SUPPORTS_Wnoimplicitfallthrough
+COMPILER_SUPPORTS_Wnoimplicitfallthrough:INTERNAL=1
+//Test COMPILER_SUPPORTS_Wnomissingfieldinitializers
+COMPILER_SUPPORTS_Wnomissingfieldinitializers:INTERNAL=1
+//Test COMPILER_SUPPORTS_Wnosigncompare
+COMPILER_SUPPORTS_Wnosigncompare:INTERNAL=1
+//Test COMPILER_SUPPORTS_Wnostringoptruncation
+COMPILER_SUPPORTS_Wnostringoptruncation:INTERNAL=
+//Test COMPILER_SUPPORTS_Wnounusedbutsetvariable
+COMPILER_SUPPORTS_Wnounusedbutsetvariable:INTERNAL=1
+//Test COMPILER_SUPPORTS_Wnounusedparameter
+COMPILER_SUPPORTS_Wnounusedparameter:INTERNAL=1
+//Test COMPILER_SUPPORTS_Wnounusedresult
+COMPILER_SUPPORTS_Wnounusedresult:INTERNAL=1
+//Test COMPILER_SUPPORTS_fnoomitframepointer
+COMPILER_SUPPORTS_fnoomitframepointer:INTERNAL=1
+//Test COMPILER_SUPPORTS_funsignedchar
+COMPILER_SUPPORTS_funsignedchar:INTERNAL=1
+//Test COMPILER_SUPPORTS_ggdb
+COMPILER_SUPPORTS_ggdb:INTERNAL=1
+//ADVANCED property for variable: CPACK_SOURCE_RPM
+CPACK_SOURCE_RPM-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CPACK_SOURCE_TBZ2
+CPACK_SOURCE_TBZ2-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CPACK_SOURCE_TGZ
+CPACK_SOURCE_TGZ-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CPACK_SOURCE_TXZ
+CPACK_SOURCE_TXZ-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CPACK_SOURCE_TZ
+CPACK_SOURCE_TZ-ADVANCED:INTERNAL=1
+//ADVANCED property for variable: CPACK_SOURCE_ZIP
+CPACK_SOURCE_ZIP-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CUPS_INCLUDE_DIR
 CUPS_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CUPS_LIBRARIES
@@ -740,6 +909,8 @@ CUPS_LIBRARIES-ADVANCED:INTERNAL=1
 FIND_PACKAGE_MESSAGE_DETAILS_Freetype:INTERNAL=[/opt/homebrew/lib/libfreetype.dylib][/Library/Frameworks/Mono.framework/Headers;/opt/homebrew/include/freetype2][v2.14.3()]
 //Details about finding OpenGL
 FIND_PACKAGE_MESSAGE_DETAILS_OpenGL:INTERNAL=[/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework][/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenGL.framework][ ][v()]
+//Details about finding Threads
+FIND_PACKAGE_MESSAGE_DETAILS_Threads:INTERNAL=[TRUE][v()]
 //ADVANCED property for variable: FREETYPE_INCLUDE_DIR_freetype2
 FREETYPE_INCLUDE_DIR_freetype2-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: FREETYPE_INCLUDE_DIR_ft2build

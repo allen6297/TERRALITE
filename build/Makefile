@@ -65,6 +65,26 @@ CMAKE_BINARY_DIR = /Users/kalob/Documents/CODE/VoxelGame/build
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target package
+package: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Run CPack packaging tool..."
+	/opt/homebrew/bin/cpack --config ./CPackConfig.cmake
+.PHONY : package
+
+# Special rule for the target package
+package/fast: package
+.PHONY : package/fast
+
+# Special rule for the target package_source
+package_source:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Run CPack packaging tool for source..."
+	/opt/homebrew/bin/cpack --config ./CPackSourceConfig.cmake
+.PHONY : package_source
+
+# Special rule for the target package_source
+package_source/fast: package_source
+.PHONY : package_source/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake cache editor..."
@@ -175,43 +195,121 @@ VoxelGame/fast:
 .PHONY : VoxelGame/fast
 
 #=============================================================================
-# Target rules for targets named ContentEditor
+# Target rules for targets named generate_bindings
 
 # Build rule for target.
-ContentEditor: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ContentEditor
-.PHONY : ContentEditor
+generate_bindings: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 generate_bindings
+.PHONY : generate_bindings
 
 # fast build rule for target.
-ContentEditor/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/build
-.PHONY : ContentEditor/fast
+generate_bindings/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_bindings.dir/build.make CMakeFiles/generate_bindings.dir/build
+.PHONY : generate_bindings/fast
 
 #=============================================================================
-# Target rules for targets named ContentEditor_autogen_timestamp_deps
+# Target rules for targets named qjs
 
 # Build rule for target.
-ContentEditor_autogen_timestamp_deps: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ContentEditor_autogen_timestamp_deps
-.PHONY : ContentEditor_autogen_timestamp_deps
+qjs: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 qjs
+.PHONY : qjs
 
 # fast build rule for target.
-ContentEditor_autogen_timestamp_deps/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor_autogen_timestamp_deps.dir/build.make CMakeFiles/ContentEditor_autogen_timestamp_deps.dir/build
-.PHONY : ContentEditor_autogen_timestamp_deps/fast
+qjs/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/quickjs-build/CMakeFiles/qjs.dir/build.make _deps/quickjs-build/CMakeFiles/qjs.dir/build
+.PHONY : qjs/fast
 
 #=============================================================================
-# Target rules for targets named ContentEditor_autogen
+# Target rules for targets named qjsc
 
 # Build rule for target.
-ContentEditor_autogen: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ContentEditor_autogen
-.PHONY : ContentEditor_autogen
+qjsc: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 qjsc
+.PHONY : qjsc
 
 # fast build rule for target.
-ContentEditor_autogen/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor_autogen.dir/build.make CMakeFiles/ContentEditor_autogen.dir/build
-.PHONY : ContentEditor_autogen/fast
+qjsc/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/quickjs-build/CMakeFiles/qjsc.dir/build.make _deps/quickjs-build/CMakeFiles/qjsc.dir/build
+.PHONY : qjsc/fast
+
+#=============================================================================
+# Target rules for targets named qjs_exe
+
+# Build rule for target.
+qjs_exe: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 qjs_exe
+.PHONY : qjs_exe
+
+# fast build rule for target.
+qjs_exe/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/quickjs-build/CMakeFiles/qjs_exe.dir/build.make _deps/quickjs-build/CMakeFiles/qjs_exe.dir/build
+.PHONY : qjs_exe/fast
+
+#=============================================================================
+# Target rules for targets named run-test262
+
+# Build rule for target.
+run-test262: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 run-test262
+.PHONY : run-test262
+
+# fast build rule for target.
+run-test262/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/quickjs-build/CMakeFiles/run-test262.dir/build.make _deps/quickjs-build/CMakeFiles/run-test262.dir/build
+.PHONY : run-test262/fast
+
+#=============================================================================
+# Target rules for targets named api-test
+
+# Build rule for target.
+api-test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 api-test
+.PHONY : api-test
+
+# fast build rule for target.
+api-test/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/quickjs-build/CMakeFiles/api-test.dir/build.make _deps/quickjs-build/CMakeFiles/api-test.dir/build
+.PHONY : api-test/fast
+
+#=============================================================================
+# Target rules for targets named unicode_gen
+
+# Build rule for target.
+unicode_gen: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 unicode_gen
+.PHONY : unicode_gen
+
+# fast build rule for target.
+unicode_gen/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/quickjs-build/CMakeFiles/unicode_gen.dir/build.make _deps/quickjs-build/CMakeFiles/unicode_gen.dir/build
+.PHONY : unicode_gen/fast
+
+#=============================================================================
+# Target rules for targets named function_source
+
+# Build rule for target.
+function_source: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 function_source
+.PHONY : function_source
+
+# fast build rule for target.
+function_source/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/quickjs-build/CMakeFiles/function_source.dir/build.make _deps/quickjs-build/CMakeFiles/function_source.dir/build
+.PHONY : function_source/fast
+
+#=============================================================================
+# Target rules for targets named miniz
+
+# Build rule for target.
+miniz: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 miniz
+.PHONY : miniz
+
+# fast build rule for target.
+miniz/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/miniz-build/CMakeFiles/miniz.dir/build.make _deps/miniz-build/CMakeFiles/miniz.dir/build
+.PHONY : miniz/fast
 
 #=============================================================================
 # Target rules for targets named rmlui_core
@@ -239,29 +337,197 @@ rmlui_debugger/fast:
 	$(MAKE) $(MAKESILENT) -f _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/build.make _deps/rmlui-build/Source/Debugger/CMakeFiles/rmlui_debugger.dir/build
 .PHONY : rmlui_debugger/fast
 
-ContentEditor_autogen/mocs_compilation.o: ContentEditor_autogen/mocs_compilation.cpp.o
-.PHONY : ContentEditor_autogen/mocs_compilation.o
+_deps/imgui-src/backends/imgui_impl_glfw.o: _deps/imgui-src/backends/imgui_impl_glfw.cpp.o
+.PHONY : _deps/imgui-src/backends/imgui_impl_glfw.o
 
 # target to build an object file
-ContentEditor_autogen/mocs_compilation.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/ContentEditor_autogen/mocs_compilation.cpp.o
-.PHONY : ContentEditor_autogen/mocs_compilation.cpp.o
+_deps/imgui-src/backends/imgui_impl_glfw.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/backends/imgui_impl_glfw.cpp.o
+.PHONY : _deps/imgui-src/backends/imgui_impl_glfw.cpp.o
 
-ContentEditor_autogen/mocs_compilation.i: ContentEditor_autogen/mocs_compilation.cpp.i
-.PHONY : ContentEditor_autogen/mocs_compilation.i
+_deps/imgui-src/backends/imgui_impl_glfw.i: _deps/imgui-src/backends/imgui_impl_glfw.cpp.i
+.PHONY : _deps/imgui-src/backends/imgui_impl_glfw.i
 
 # target to preprocess a source file
-ContentEditor_autogen/mocs_compilation.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/ContentEditor_autogen/mocs_compilation.cpp.i
-.PHONY : ContentEditor_autogen/mocs_compilation.cpp.i
+_deps/imgui-src/backends/imgui_impl_glfw.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/backends/imgui_impl_glfw.cpp.i
+.PHONY : _deps/imgui-src/backends/imgui_impl_glfw.cpp.i
 
-ContentEditor_autogen/mocs_compilation.s: ContentEditor_autogen/mocs_compilation.cpp.s
-.PHONY : ContentEditor_autogen/mocs_compilation.s
+_deps/imgui-src/backends/imgui_impl_glfw.s: _deps/imgui-src/backends/imgui_impl_glfw.cpp.s
+.PHONY : _deps/imgui-src/backends/imgui_impl_glfw.s
 
 # target to generate assembly for a file
-ContentEditor_autogen/mocs_compilation.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/ContentEditor_autogen/mocs_compilation.cpp.s
-.PHONY : ContentEditor_autogen/mocs_compilation.cpp.s
+_deps/imgui-src/backends/imgui_impl_glfw.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/backends/imgui_impl_glfw.cpp.s
+.PHONY : _deps/imgui-src/backends/imgui_impl_glfw.cpp.s
+
+_deps/imgui-src/backends/imgui_impl_opengl2.o: _deps/imgui-src/backends/imgui_impl_opengl2.cpp.o
+.PHONY : _deps/imgui-src/backends/imgui_impl_opengl2.o
+
+# target to build an object file
+_deps/imgui-src/backends/imgui_impl_opengl2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/backends/imgui_impl_opengl2.cpp.o
+.PHONY : _deps/imgui-src/backends/imgui_impl_opengl2.cpp.o
+
+_deps/imgui-src/backends/imgui_impl_opengl2.i: _deps/imgui-src/backends/imgui_impl_opengl2.cpp.i
+.PHONY : _deps/imgui-src/backends/imgui_impl_opengl2.i
+
+# target to preprocess a source file
+_deps/imgui-src/backends/imgui_impl_opengl2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/backends/imgui_impl_opengl2.cpp.i
+.PHONY : _deps/imgui-src/backends/imgui_impl_opengl2.cpp.i
+
+_deps/imgui-src/backends/imgui_impl_opengl2.s: _deps/imgui-src/backends/imgui_impl_opengl2.cpp.s
+.PHONY : _deps/imgui-src/backends/imgui_impl_opengl2.s
+
+# target to generate assembly for a file
+_deps/imgui-src/backends/imgui_impl_opengl2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/backends/imgui_impl_opengl2.cpp.s
+.PHONY : _deps/imgui-src/backends/imgui_impl_opengl2.cpp.s
+
+_deps/imgui-src/imgui.o: _deps/imgui-src/imgui.cpp.o
+.PHONY : _deps/imgui-src/imgui.o
+
+# target to build an object file
+_deps/imgui-src/imgui.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/imgui.cpp.o
+.PHONY : _deps/imgui-src/imgui.cpp.o
+
+_deps/imgui-src/imgui.i: _deps/imgui-src/imgui.cpp.i
+.PHONY : _deps/imgui-src/imgui.i
+
+# target to preprocess a source file
+_deps/imgui-src/imgui.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/imgui.cpp.i
+.PHONY : _deps/imgui-src/imgui.cpp.i
+
+_deps/imgui-src/imgui.s: _deps/imgui-src/imgui.cpp.s
+.PHONY : _deps/imgui-src/imgui.s
+
+# target to generate assembly for a file
+_deps/imgui-src/imgui.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/imgui.cpp.s
+.PHONY : _deps/imgui-src/imgui.cpp.s
+
+_deps/imgui-src/imgui_draw.o: _deps/imgui-src/imgui_draw.cpp.o
+.PHONY : _deps/imgui-src/imgui_draw.o
+
+# target to build an object file
+_deps/imgui-src/imgui_draw.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/imgui_draw.cpp.o
+.PHONY : _deps/imgui-src/imgui_draw.cpp.o
+
+_deps/imgui-src/imgui_draw.i: _deps/imgui-src/imgui_draw.cpp.i
+.PHONY : _deps/imgui-src/imgui_draw.i
+
+# target to preprocess a source file
+_deps/imgui-src/imgui_draw.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/imgui_draw.cpp.i
+.PHONY : _deps/imgui-src/imgui_draw.cpp.i
+
+_deps/imgui-src/imgui_draw.s: _deps/imgui-src/imgui_draw.cpp.s
+.PHONY : _deps/imgui-src/imgui_draw.s
+
+# target to generate assembly for a file
+_deps/imgui-src/imgui_draw.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/imgui_draw.cpp.s
+.PHONY : _deps/imgui-src/imgui_draw.cpp.s
+
+_deps/imgui-src/imgui_tables.o: _deps/imgui-src/imgui_tables.cpp.o
+.PHONY : _deps/imgui-src/imgui_tables.o
+
+# target to build an object file
+_deps/imgui-src/imgui_tables.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/imgui_tables.cpp.o
+.PHONY : _deps/imgui-src/imgui_tables.cpp.o
+
+_deps/imgui-src/imgui_tables.i: _deps/imgui-src/imgui_tables.cpp.i
+.PHONY : _deps/imgui-src/imgui_tables.i
+
+# target to preprocess a source file
+_deps/imgui-src/imgui_tables.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/imgui_tables.cpp.i
+.PHONY : _deps/imgui-src/imgui_tables.cpp.i
+
+_deps/imgui-src/imgui_tables.s: _deps/imgui-src/imgui_tables.cpp.s
+.PHONY : _deps/imgui-src/imgui_tables.s
+
+# target to generate assembly for a file
+_deps/imgui-src/imgui_tables.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/imgui_tables.cpp.s
+.PHONY : _deps/imgui-src/imgui_tables.cpp.s
+
+_deps/imgui-src/imgui_widgets.o: _deps/imgui-src/imgui_widgets.cpp.o
+.PHONY : _deps/imgui-src/imgui_widgets.o
+
+# target to build an object file
+_deps/imgui-src/imgui_widgets.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/imgui_widgets.cpp.o
+.PHONY : _deps/imgui-src/imgui_widgets.cpp.o
+
+_deps/imgui-src/imgui_widgets.i: _deps/imgui-src/imgui_widgets.cpp.i
+.PHONY : _deps/imgui-src/imgui_widgets.i
+
+# target to preprocess a source file
+_deps/imgui-src/imgui_widgets.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/imgui_widgets.cpp.i
+.PHONY : _deps/imgui-src/imgui_widgets.cpp.i
+
+_deps/imgui-src/imgui_widgets.s: _deps/imgui-src/imgui_widgets.cpp.s
+.PHONY : _deps/imgui-src/imgui_widgets.s
+
+# target to generate assembly for a file
+_deps/imgui-src/imgui_widgets.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/imgui-src/imgui_widgets.cpp.s
+.PHONY : _deps/imgui-src/imgui_widgets.cpp.s
+
+_deps/rmlui-src/Backends/RmlUi_Platform_GLFW.o: _deps/rmlui-src/Backends/RmlUi_Platform_GLFW.cpp.o
+.PHONY : _deps/rmlui-src/Backends/RmlUi_Platform_GLFW.o
+
+# target to build an object file
+_deps/rmlui-src/Backends/RmlUi_Platform_GLFW.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/rmlui-src/Backends/RmlUi_Platform_GLFW.cpp.o
+.PHONY : _deps/rmlui-src/Backends/RmlUi_Platform_GLFW.cpp.o
+
+_deps/rmlui-src/Backends/RmlUi_Platform_GLFW.i: _deps/rmlui-src/Backends/RmlUi_Platform_GLFW.cpp.i
+.PHONY : _deps/rmlui-src/Backends/RmlUi_Platform_GLFW.i
+
+# target to preprocess a source file
+_deps/rmlui-src/Backends/RmlUi_Platform_GLFW.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/rmlui-src/Backends/RmlUi_Platform_GLFW.cpp.i
+.PHONY : _deps/rmlui-src/Backends/RmlUi_Platform_GLFW.cpp.i
+
+_deps/rmlui-src/Backends/RmlUi_Platform_GLFW.s: _deps/rmlui-src/Backends/RmlUi_Platform_GLFW.cpp.s
+.PHONY : _deps/rmlui-src/Backends/RmlUi_Platform_GLFW.s
+
+# target to generate assembly for a file
+_deps/rmlui-src/Backends/RmlUi_Platform_GLFW.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/rmlui-src/Backends/RmlUi_Platform_GLFW.cpp.s
+.PHONY : _deps/rmlui-src/Backends/RmlUi_Platform_GLFW.cpp.s
+
+_deps/rmlui-src/Backends/RmlUi_Renderer_GL2.o: _deps/rmlui-src/Backends/RmlUi_Renderer_GL2.cpp.o
+.PHONY : _deps/rmlui-src/Backends/RmlUi_Renderer_GL2.o
+
+# target to build an object file
+_deps/rmlui-src/Backends/RmlUi_Renderer_GL2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/rmlui-src/Backends/RmlUi_Renderer_GL2.cpp.o
+.PHONY : _deps/rmlui-src/Backends/RmlUi_Renderer_GL2.cpp.o
+
+_deps/rmlui-src/Backends/RmlUi_Renderer_GL2.i: _deps/rmlui-src/Backends/RmlUi_Renderer_GL2.cpp.i
+.PHONY : _deps/rmlui-src/Backends/RmlUi_Renderer_GL2.i
+
+# target to preprocess a source file
+_deps/rmlui-src/Backends/RmlUi_Renderer_GL2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/rmlui-src/Backends/RmlUi_Renderer_GL2.cpp.i
+.PHONY : _deps/rmlui-src/Backends/RmlUi_Renderer_GL2.cpp.i
+
+_deps/rmlui-src/Backends/RmlUi_Renderer_GL2.s: _deps/rmlui-src/Backends/RmlUi_Renderer_GL2.cpp.s
+.PHONY : _deps/rmlui-src/Backends/RmlUi_Renderer_GL2.s
+
+# target to generate assembly for a file
+_deps/rmlui-src/Backends/RmlUi_Renderer_GL2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/_deps/rmlui-src/Backends/RmlUi_Renderer_GL2.cpp.s
+.PHONY : _deps/rmlui-src/Backends/RmlUi_Renderer_GL2.cpp.s
 
 src/Math.o: src/Math.cpp.o
 .PHONY : src/Math.o
@@ -341,7 +607,6 @@ src/data/JsonValue.o: src/data/JsonValue.cpp.o
 # target to build an object file
 src/data/JsonValue.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/data/JsonValue.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/src/data/JsonValue.cpp.o
 .PHONY : src/data/JsonValue.cpp.o
 
 src/data/JsonValue.i: src/data/JsonValue.cpp.i
@@ -350,7 +615,6 @@ src/data/JsonValue.i: src/data/JsonValue.cpp.i
 # target to preprocess a source file
 src/data/JsonValue.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/data/JsonValue.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/src/data/JsonValue.cpp.i
 .PHONY : src/data/JsonValue.cpp.i
 
 src/data/JsonValue.s: src/data/JsonValue.cpp.s
@@ -359,7 +623,6 @@ src/data/JsonValue.s: src/data/JsonValue.cpp.s
 # target to generate assembly for a file
 src/data/JsonValue.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/data/JsonValue.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/src/data/JsonValue.cpp.s
 .PHONY : src/data/JsonValue.cpp.s
 
 src/game/Game.o: src/game/Game.cpp.o
@@ -505,6 +768,150 @@ src/main.s: src/main.cpp.s
 src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
+
+src/pack/AssetPackManager.o: src/pack/AssetPackManager.cpp.o
+.PHONY : src/pack/AssetPackManager.o
+
+# target to build an object file
+src/pack/AssetPackManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/AssetPackManager.cpp.o
+.PHONY : src/pack/AssetPackManager.cpp.o
+
+src/pack/AssetPackManager.i: src/pack/AssetPackManager.cpp.i
+.PHONY : src/pack/AssetPackManager.i
+
+# target to preprocess a source file
+src/pack/AssetPackManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/AssetPackManager.cpp.i
+.PHONY : src/pack/AssetPackManager.cpp.i
+
+src/pack/AssetPackManager.s: src/pack/AssetPackManager.cpp.s
+.PHONY : src/pack/AssetPackManager.s
+
+# target to generate assembly for a file
+src/pack/AssetPackManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/AssetPackManager.cpp.s
+.PHONY : src/pack/AssetPackManager.cpp.s
+
+src/pack/Pack.o: src/pack/Pack.cpp.o
+.PHONY : src/pack/Pack.o
+
+# target to build an object file
+src/pack/Pack.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/Pack.cpp.o
+.PHONY : src/pack/Pack.cpp.o
+
+src/pack/Pack.i: src/pack/Pack.cpp.i
+.PHONY : src/pack/Pack.i
+
+# target to preprocess a source file
+src/pack/Pack.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/Pack.cpp.i
+.PHONY : src/pack/Pack.cpp.i
+
+src/pack/Pack.s: src/pack/Pack.cpp.s
+.PHONY : src/pack/Pack.s
+
+# target to generate assembly for a file
+src/pack/Pack.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/Pack.cpp.s
+.PHONY : src/pack/Pack.cpp.s
+
+src/pack/PackManager.o: src/pack/PackManager.cpp.o
+.PHONY : src/pack/PackManager.o
+
+# target to build an object file
+src/pack/PackManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/PackManager.cpp.o
+.PHONY : src/pack/PackManager.cpp.o
+
+src/pack/PackManager.i: src/pack/PackManager.cpp.i
+.PHONY : src/pack/PackManager.i
+
+# target to preprocess a source file
+src/pack/PackManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/PackManager.cpp.i
+.PHONY : src/pack/PackManager.cpp.i
+
+src/pack/PackManager.s: src/pack/PackManager.cpp.s
+.PHONY : src/pack/PackManager.s
+
+# target to generate assembly for a file
+src/pack/PackManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/PackManager.cpp.s
+.PHONY : src/pack/PackManager.cpp.s
+
+src/pack/ScriptBindingsCustom.o: src/pack/ScriptBindingsCustom.cpp.o
+.PHONY : src/pack/ScriptBindingsCustom.o
+
+# target to build an object file
+src/pack/ScriptBindingsCustom.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/ScriptBindingsCustom.cpp.o
+.PHONY : src/pack/ScriptBindingsCustom.cpp.o
+
+src/pack/ScriptBindingsCustom.i: src/pack/ScriptBindingsCustom.cpp.i
+.PHONY : src/pack/ScriptBindingsCustom.i
+
+# target to preprocess a source file
+src/pack/ScriptBindingsCustom.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/ScriptBindingsCustom.cpp.i
+.PHONY : src/pack/ScriptBindingsCustom.cpp.i
+
+src/pack/ScriptBindingsCustom.s: src/pack/ScriptBindingsCustom.cpp.s
+.PHONY : src/pack/ScriptBindingsCustom.s
+
+# target to generate assembly for a file
+src/pack/ScriptBindingsCustom.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/ScriptBindingsCustom.cpp.s
+.PHONY : src/pack/ScriptBindingsCustom.cpp.s
+
+src/pack/ScriptManager.o: src/pack/ScriptManager.cpp.o
+.PHONY : src/pack/ScriptManager.o
+
+# target to build an object file
+src/pack/ScriptManager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/ScriptManager.cpp.o
+.PHONY : src/pack/ScriptManager.cpp.o
+
+src/pack/ScriptManager.i: src/pack/ScriptManager.cpp.i
+.PHONY : src/pack/ScriptManager.i
+
+# target to preprocess a source file
+src/pack/ScriptManager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/ScriptManager.cpp.i
+.PHONY : src/pack/ScriptManager.cpp.i
+
+src/pack/ScriptManager.s: src/pack/ScriptManager.cpp.s
+.PHONY : src/pack/ScriptManager.s
+
+# target to generate assembly for a file
+src/pack/ScriptManager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/ScriptManager.cpp.s
+.PHONY : src/pack/ScriptManager.cpp.s
+
+src/pack/generated/ParseBindings.o: src/pack/generated/ParseBindings.cpp.o
+.PHONY : src/pack/generated/ParseBindings.o
+
+# target to build an object file
+src/pack/generated/ParseBindings.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/generated/ParseBindings.cpp.o
+.PHONY : src/pack/generated/ParseBindings.cpp.o
+
+src/pack/generated/ParseBindings.i: src/pack/generated/ParseBindings.cpp.i
+.PHONY : src/pack/generated/ParseBindings.i
+
+# target to preprocess a source file
+src/pack/generated/ParseBindings.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/generated/ParseBindings.cpp.i
+.PHONY : src/pack/generated/ParseBindings.cpp.i
+
+src/pack/generated/ParseBindings.s: src/pack/generated/ParseBindings.cpp.s
+.PHONY : src/pack/generated/ParseBindings.s
+
+# target to generate assembly for a file
+src/pack/generated/ParseBindings.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/pack/generated/ParseBindings.cpp.s
+.PHONY : src/pack/generated/ParseBindings.cpp.s
 
 src/player/Inventory.o: src/player/Inventory.cpp.o
 .PHONY : src/player/Inventory.o
@@ -674,54 +1081,6 @@ src/ui/GameUI.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/GameUI.cpp.s
 .PHONY : src/ui/GameUI.cpp.s
 
-src/ui/RmlUi_Platform_GLFW.o: src/ui/RmlUi_Platform_GLFW.cpp.o
-.PHONY : src/ui/RmlUi_Platform_GLFW.o
-
-# target to build an object file
-src/ui/RmlUi_Platform_GLFW.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.o
-.PHONY : src/ui/RmlUi_Platform_GLFW.cpp.o
-
-src/ui/RmlUi_Platform_GLFW.i: src/ui/RmlUi_Platform_GLFW.cpp.i
-.PHONY : src/ui/RmlUi_Platform_GLFW.i
-
-# target to preprocess a source file
-src/ui/RmlUi_Platform_GLFW.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.i
-.PHONY : src/ui/RmlUi_Platform_GLFW.cpp.i
-
-src/ui/RmlUi_Platform_GLFW.s: src/ui/RmlUi_Platform_GLFW.cpp.s
-.PHONY : src/ui/RmlUi_Platform_GLFW.s
-
-# target to generate assembly for a file
-src/ui/RmlUi_Platform_GLFW.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Platform_GLFW.cpp.s
-.PHONY : src/ui/RmlUi_Platform_GLFW.cpp.s
-
-src/ui/RmlUi_Renderer_GL2.o: src/ui/RmlUi_Renderer_GL2.cpp.o
-.PHONY : src/ui/RmlUi_Renderer_GL2.o
-
-# target to build an object file
-src/ui/RmlUi_Renderer_GL2.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.o
-.PHONY : src/ui/RmlUi_Renderer_GL2.cpp.o
-
-src/ui/RmlUi_Renderer_GL2.i: src/ui/RmlUi_Renderer_GL2.cpp.i
-.PHONY : src/ui/RmlUi_Renderer_GL2.i
-
-# target to preprocess a source file
-src/ui/RmlUi_Renderer_GL2.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.i
-.PHONY : src/ui/RmlUi_Renderer_GL2.cpp.i
-
-src/ui/RmlUi_Renderer_GL2.s: src/ui/RmlUi_Renderer_GL2.cpp.s
-.PHONY : src/ui/RmlUi_Renderer_GL2.s
-
-# target to generate assembly for a file
-src/ui/RmlUi_Renderer_GL2.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/ui/RmlUi_Renderer_GL2.cpp.s
-.PHONY : src/ui/RmlUi_Renderer_GL2.cpp.s
-
 src/world/BiomeDefinition.o: src/world/BiomeDefinition.cpp.o
 .PHONY : src/world/BiomeDefinition.o
 
@@ -794,54 +1153,6 @@ src/world/World.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/VoxelGame.dir/build.make CMakeFiles/VoxelGame.dir/src/world/World.cpp.s
 .PHONY : src/world/World.cpp.s
 
-tools/content_editor/MainWindow.o: tools/content_editor/MainWindow.cpp.o
-.PHONY : tools/content_editor/MainWindow.o
-
-# target to build an object file
-tools/content_editor/MainWindow.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/tools/content_editor/MainWindow.cpp.o
-.PHONY : tools/content_editor/MainWindow.cpp.o
-
-tools/content_editor/MainWindow.i: tools/content_editor/MainWindow.cpp.i
-.PHONY : tools/content_editor/MainWindow.i
-
-# target to preprocess a source file
-tools/content_editor/MainWindow.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/tools/content_editor/MainWindow.cpp.i
-.PHONY : tools/content_editor/MainWindow.cpp.i
-
-tools/content_editor/MainWindow.s: tools/content_editor/MainWindow.cpp.s
-.PHONY : tools/content_editor/MainWindow.s
-
-# target to generate assembly for a file
-tools/content_editor/MainWindow.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/tools/content_editor/MainWindow.cpp.s
-.PHONY : tools/content_editor/MainWindow.cpp.s
-
-tools/content_editor/main.o: tools/content_editor/main.cpp.o
-.PHONY : tools/content_editor/main.o
-
-# target to build an object file
-tools/content_editor/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/tools/content_editor/main.cpp.o
-.PHONY : tools/content_editor/main.cpp.o
-
-tools/content_editor/main.i: tools/content_editor/main.cpp.i
-.PHONY : tools/content_editor/main.i
-
-# target to preprocess a source file
-tools/content_editor/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/tools/content_editor/main.cpp.i
-.PHONY : tools/content_editor/main.cpp.i
-
-tools/content_editor/main.s: tools/content_editor/main.cpp.s
-.PHONY : tools/content_editor/main.s
-
-# target to generate assembly for a file
-tools/content_editor/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ContentEditor.dir/build.make CMakeFiles/ContentEditor.dir/tools/content_editor/main.cpp.s
-.PHONY : tools/content_editor/main.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -853,16 +1164,45 @@ help:
 	@echo "... install/local"
 	@echo "... install/strip"
 	@echo "... list_install_components"
+	@echo "... package"
+	@echo "... package_source"
 	@echo "... rebuild_cache"
-	@echo "... ContentEditor_autogen"
-	@echo "... ContentEditor_autogen_timestamp_deps"
-	@echo "... ContentEditor"
+	@echo "... generate_bindings"
 	@echo "... VoxelGame"
+	@echo "... api-test"
+	@echo "... function_source"
+	@echo "... miniz"
+	@echo "... qjs"
+	@echo "... qjs_exe"
+	@echo "... qjsc"
 	@echo "... rmlui_core"
 	@echo "... rmlui_debugger"
-	@echo "... ContentEditor_autogen/mocs_compilation.o"
-	@echo "... ContentEditor_autogen/mocs_compilation.i"
-	@echo "... ContentEditor_autogen/mocs_compilation.s"
+	@echo "... run-test262"
+	@echo "... unicode_gen"
+	@echo "... _deps/imgui-src/backends/imgui_impl_glfw.o"
+	@echo "... _deps/imgui-src/backends/imgui_impl_glfw.i"
+	@echo "... _deps/imgui-src/backends/imgui_impl_glfw.s"
+	@echo "... _deps/imgui-src/backends/imgui_impl_opengl2.o"
+	@echo "... _deps/imgui-src/backends/imgui_impl_opengl2.i"
+	@echo "... _deps/imgui-src/backends/imgui_impl_opengl2.s"
+	@echo "... _deps/imgui-src/imgui.o"
+	@echo "... _deps/imgui-src/imgui.i"
+	@echo "... _deps/imgui-src/imgui.s"
+	@echo "... _deps/imgui-src/imgui_draw.o"
+	@echo "... _deps/imgui-src/imgui_draw.i"
+	@echo "... _deps/imgui-src/imgui_draw.s"
+	@echo "... _deps/imgui-src/imgui_tables.o"
+	@echo "... _deps/imgui-src/imgui_tables.i"
+	@echo "... _deps/imgui-src/imgui_tables.s"
+	@echo "... _deps/imgui-src/imgui_widgets.o"
+	@echo "... _deps/imgui-src/imgui_widgets.i"
+	@echo "... _deps/imgui-src/imgui_widgets.s"
+	@echo "... _deps/rmlui-src/Backends/RmlUi_Platform_GLFW.o"
+	@echo "... _deps/rmlui-src/Backends/RmlUi_Platform_GLFW.i"
+	@echo "... _deps/rmlui-src/Backends/RmlUi_Platform_GLFW.s"
+	@echo "... _deps/rmlui-src/Backends/RmlUi_Renderer_GL2.o"
+	@echo "... _deps/rmlui-src/Backends/RmlUi_Renderer_GL2.i"
+	@echo "... _deps/rmlui-src/Backends/RmlUi_Renderer_GL2.s"
 	@echo "... src/Math.o"
 	@echo "... src/Math.i"
 	@echo "... src/Math.s"
@@ -893,6 +1233,24 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/pack/AssetPackManager.o"
+	@echo "... src/pack/AssetPackManager.i"
+	@echo "... src/pack/AssetPackManager.s"
+	@echo "... src/pack/Pack.o"
+	@echo "... src/pack/Pack.i"
+	@echo "... src/pack/Pack.s"
+	@echo "... src/pack/PackManager.o"
+	@echo "... src/pack/PackManager.i"
+	@echo "... src/pack/PackManager.s"
+	@echo "... src/pack/ScriptBindingsCustom.o"
+	@echo "... src/pack/ScriptBindingsCustom.i"
+	@echo "... src/pack/ScriptBindingsCustom.s"
+	@echo "... src/pack/ScriptManager.o"
+	@echo "... src/pack/ScriptManager.i"
+	@echo "... src/pack/ScriptManager.s"
+	@echo "... src/pack/generated/ParseBindings.o"
+	@echo "... src/pack/generated/ParseBindings.i"
+	@echo "... src/pack/generated/ParseBindings.s"
 	@echo "... src/player/Inventory.o"
 	@echo "... src/player/Inventory.i"
 	@echo "... src/player/Inventory.s"
@@ -914,12 +1272,6 @@ help:
 	@echo "... src/ui/GameUI.o"
 	@echo "... src/ui/GameUI.i"
 	@echo "... src/ui/GameUI.s"
-	@echo "... src/ui/RmlUi_Platform_GLFW.o"
-	@echo "... src/ui/RmlUi_Platform_GLFW.i"
-	@echo "... src/ui/RmlUi_Platform_GLFW.s"
-	@echo "... src/ui/RmlUi_Renderer_GL2.o"
-	@echo "... src/ui/RmlUi_Renderer_GL2.i"
-	@echo "... src/ui/RmlUi_Renderer_GL2.s"
 	@echo "... src/world/BiomeDefinition.o"
 	@echo "... src/world/BiomeDefinition.i"
 	@echo "... src/world/BiomeDefinition.s"
@@ -929,12 +1281,6 @@ help:
 	@echo "... src/world/World.o"
 	@echo "... src/world/World.i"
 	@echo "... src/world/World.s"
-	@echo "... tools/content_editor/MainWindow.o"
-	@echo "... tools/content_editor/MainWindow.i"
-	@echo "... tools/content_editor/MainWindow.s"
-	@echo "... tools/content_editor/main.o"
-	@echo "... tools/content_editor/main.i"
-	@echo "... tools/content_editor/main.s"
 .PHONY : help
 
 

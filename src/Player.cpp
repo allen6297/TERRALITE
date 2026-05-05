@@ -115,9 +115,15 @@ Vec3 getEyePosition(const Player& player) {
 }
 
 void updateMouseLook(GLFWwindow* window, Player& player) {
-    static bool firstMouse = true;
-    static double lastX = 0.0;
-    static double lastY = 0.0;
+    static bool   firstMouse = true;
+    static double lastX      = 0.0;
+    static double lastY      = 0.0;
+
+    // Skip mouse look when cursor is visible (ESC unlocked)
+    if (glfwGetInputMode(window, GLFW_CURSOR) != GLFW_CURSOR_DISABLED) {
+        firstMouse = true;  // reset so re-capture has no jump
+        return;
+    }
 
     double cursorX = 0.0;
     double cursorY = 0.0;

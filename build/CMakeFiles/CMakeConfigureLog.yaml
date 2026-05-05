@@ -12127,3 +12127,1236 @@ events:
         - "/Network/Library/Frameworks"
         - "/System/Library/Frameworks"
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:29 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wall"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-fWfdEY"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-fWfdEY"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wall"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-fWfdEY'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_73e0f/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_73e0f.dir/build.make CMakeFiles/cmTC_73e0f.dir/build
+        Building C object CMakeFiles/cmTC_73e0f.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wall  -std=gnu11 -arch arm64   -Wall -MD -MT CMakeFiles/cmTC_73e0f.dir/src.c.o -MF CMakeFiles/cmTC_73e0f.dir/src.c.o.d -o CMakeFiles/cmTC_73e0f.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-fWfdEY/src.c
+        Linking C executable cmTC_73e0f
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_73e0f.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_73e0f.dir/src.c.o -o cmTC_73e0f
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:31 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Werror"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-NWwMzW"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-NWwMzW"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Werror"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-NWwMzW'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_9600f/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_9600f.dir/build.make CMakeFiles/cmTC_9600f.dir/build
+        Building C object CMakeFiles/cmTC_9600f.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Werror  -std=gnu11 -arch arm64   -Werror -MD -MT CMakeFiles/cmTC_9600f.dir/src.c.o -MF CMakeFiles/cmTC_9600f.dir/src.c.o.d -o CMakeFiles/cmTC_9600f.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-NWwMzW/src.c
+        Linking C executable cmTC_9600f
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9600f.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_9600f.dir/src.c.o -o cmTC_9600f
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:32 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wextra"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-jzrfZf"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-jzrfZf"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wextra"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-jzrfZf'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_76db0/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_76db0.dir/build.make CMakeFiles/cmTC_76db0.dir/build
+        Building C object CMakeFiles/cmTC_76db0.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wextra  -std=gnu11 -arch arm64   -Wextra -MD -MT CMakeFiles/cmTC_76db0.dir/src.c.o -MF CMakeFiles/cmTC_76db0.dir/src.c.o.d -o CMakeFiles/cmTC_76db0.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-jzrfZf/src.c
+        Linking C executable cmTC_76db0
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_76db0.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_76db0.dir/src.c.o -o cmTC_76db0
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:34 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wformat=2"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-VA68wQ"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-VA68wQ"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wformat=2"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-VA68wQ'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_fc2a6/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_fc2a6.dir/build.make CMakeFiles/cmTC_fc2a6.dir/build
+        Building C object CMakeFiles/cmTC_fc2a6.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wformat=2  -std=gnu11 -arch arm64   -Wformat=2 -MD -MT CMakeFiles/cmTC_fc2a6.dir/src.c.o -MF CMakeFiles/cmTC_fc2a6.dir/src.c.o.d -o CMakeFiles/cmTC_fc2a6.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-VA68wQ/src.c
+        Linking C executable cmTC_fc2a6
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_fc2a6.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_fc2a6.dir/src.c.o -o cmTC_fc2a6
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:35 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wnoimplicitfallthrough"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-ryR0nn"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-ryR0nn"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wnoimplicitfallthrough"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-ryR0nn'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_94a90/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_94a90.dir/build.make CMakeFiles/cmTC_94a90.dir/build
+        Building C object CMakeFiles/cmTC_94a90.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wnoimplicitfallthrough  -std=gnu11 -arch arm64   -Wno-implicit-fallthrough -MD -MT CMakeFiles/cmTC_94a90.dir/src.c.o -MF CMakeFiles/cmTC_94a90.dir/src.c.o.d -o CMakeFiles/cmTC_94a90.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-ryR0nn/src.c
+        Linking C executable cmTC_94a90
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_94a90.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_94a90.dir/src.c.o -o cmTC_94a90
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:36 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wnosigncompare"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-yAONsO"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-yAONsO"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wnosigncompare"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-yAONsO'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_d4507/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_d4507.dir/build.make CMakeFiles/cmTC_d4507.dir/build
+        Building C object CMakeFiles/cmTC_d4507.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wnosigncompare  -std=gnu11 -arch arm64   -Wno-sign-compare -MD -MT CMakeFiles/cmTC_d4507.dir/src.c.o -MF CMakeFiles/cmTC_d4507.dir/src.c.o.d -o CMakeFiles/cmTC_d4507.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-yAONsO/src.c
+        Linking C executable cmTC_d4507
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_d4507.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_d4507.dir/src.c.o -o cmTC_d4507
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:37 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wnomissingfieldinitializers"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-tZy2tm"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-tZy2tm"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wnomissingfieldinitializers"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-tZy2tm'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_702e1/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_702e1.dir/build.make CMakeFiles/cmTC_702e1.dir/build
+        Building C object CMakeFiles/cmTC_702e1.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wnomissingfieldinitializers  -std=gnu11 -arch arm64   -Wno-missing-field-initializers -MD -MT CMakeFiles/cmTC_702e1.dir/src.c.o -MF CMakeFiles/cmTC_702e1.dir/src.c.o.d -o CMakeFiles/cmTC_702e1.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-tZy2tm/src.c
+        Linking C executable cmTC_702e1
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_702e1.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_702e1.dir/src.c.o -o cmTC_702e1
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:38 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wnounusedparameter"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-3ESjHC"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-3ESjHC"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wnounusedparameter"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-3ESjHC'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_9b171/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_9b171.dir/build.make CMakeFiles/cmTC_9b171.dir/build
+        Building C object CMakeFiles/cmTC_9b171.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wnounusedparameter  -std=gnu11 -arch arm64   -Wno-unused-parameter -MD -MT CMakeFiles/cmTC_9b171.dir/src.c.o -MF CMakeFiles/cmTC_9b171.dir/src.c.o.d -o CMakeFiles/cmTC_9b171.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-3ESjHC/src.c
+        Linking C executable cmTC_9b171
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9b171.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_9b171.dir/src.c.o -o cmTC_9b171
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:39 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wnounusedbutsetvariable"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-3ItprS"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-3ItprS"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wnounusedbutsetvariable"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-3ItprS'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_49cf5/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_49cf5.dir/build.make CMakeFiles/cmTC_49cf5.dir/build
+        Building C object CMakeFiles/cmTC_49cf5.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wnounusedbutsetvariable  -std=gnu11 -arch arm64   -Wno-unused-but-set-variable -MD -MT CMakeFiles/cmTC_49cf5.dir/src.c.o -MF CMakeFiles/cmTC_49cf5.dir/src.c.o.d -o CMakeFiles/cmTC_49cf5.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-3ItprS/src.c
+        Linking C executable cmTC_49cf5
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_49cf5.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_49cf5.dir/src.c.o -o cmTC_49cf5
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:40 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wnounusedresult"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-fBjxcU"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-fBjxcU"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wnounusedresult"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-fBjxcU'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_9a62a/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_9a62a.dir/build.make CMakeFiles/cmTC_9a62a.dir/build
+        Building C object CMakeFiles/cmTC_9a62a.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wnounusedresult  -std=gnu11 -arch arm64   -Wno-unused-result -MD -MT CMakeFiles/cmTC_9a62a.dir/src.c.o -MF CMakeFiles/cmTC_9a62a.dir/src.c.o.d -o CMakeFiles/cmTC_9a62a.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-fBjxcU/src.c
+        Linking C executable cmTC_9a62a
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9a62a.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_9a62a.dir/src.c.o -o cmTC_9a62a
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:41 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wnostringoptruncation"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-bIwDvC"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-bIwDvC"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wnostringoptruncation"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-bIwDvC'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_0f2c4/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_0f2c4.dir/build.make CMakeFiles/cmTC_0f2c4.dir/build
+        Building C object CMakeFiles/cmTC_0f2c4.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wnostringoptruncation  -std=gnu11 -arch arm64   -Wno-stringop-truncation -MD -MT CMakeFiles/cmTC_0f2c4.dir/src.c.o -MF CMakeFiles/cmTC_0f2c4.dir/src.c.o.d -o CMakeFiles/cmTC_0f2c4.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-bIwDvC/src.c
+        warning: unknown warning option '-Wno-stringop-truncation'; did you mean '-Wno-format-truncation'? [-Wunknown-warning-option]
+        1 warning generated.
+        Linking C executable cmTC_0f2c4
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_0f2c4.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_0f2c4.dir/src.c.o -o cmTC_0f2c4
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:42 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wnoarraybounds"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-PAC1j1"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-PAC1j1"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wnoarraybounds"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-PAC1j1'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_ff372/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_ff372.dir/build.make CMakeFiles/cmTC_ff372.dir/build
+        Building C object CMakeFiles/cmTC_ff372.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wnoarraybounds  -std=gnu11 -arch arm64   -Wno-array-bounds -MD -MT CMakeFiles/cmTC_ff372.dir/src.c.o -MF CMakeFiles/cmTC_ff372.dir/src.c.o.d -o CMakeFiles/cmTC_ff372.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-PAC1j1/src.c
+        Linking C executable cmTC_ff372
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ff372.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_ff372.dir/src.c.o -o cmTC_ff372
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:43 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_funsignedchar"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-pAfV3F"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-pAfV3F"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_funsignedchar"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-pAfV3F'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_041f7/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_041f7.dir/build.make CMakeFiles/cmTC_041f7.dir/build
+        Building C object CMakeFiles/cmTC_041f7.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_funsignedchar  -std=gnu11 -arch arm64   -funsigned-char -MD -MT CMakeFiles/cmTC_041f7.dir/src.c.o -MF CMakeFiles/cmTC_041f7.dir/src.c.o.d -o CMakeFiles/cmTC_041f7.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-pAfV3F/src.c
+        Linking C executable cmTC_041f7
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_041f7.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_041f7.dir/src.c.o -o cmTC_041f7
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:103 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_/Od"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-G2fb7N"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-G2fb7N"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_/Od"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-G2fb7N'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_36256/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_36256.dir/build.make CMakeFiles/cmTC_36256.dir/build
+        Building C object CMakeFiles/cmTC_36256.dir/src.c.o
+        /usr/bin/cc   -std=gnu11 -arch arm64   -DCOMPILER_SUPPORTS_/Od /Od -MD -MT CMakeFiles/cmTC_36256.dir/src.c.o -MF CMakeFiles/cmTC_36256.dir/src.c.o.d -o CMakeFiles/cmTC_36256.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-G2fb7N/src.c
+        clang: error: no such file or directory: '/Od'
+        make[1]: *** [CMakeFiles/cmTC_36256.dir/src.c.o] Error 1
+        make: *** [cmTC_36256/fast] Error 2
+        
+      exitCode: 2
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:104 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_O0"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-Pfe6LT"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-Pfe6LT"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_O0"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-Pfe6LT'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_37249/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_37249.dir/build.make CMakeFiles/cmTC_37249.dir/build
+        Building C object CMakeFiles/cmTC_37249.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_O0  -std=gnu11 -arch arm64   -O0 -MD -MT CMakeFiles/cmTC_37249.dir/src.c.o -MF CMakeFiles/cmTC_37249.dir/src.c.o.d -o CMakeFiles/cmTC_37249.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-Pfe6LT/src.c
+        Linking C executable cmTC_37249
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_37249.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_37249.dir/src.c.o -o cmTC_37249
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:105 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_ggdb"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-lJ0pUA"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-lJ0pUA"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_ggdb"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-lJ0pUA'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_bcf3a/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_bcf3a.dir/build.make CMakeFiles/cmTC_bcf3a.dir/build
+        Building C object CMakeFiles/cmTC_bcf3a.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_ggdb  -std=gnu11 -arch arm64   -ggdb -MD -MT CMakeFiles/cmTC_bcf3a.dir/src.c.o -MF CMakeFiles/cmTC_bcf3a.dir/src.c.o.d -o CMakeFiles/cmTC_bcf3a.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-lJ0pUA/src.c
+        Linking C executable cmTC_bcf3a
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_bcf3a.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_bcf3a.dir/src.c.o -o cmTC_bcf3a
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:106 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_fnoomitframepointer"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-1q2PMs"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-1q2PMs"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_fnoomitframepointer"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-1q2PMs'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_55339/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_55339.dir/build.make CMakeFiles/cmTC_55339.dir/build
+        Building C object CMakeFiles/cmTC_55339.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_fnoomitframepointer  -std=gnu11 -arch arm64   -fno-omit-frame-pointer -MD -MT CMakeFiles/cmTC_55339.dir/src.c.o -MF CMakeFiles/cmTC_55339.dir/src.c.o.d -o CMakeFiles/cmTC_55339.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-1q2PMs/src.c
+        Linking C executable cmTC_55339
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_55339.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_55339.dir/src.c.o -o cmTC_55339
+        
+      exitCode: 0
+  -
+    kind: "find-v1"
+    backtrace:
+      - "build/_deps/quickjs-src/CMakeLists.txt:237 (find_library)"
+    mode: "library"
+    variable: "M_LIBRARIES"
+    description: "Path to a library."
+    settings:
+      SearchFramework: "FIRST"
+      SearchAppBundle: "FIRST"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "m"
+    candidate_directories:
+      - "/opt/homebrew/lib/"
+      - "/opt/homebrew/"
+      - "/opt/homebrew/opt/glfw/lib/"
+      - "/opt/homebrew/opt/glfw/"
+      - "/opt/homebrew/opt/freetype/lib/"
+      - "/opt/homebrew/opt/freetype/"
+      - "/usr/local/"
+      - "/Users/kalob/.local/bin/"
+      - "/System/Cryptexes/App/usr/bin/"
+      - "/usr/bin/"
+      - "/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/Library/Apple/usr/bin/"
+      - "/usr/local/share/dotnet/"
+      - "/opt/homebrew/bin/"
+      - "/Library/Frameworks/Mono.framework/Versions/Current/Commands/"
+      - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/"
+      - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/"
+      - "/usr/lib/"
+      - "/usr/"
+      - "/opt/"
+      - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/"
+      - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks/"
+      - "/Applications/Xcode.app/Contents/Developer/Library/Frameworks/"
+      - "/Library/Frameworks/"
+      - "/System/Library/Frameworks/"
+    searched_directories:
+      - "/opt/homebrew/lib/"
+      - "/opt/homebrew/"
+      - "/opt/homebrew/opt/glfw/lib/"
+      - "/opt/homebrew/opt/glfw/"
+      - "/opt/homebrew/opt/freetype/lib/"
+      - "/opt/homebrew/opt/freetype/"
+      - "/usr/local/"
+      - "/Users/kalob/.local/bin/"
+      - "/System/Cryptexes/App/usr/bin/"
+      - "/usr/bin/"
+      - "/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/Library/Apple/usr/bin/"
+      - "/usr/local/share/dotnet/"
+      - "/opt/homebrew/bin/"
+      - "/Library/Frameworks/Mono.framework/Versions/Current/Commands/"
+    found: "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/lib/libm.tbd"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "/opt/homebrew"
+        - "/opt/homebrew/opt/glfw"
+        - "/opt/homebrew/opt/freetype"
+        - "/usr/local"
+        - "/usr/local/opt/glfw"
+        - "/usr/local/opt/freetype"
+      ENV{PATH}:
+        - "/Users/kalob/.local/bin"
+        - "/Users/kalob/.local/bin"
+        - "/usr/local/bin"
+        - "/System/Cryptexes/App/usr/bin"
+        - "/usr/bin"
+        - "/bin"
+        - "/usr/sbin"
+        - "/sbin"
+        - "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin"
+        - "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin"
+        - "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
+        - "/opt/pmk/env/global/bin"
+        - "/Library/Apple/usr/bin"
+        - "/usr/local/share/dotnet"
+        - "/Users/kalob/.dotnet/tools"
+        - "/opt/homebrew/bin"
+        - "/Library/Frameworks/Mono.framework/Versions/Current/Commands"
+        - "/Users/kalob/.platformio/penv/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr"
+        - "/opt/homebrew"
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/opt/homebrew"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+        - "/sw"
+        - "/opt/local"
+      CMAKE_SYSTEM_LIBRARY_PATH:
+        - "/usr/lib/X11"
+      CMAKE_SYSTEM_FRAMEWORK_PATH:
+        - "~/Library/Frameworks"
+        - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/Library/Frameworks"
+        - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/Network/Library/Frameworks"
+        - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks"
+        - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks"
+        - "/Applications/Xcode.app/Contents/Developer/Library/Frameworks"
+        - "/Library/Frameworks"
+        - "/Network/Library/Frameworks"
+        - "/System/Library/Frameworks"
+...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:34 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wformat=2"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-488w8h"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-488w8h"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wformat=2"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-488w8h'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_04845/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_04845.dir/build.make CMakeFiles/cmTC_04845.dir/build
+        Building C object CMakeFiles/cmTC_04845.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wformat=2  -std=gnu11 -arch arm64   -Wformat=2 -MD -MT CMakeFiles/cmTC_04845.dir/src.c.o -MF CMakeFiles/cmTC_04845.dir/src.c.o.d -o CMakeFiles/cmTC_04845.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-488w8h/src.c
+        Linking C executable cmTC_04845
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_04845.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_04845.dir/src.c.o -o cmTC_04845
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCompilerFlag.cmake:124 (cmake_check_compiler_flag)"
+      - "/opt/homebrew/share/cmake/Modules/GenerateExportHeader.cmake:515 (check_compiler_flag)"
+      - "/opt/homebrew/share/cmake/Modules/GenerateExportHeader.cmake:693 (_test_compiler_hidden_visibility)"
+      - "build/_deps/miniz-src/CMakeLists.txt:142 (generate_export_header)"
+    checks:
+      - "Performing Test COMPILER_HAS_HIDDEN_VISIBILITY"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-mgvjzv"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-mgvjzv"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_HAS_HIDDEN_VISIBILITY"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-mgvjzv'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_6ceda/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_6ceda.dir/build.make CMakeFiles/cmTC_6ceda.dir/build
+        Building CXX object CMakeFiles/cmTC_6ceda.dir/src.cxx.o
+        /usr/bin/c++ -DCOMPILER_HAS_HIDDEN_VISIBILITY  -std=c++20 -arch arm64   -fvisibility=hidden -MD -MT CMakeFiles/cmTC_6ceda.dir/src.cxx.o -MF CMakeFiles/cmTC_6ceda.dir/src.cxx.o.d -o CMakeFiles/cmTC_6ceda.dir/src.cxx.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-mgvjzv/src.cxx
+        Linking CXX executable cmTC_6ceda
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6ceda.dir/link.txt --verbose=1
+        /usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_6ceda.dir/src.cxx.o -o cmTC_6ceda
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCompilerFlag.cmake:124 (cmake_check_compiler_flag)"
+      - "/opt/homebrew/share/cmake/Modules/GenerateExportHeader.cmake:516 (check_compiler_flag)"
+      - "/opt/homebrew/share/cmake/Modules/GenerateExportHeader.cmake:693 (_test_compiler_hidden_visibility)"
+      - "build/_deps/miniz-src/CMakeLists.txt:142 (generate_export_header)"
+    checks:
+      - "Performing Test COMPILER_HAS_HIDDEN_INLINE_VISIBILITY"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-uWljqC"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-uWljqC"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_HAS_HIDDEN_INLINE_VISIBILITY"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-uWljqC'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_ca3ba/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_ca3ba.dir/build.make CMakeFiles/cmTC_ca3ba.dir/build
+        Building CXX object CMakeFiles/cmTC_ca3ba.dir/src.cxx.o
+        /usr/bin/c++ -DCOMPILER_HAS_HIDDEN_INLINE_VISIBILITY  -std=c++20 -arch arm64   -fvisibility-inlines-hidden -MD -MT CMakeFiles/cmTC_ca3ba.dir/src.cxx.o -MF CMakeFiles/cmTC_ca3ba.dir/src.cxx.o.d -o CMakeFiles/cmTC_ca3ba.dir/src.cxx.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-uWljqC/src.cxx
+        Linking CXX executable cmTC_ca3ba
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ca3ba.dir/link.txt --verbose=1
+        /usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_ca3ba.dir/src.cxx.o -o cmTC_ca3ba
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/CheckSourceCompiles.cmake:205 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/GenerateExportHeader.cmake:481 (check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/GenerateExportHeader.cmake:540 (_check_cxx_compiler_attribute)"
+      - "/opt/homebrew/share/cmake/Modules/GenerateExportHeader.cmake:694 (_test_compiler_has_deprecated)"
+      - "build/_deps/miniz-src/CMakeLists.txt:142 (generate_export_header)"
+    checks:
+      - "Performing Test COMPILER_HAS_DEPRECATED_ATTR"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-cakCsa"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-cakCsa"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_HAS_DEPRECATED_ATTR"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-cakCsa'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_f7463/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_f7463.dir/build.make CMakeFiles/cmTC_f7463.dir/build
+        Building CXX object CMakeFiles/cmTC_f7463.dir/src.cxx.o
+        /usr/bin/c++ -DCOMPILER_HAS_DEPRECATED_ATTR  -std=c++20 -arch arm64 -MD -MT CMakeFiles/cmTC_f7463.dir/src.cxx.o -MF CMakeFiles/cmTC_f7463.dir/src.cxx.o.d -o CMakeFiles/cmTC_f7463.dir/src.cxx.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-cakCsa/src.cxx
+        /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-cakCsa/src.cxx:2:25: warning: 'somefunc' is deprecated [-Wdeprecated-declarations]
+            2 |     int main() { return somefunc();}
+              |                         ^
+        /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-cakCsa/src.cxx:1:16: note: 'somefunc' has been explicitly marked deprecated here
+            1 | __attribute__((__deprecated__)) int somefunc() { return 0; }
+              |                ^
+        1 warning generated.
+        Linking CXX executable cmTC_f7463
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_f7463.dir/link.txt --verbose=1
+        /usr/bin/c++  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_f7463.dir/src.cxx.o -o cmTC_f7463
+        
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:34 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wformat=2"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-DMMlUG"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-DMMlUG"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wformat=2"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-DMMlUG'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_04152/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_04152.dir/build.make CMakeFiles/cmTC_04152.dir/build
+        Building C object CMakeFiles/cmTC_04152.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wformat=2  -std=gnu11 -arch arm64   -Wformat=2 -MD -MT CMakeFiles/cmTC_04152.dir/src.c.o -MF CMakeFiles/cmTC_04152.dir/src.c.o.d -o CMakeFiles/cmTC_04152.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-DMMlUG/src.c
+        Linking C executable cmTC_04152
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_04152.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_04152.dir/src.c.o -o cmTC_04152
+        
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:34 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wformat=2"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-jttdzB"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-jttdzB"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wformat=2"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-jttdzB'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_eb3a5/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_eb3a5.dir/build.make CMakeFiles/cmTC_eb3a5.dir/build
+        Building C object CMakeFiles/cmTC_eb3a5.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wformat=2  -std=gnu11 -arch arm64   -Wformat=2 -MD -MT CMakeFiles/cmTC_eb3a5.dir/src.c.o -MF CMakeFiles/cmTC_eb3a5.dir/src.c.o.d -o CMakeFiles/cmTC_eb3a5.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-jttdzB/src.c
+        Linking C executable cmTC_eb3a5
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_eb3a5.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_eb3a5.dir/src.c.o -o cmTC_eb3a5
+        
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:34 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wformat=2"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-Uk3Eqn"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-Uk3Eqn"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wformat=2"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-Uk3Eqn'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_1bbf0/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_1bbf0.dir/build.make CMakeFiles/cmTC_1bbf0.dir/build
+        Building C object CMakeFiles/cmTC_1bbf0.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wformat=2  -std=gnu11 -arch arm64   -Wformat=2 -MD -MT CMakeFiles/cmTC_1bbf0.dir/src.c.o -MF CMakeFiles/cmTC_1bbf0.dir/src.c.o.d -o CMakeFiles/cmTC_1bbf0.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-Uk3Eqn/src.c
+        Linking C executable cmTC_1bbf0
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1bbf0.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_1bbf0.dir/src.c.o -o cmTC_1bbf0
+        
+      exitCode: 0
+  -
+    kind: "find-v1"
+    backtrace:
+      - "CMakeLists.txt:160 (find_program)"
+    mode: "program"
+    variable: "NODEJS"
+    description: "Path to a program."
+    settings:
+      SearchFramework: "FIRST"
+      SearchAppBundle: "FIRST"
+      CMAKE_FIND_USE_CMAKE_PATH: true
+      CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
+      CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
+      CMAKE_FIND_USE_INSTALL_PREFIX: true
+    names:
+      - "node"
+    candidate_directories:
+      - "/opt/homebrew/bin/"
+      - "/opt/homebrew/sbin/"
+      - "/opt/homebrew/"
+      - "/opt/homebrew/opt/glfw/bin/"
+      - "/opt/homebrew/opt/glfw/sbin/"
+      - "/opt/homebrew/opt/glfw/"
+      - "/opt/homebrew/opt/freetype/bin/"
+      - "/opt/homebrew/opt/freetype/sbin/"
+      - "/opt/homebrew/opt/freetype/"
+      - "/usr/local/bin/"
+      - "/usr/local/sbin/"
+      - "/usr/local/"
+      - "/usr/local/opt/glfw/bin/"
+      - "/usr/local/opt/glfw/sbin/"
+      - "/usr/local/opt/glfw/"
+      - "/usr/local/opt/freetype/bin/"
+      - "/usr/local/opt/freetype/sbin/"
+      - "/usr/local/opt/freetype/"
+      - "/Users/kalob/.local/bin/"
+      - "/usr/local/bin/"
+      - "/System/Cryptexes/App/usr/bin/"
+      - "/usr/bin/"
+      - "/bin/"
+      - "/usr/sbin/"
+      - "/sbin/"
+      - "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin/"
+      - "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin/"
+      - "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin/"
+      - "/opt/pmk/env/global/bin/"
+      - "/Library/Apple/usr/bin/"
+      - "/usr/local/share/dotnet/"
+      - "/Users/kalob/.dotnet/tools/"
+      - "/opt/homebrew/bin/"
+      - "/Library/Frameworks/Mono.framework/Versions/Current/Commands/"
+      - "/Users/kalob/.platformio/penv/bin/"
+      - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/bin/"
+      - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/sbin/"
+      - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/"
+      - "/usr/bin/"
+      - "/usr/sbin/"
+      - "/usr/"
+      - "/bin/"
+      - "/sbin/"
+      - "/usr/X11R6/bin/"
+      - "/usr/X11R6/sbin/"
+      - "/usr/X11R6/"
+      - "/usr/pkg/bin/"
+      - "/usr/pkg/sbin/"
+      - "/usr/pkg/"
+      - "/opt/bin/"
+      - "/opt/sbin/"
+      - "/opt/"
+      - "/sw/bin/"
+      - "/sw/sbin/"
+      - "/sw/"
+      - "/opt/local/bin/"
+      - "/opt/local/sbin/"
+      - "/opt/local/"
+      - "/Users/kalob/Applications/"
+      - "/Applications/"
+      - "/Applications/Xcode.app/Contents/Applications/"
+      - "/Applications/Xcode.app/Contents/Developer/Applications/"
+    found: "/opt/homebrew/bin/node"
+    search_context:
+      CMAKE_PREFIX_PATH:
+        - "/opt/homebrew"
+        - "/opt/homebrew/opt/glfw"
+        - "/opt/homebrew/opt/freetype"
+        - "/usr/local"
+        - "/usr/local/opt/glfw"
+        - "/usr/local/opt/freetype"
+      ENV{PATH}:
+        - "/Users/kalob/.local/bin"
+        - "/Users/kalob/.local/bin"
+        - "/usr/local/bin"
+        - "/System/Cryptexes/App/usr/bin"
+        - "/usr/bin"
+        - "/bin"
+        - "/usr/sbin"
+        - "/sbin"
+        - "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin"
+        - "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin"
+        - "/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin"
+        - "/opt/pmk/env/global/bin"
+        - "/Library/Apple/usr/bin"
+        - "/usr/local/share/dotnet"
+        - "/Users/kalob/.dotnet/tools"
+        - "/opt/homebrew/bin"
+        - "/Library/Frameworks/Mono.framework/Versions/Current/Commands"
+        - "/Users/kalob/.platformio/penv/bin"
+      CMAKE_INSTALL_PREFIX: "/usr/local"
+      CMAKE_SYSTEM_PREFIX_PATH:
+        - "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr"
+        - "/opt/homebrew"
+        - "/usr/local"
+        - "/usr"
+        - "/"
+        - "/opt/homebrew"
+        - "/usr/local"
+        - "/usr/X11R6"
+        - "/usr/pkg"
+        - "/opt"
+        - "/sw"
+        - "/opt/local"
+      CMAKE_SYSTEM_APPBUNDLE_PATH:
+        - "/Users/kalob/Applications"
+        - "/Applications"
+        - "/Applications/Xcode.app/Contents/Applications"
+        - "/Applications/Xcode.app/Contents/Developer/Applications"
+...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:34 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wformat=2"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-ssgnh6"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-ssgnh6"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wformat=2"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-ssgnh6'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_9b1ce/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_9b1ce.dir/build.make CMakeFiles/cmTC_9b1ce.dir/build
+        Building C object CMakeFiles/cmTC_9b1ce.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wformat=2  -std=gnu11 -arch arm64   -Wformat=2 -MD -MT CMakeFiles/cmTC_9b1ce.dir/src.c.o -MF CMakeFiles/cmTC_9b1ce.dir/src.c.o.d -o CMakeFiles/cmTC_9b1ce.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-ssgnh6/src.c
+        Linking C executable cmTC_9b1ce
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9b1ce.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_9b1ce.dir/src.c.o -o cmTC_9b1ce
+        
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:34 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wformat=2"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-KMYuNl"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-KMYuNl"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wformat=2"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-KMYuNl'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_78313/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_78313.dir/build.make CMakeFiles/cmTC_78313.dir/build
+        Building C object CMakeFiles/cmTC_78313.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wformat=2  -std=gnu11 -arch arm64   -Wformat=2 -MD -MT CMakeFiles/cmTC_78313.dir/src.c.o -MF CMakeFiles/cmTC_78313.dir/src.c.o.d -o CMakeFiles/cmTC_78313.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-KMYuNl/src.c
+        Linking C executable cmTC_78313
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_78313.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_78313.dir/src.c.o -o cmTC_78313
+        
+      exitCode: 0
+...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCCompilerFlag.cmake:105 (cmake_check_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:23 (check_c_compiler_flag)"
+      - "build/_deps/quickjs-src/CMakeLists.txt:34 (xcheck_add_c_compiler_flag)"
+    checks:
+      - "Performing Test COMPILER_SUPPORTS_Wformat=2"
+    directories:
+      source: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-DHrbDP"
+      binary: "/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-DHrbDP"
+    cmakeVariables:
+      CMAKE_C_FLAGS: ""
+      CMAKE_C_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_OSX_ARCHITECTURES: ""
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: ""
+    buildResult:
+      variable: "COMPILER_SUPPORTS_Wformat=2"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-DHrbDP'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /usr/bin/make -f Makefile cmTC_61abe/fast
+        /Applications/Xcode.app/Contents/Developer/usr/bin/make  -f CMakeFiles/cmTC_61abe.dir/build.make CMakeFiles/cmTC_61abe.dir/build
+        Building C object CMakeFiles/cmTC_61abe.dir/src.c.o
+        /usr/bin/cc -DCOMPILER_SUPPORTS_Wformat=2  -std=gnu11 -arch arm64   -Wformat=2 -MD -MT CMakeFiles/cmTC_61abe.dir/src.c.o -MF CMakeFiles/cmTC_61abe.dir/src.c.o.d -o CMakeFiles/cmTC_61abe.dir/src.c.o -c /Users/kalob/Documents/CODE/VoxelGame/build/CMakeFiles/CMakeScratch/TryCompile-DHrbDP/src.c
+        Linking C executable cmTC_61abe
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_61abe.dir/link.txt --verbose=1
+        /usr/bin/cc  -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_61abe.dir/src.c.o -o cmTC_61abe
+        
+      exitCode: 0
+...

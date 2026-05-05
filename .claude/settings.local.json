@@ -19,7 +19,14 @@
       "Bash(cmake --build . --target ContentEditor)",
       "Bash(grep -iE '\\\\.\\(png|jpg|jpeg|gif|webp\\)$')",
       "Bash(cmake --build /Users/kalob/Documents/CODE/VoxelGame/build --target ContentEditor)",
-      "Bash(ls ~/Desktop/*.png)"
+      "Bash(ls ~/Desktop/*.png)",
+      "Bash(cmake .. -G \"Unix Makefiles\")",
+      "Bash(make:*)",
+      "Bash(cmake .. -DCMAKE_BUILD_TYPE=Debug)",
+      "Bash(find /Users/kalob/Documents/CODE/VoxelGame/src -type f \\\\\\(-name *.cpp -o -name *.hpp -o -name *.h \\\\\\))",
+      "Bash(cmake --build /Users/kalob/Documents/CODE/VoxelGame/build --parallel 8)",
+      "Bash(ls -t ~/Desktop/*.png)",
+      "Bash(cmake --build build --target VoxelGame)"
     ]
   }
 }

@@ -2,6 +2,8 @@
 	"InstallScripts" : 
 	[
 		"/Users/kalob/Documents/CODE/VoxelGame/build/cmake_install.cmake",
+		"/Users/kalob/Documents/CODE/VoxelGame/build/_deps/quickjs-build/cmake_install.cmake",
+		"/Users/kalob/Documents/CODE/VoxelGame/build/_deps/miniz-build/cmake_install.cmake",
 		"/Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-build/cmake_install.cmake",
 		"/Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-build/Source/cmake_install.cmake",
 		"/Users/kalob/Documents/CODE/VoxelGame/build/_deps/rmlui-build/Source/Core/cmake_install.cmake",

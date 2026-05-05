@@ -7,7 +7,7 @@
 #include <variant>
 #include <vector>
 
-#include "world/BiomeDefinition.hpp"
+#include "data/BiomeDefinition.hpp"
 
 namespace voxel {
 
@@ -81,9 +81,15 @@ struct ItemDefinition {
     std::string icon;
 };
 
+struct TagDefinition {
+    std::string id;           // namespaced, e.g. "base:flammable"
+    std::string description;  // optional human-readable note
+};
+
 struct GameData {
     std::unordered_map<std::string, BlockDefinition> blocks;
     std::unordered_map<std::string, ItemDefinition> items;
+    std::unordered_map<std::string, TagDefinition> tags;
     std::unordered_map<std::string, BlockStateDefinition> blockStates;
     std::unordered_map<std::string, BiomeDefinition> biomes;
 
@@ -108,6 +114,10 @@ struct GameData {
 };
 
 GameData loadGameData(const std::string& dataRoot);
+
+// Assigns state IDs, populates derived look-up tables, and fills the flat
+// solid/liquid arrays.  Call after blocks/items/biomes/blockStates are populated.
+void finalizeGameData(GameData& data);
 std::uint16_t runtimeIdForBlock(const GameData& gameData, const std::string& blockId);
 const BlockDefinition* findBlockDefinitionForBlockType(const GameData& gameData, std::uint16_t stateId);
 const ItemDefinition* findItemDefinition(const GameData& gameData, const std::string& itemId);
