@@ -1,10 +1,8 @@
 #pragma once
 
-#include <OpenGL/gl.h>
-#include <OpenGL/glext.h>
-
 #include <string>
 
+#include "render/OpenGLCompat.hpp"
 #include "render/TextureManager.hpp"
 
 namespace voxel {
@@ -21,7 +19,7 @@ public:
     void stop() const;
 
 private:
-    GLhandleARB program_ = nullptr;
+    GLhandleARB program_ = 0;
     int albedoUniform_ = -1;
     int emissiveUniform_ = -1;
     int hasEmissiveUniform_ = -1;

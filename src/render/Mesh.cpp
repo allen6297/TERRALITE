@@ -9,6 +9,7 @@
 
 #include "Math.hpp"
 #include "render/ModelManager.hpp"
+#include "render/OpenGLCompat.hpp"
 #include "world/Chunk.hpp"
 
 namespace voxel {

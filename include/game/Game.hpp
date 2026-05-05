@@ -57,7 +57,7 @@ private:
     void rebuildMeshesAroundBlock(const Int3& block);
     void updateLoadedChunks(const ChunkCoord& playerChunk);
     void launchMeshBuild(const ChunkCoord& coord);
-    void collectPending();
+    void collectPending(const ChunkCoord& playerChunk);
     void reloadGameData();
     void populateFaceTextures();
 
@@ -72,6 +72,7 @@ private:
     std::unordered_map<ChunkCoord, std::future<Chunk>, ChunkCoordHash> pendingTerrain_;
     std::unordered_map<std::string, ChunkMesh> iconMeshes_;  // cached single-block meshes for hotbar icons
     std::vector<PendingMesh> pendingMeshes_;
+    std::vector<ChunkCoord> queuedMeshBuilds_;
     Player player_;
     InputState input_;
     std::optional<RaycastHit> currentHit_;

@@ -87,10 +87,9 @@ void Game::rebuildChunkMesh(const ChunkCoord& coord) {
         return;
     }
 
-    pendingMeshes_.erase(
-        std::remove_if(pendingMeshes_.begin(), pendingMeshes_.end(),
-            [&coord](PendingMesh& pm) { return pm.coord == coord; }),
-        pendingMeshes_.end()
+    queuedMeshBuilds_.erase(
+        std::remove(queuedMeshBuilds_.begin(), queuedMeshBuilds_.end(), coord),
+        queuedMeshBuilds_.end()
     );
 
     const auto it = meshes_.find(coord);

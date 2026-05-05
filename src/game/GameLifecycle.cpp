@@ -140,6 +140,7 @@ Game::Game(GameData gameData, std::string assetsRoot)
 Game::~Game() {
     pendingTerrain_.clear();
     pendingMeshes_.clear();
+    queuedMeshBuilds_.clear();
     for (auto& [coord, mesh] : meshes_) destroyChunkMesh(mesh);
     for (auto& [id, mesh] : iconMeshes_) destroyChunkMesh(mesh);
 }
@@ -151,6 +152,7 @@ void Game::reloadContent() {
 void Game::reloadGameData() {
     pendingTerrain_.clear();
     pendingMeshes_.clear();
+    queuedMeshBuilds_.clear();
     blockTicks_ = {};
     blockTickGeneration_.clear();
     for (auto& [id, mesh] : iconMeshes_) destroyChunkMesh(mesh);

@@ -7,6 +7,21 @@
 #include "GameInternal.hpp"
 
 namespace voxel {
+namespace {
+
+constexpr int kMaxTerrainJobs = 4;
+constexpr int kMaxMeshJobs = 2;
+constexpr int kMaxTerrainIntegrationsPerFrame = 2;
+constexpr int kMaxMeshUploadsPerFrame = 1;
+constexpr int kMaxTerrainQueuesPerFrame = 2;
+
+bool isWithinUnloadDistance(const ChunkCoord& coord, const ChunkCoord& playerChunk) {
+    const int unloadDist = kViewDistance + 2;
+    return std::abs(coord.x - playerChunk.x) <= unloadDist &&
+           std::abs(coord.z - playerChunk.z) <= unloadDist;
+}
+
+}  // namespace
 
 void Game::update(GLFWwindow* window, const float deltaTime) {
     gameTimeSeconds_ += deltaTime;
@@ -19,7 +34,12 @@ void Game::update(GLFWwindow* window, const float deltaTime) {
         fpsFrameCount_ = 0;
     }
 
-    collectPending();
+    const int px = static_cast<int>(std::floor(player_.position.x));
+    const int py = std::clamp(static_cast<int>(std::floor(player_.position.y)), 0, kWorldY - 1);
+    const int pz = static_cast<int>(std::floor(player_.position.z));
+    const ChunkCoord playerChunk = worldToChunkCoord(px, py, pz);
+
+    collectPending(playerChunk);
 
     updateMouseLook(window, player_);
     updateInput(window, input_);
@@ -38,38 +58,61 @@ void Game::update(GLFWwindow* window, const float deltaTime) {
     }
     f5WasPressed_ = f5Now;
 
-    const int px = static_cast<int>(std::floor(player_.position.x));
-    const int py = std::clamp(static_cast<int>(std::floor(player_.position.y)), 0, kWorldY - 1);
-    const int pz = static_cast<int>(std::floor(player_.position.z));
-    updateLoadedChunks(worldToChunkCoord(px, py, pz));
+    updateLoadedChunks(playerChunk);
 }
 
-void Game::collectPending() {
+void Game::collectPending(const ChunkCoord& playerChunk) {
+    int terrainIntegrations = 0;
     for (auto it = pendingTerrain_.begin(); it != pendingTerrain_.end();) {
         if (it->second.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
             const ChunkCoord coord = it->first;
-            world_.chunks[coord] = it->second.get();
-            scheduleChunkBlockTicks(world_.chunks[coord]);
+            const bool shouldKeep = isWithinUnloadDistance(coord, playerChunk);
+            if (shouldKeep && terrainIntegrations >= kMaxTerrainIntegrationsPerFrame) {
+                break;
+            }
+            Chunk chunk = it->second.get();
             it = pendingTerrain_.erase(it);
-            launchMeshBuild(coord);
+            if (shouldKeep) {
+                world_.chunks[coord] = std::move(chunk);
+                scheduleChunkBlockTicks(world_.chunks[coord]);
+                launchMeshBuild(coord);
+                ++terrainIntegrations;
+            }
         } else {
             ++it;
         }
     }
 
+    int meshUploads = 0;
     for (auto it = pendingMeshes_.begin(); it != pendingMeshes_.end();) {
         if (it->future.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
             const ChunkCoord coord = it->coord;
+            const bool shouldUpload = chunkLoaded(world_, coord) && isWithinUnloadDistance(coord, playerChunk);
+            if (shouldUpload && meshUploads >= kMaxMeshUploadsPerFrame) {
+                break;
+            }
             ChunkMesh mesh = it->future.get();
             it = pendingMeshes_.erase(it);
-            const auto existing = meshes_.find(coord);
-            if (existing != meshes_.end()) {
-                destroyChunkMesh(existing->second);
+            if (shouldUpload) {
+                const auto existing = meshes_.find(coord);
+                if (existing != meshes_.end()) {
+                    destroyChunkMesh(mesh);
+                    continue;
+                }
+                uploadChunkMesh(mesh);
+                meshes_[coord] = std::move(mesh);
+                ++meshUploads;
             }
-            uploadChunkMesh(mesh);
-            meshes_[coord] = std::move(mesh);
         } else {
             ++it;
+        }
+    }
+
+    for (auto it = queuedMeshBuilds_.begin(); it != queuedMeshBuilds_.end() && pendingMeshes_.size() < kMaxMeshJobs;) {
+        const ChunkCoord coord = *it;
+        it = queuedMeshBuilds_.erase(it);
+        if (chunkLoaded(world_, coord) && isWithinUnloadDistance(coord, playerChunk)) {
+            launchMeshBuild(coord);
         }
     }
 }
@@ -172,6 +215,18 @@ void Game::scheduleChunkBlockTicks(const Chunk& chunk) {
 }
 
 void Game::launchMeshBuild(const ChunkCoord& coord) {
+    if (std::any_of(pendingMeshes_.begin(), pendingMeshes_.end(),
+            [&coord](const PendingMesh& pm) { return pm.coord == coord; })) {
+        return;
+    }
+    if (std::find(queuedMeshBuilds_.begin(), queuedMeshBuilds_.end(), coord) != queuedMeshBuilds_.end()) {
+        return;
+    }
+    if (pendingMeshes_.size() >= kMaxMeshJobs) {
+        queuedMeshBuilds_.push_back(coord);
+        return;
+    }
+
     World snap;
     for (const ChunkCoord& c : {
             coord,
@@ -270,11 +325,13 @@ void Game::simulateLiquids(const float deltaTime) {
 }
 
 void Game::updateLoadedChunks(const ChunkCoord& playerChunk) {
-    constexpr int kMaxQueuesPerFrame = 4;
     int queued = 0;
-    for (int dz = -kViewDistance; dz <= kViewDistance && queued < kMaxQueuesPerFrame; ++dz) {
-        for (int dx = -kViewDistance; dx <= kViewDistance && queued < kMaxQueuesPerFrame; ++dx) {
-            for (int cy = 0; cy < kChunkCountY && queued < kMaxQueuesPerFrame; ++cy) {
+    for (int dz = -kViewDistance; dz <= kViewDistance && queued < kMaxTerrainQueuesPerFrame; ++dz) {
+        for (int dx = -kViewDistance; dx <= kViewDistance && queued < kMaxTerrainQueuesPerFrame; ++dx) {
+            for (int cy = 0; cy < kChunkCountY && queued < kMaxTerrainQueuesPerFrame; ++cy) {
+                if (pendingTerrain_.size() >= kMaxTerrainJobs) {
+                    break;
+                }
                 const ChunkCoord coord {playerChunk.x + dx, cy, playerChunk.z + dz};
                 if (chunkLoaded(world_, coord)) continue;
                 if (pendingTerrain_.find(coord) != pendingTerrain_.end()) continue;
@@ -299,11 +356,9 @@ void Game::updateLoadedChunks(const ChunkCoord& playerChunk) {
         }
     }
     for (const auto& coord : toUnload) {
-        pendingTerrain_.erase(coord);
-        pendingMeshes_.erase(
-            std::remove_if(pendingMeshes_.begin(), pendingMeshes_.end(),
-                [&coord](PendingMesh& pm) { return pm.coord == coord; }),
-            pendingMeshes_.end()
+        queuedMeshBuilds_.erase(
+            std::remove(queuedMeshBuilds_.begin(), queuedMeshBuilds_.end(), coord),
+            queuedMeshBuilds_.end()
         );
         world_.chunks.erase(coord);
         const auto it = meshes_.find(coord);

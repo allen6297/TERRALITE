@@ -39,7 +39,24 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(miniz)
 
 # ── FreeType (required by RmlUI font engine) ──────────────────────────────────
-find_package(Freetype REQUIRED)
+find_package(Freetype QUIET)
+if(NOT Freetype_FOUND)
+    set(FT_DISABLE_ZLIB    ON CACHE BOOL "" FORCE)
+    set(FT_DISABLE_BZIP2   ON CACHE BOOL "" FORCE)
+    set(FT_DISABLE_PNG     ON CACHE BOOL "" FORCE)
+    set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "" FORCE)
+    set(FT_DISABLE_BROTLI  ON CACHE BOOL "" FORCE)
+    FetchContent_Declare(
+        freetype
+        GIT_REPOSITORY https://github.com/freetype/freetype.git
+        GIT_TAG        VER-2-13-3
+        GIT_SHALLOW    TRUE
+    )
+    FetchContent_MakeAvailable(freetype)
+    if(TARGET freetype AND NOT TARGET Freetype::Freetype)
+        add_library(Freetype::Freetype ALIAS freetype)
+    endif()
+endif()
 
 # ── RmlUI ─────────────────────────────────────────────────────────────────────
 set(BUILD_SHARED_LIBS          OFF CACHE BOOL "" FORCE)
@@ -88,7 +105,6 @@ else()
             /usr/local/opt/glfw/include
             "C:/Program Files/GLFW/include"
             "C:/glfw/include"
-        REQUIRED
     )
     find_library(GLFW_LIBRARY glfw
         PATHS
@@ -98,15 +114,28 @@ else()
             /usr/local/opt/glfw/lib
             "C:/Program Files/GLFW/lib"
             "C:/glfw/lib"
-        REQUIRED
     )
 
-    add_library(glfw_manual UNKNOWN IMPORTED)
-    set_target_properties(glfw_manual PROPERTIES
-        IMPORTED_LOCATION "${GLFW_LIBRARY}"
-        INTERFACE_INCLUDE_DIRECTORIES "${GLFW_INCLUDE_DIR}"
-    )
-    set(GLFW_TARGET glfw_manual)
+    if(GLFW_INCLUDE_DIR AND GLFW_LIBRARY)
+        add_library(glfw_manual UNKNOWN IMPORTED)
+        set_target_properties(glfw_manual PROPERTIES
+            IMPORTED_LOCATION "${GLFW_LIBRARY}"
+            INTERFACE_INCLUDE_DIRECTORIES "${GLFW_INCLUDE_DIR}"
+        )
+        set(GLFW_TARGET glfw_manual)
+    else()
+        set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+        set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+        set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+        FetchContent_Declare(
+            glfw
+            GIT_REPOSITORY https://github.com/glfw/glfw.git
+            GIT_TAG        3.4
+            GIT_SHALLOW    TRUE
+        )
+        FetchContent_MakeAvailable(glfw)
+        set(GLFW_TARGET glfw)
+    endif()
 endif()
 
 # ── Platform-specific OpenGL and windowing libraries ──────────────────────────
@@ -193,7 +222,13 @@ if(NODEJS)
         COMMENT "Regenerating parse bindings and voxel.d.ts from schema (cmake --build . --target generate_bindings)"
     )
 else()
+    add_custom_target(generate_bindings
+        COMMAND ${CMAKE_COMMAND} -E echo "Node.js not found; using pre-generated bindings"
+    )
     message(STATUS "Node.js not found — using pre-generated bindings (run node tools/codegen/generate.js to regenerate)")
+endif()
+if(NOT TARGET update_mappings)
+    add_custom_target(update_mappings DEPENDS generate_bindings)
 endif()
 
 if(APPLE)

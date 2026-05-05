@@ -44,13 +44,13 @@ GLhandleARB compileShader(const GLenum type, const char* source) {
 }  // namespace
 
 ShaderProgram::~ShaderProgram() {
-    if (program_ != nullptr) {
+    if (program_ != 0) {
         glDeleteObjectARB(program_);
     }
 }
 
 void ShaderProgram::initialize() {
-    if (program_ != nullptr) {
+    if (program_ != 0) {
         return;
     }
 
@@ -129,7 +129,7 @@ void ShaderProgram::useSurface(
     const TextureResource& fallbackBlack,
     const float opacity
 ) {
-    if (program_ == nullptr || albedo == nullptr) {
+    if (program_ == 0 || albedo == nullptr) {
         return;
     }
 

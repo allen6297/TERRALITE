@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include "render/Mesh.hpp"
+#include "render/OpenGLCompat.hpp"
 #include "render/ShaderProgram.hpp"
 
 namespace voxel {
