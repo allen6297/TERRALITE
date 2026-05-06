@@ -60,9 +60,6 @@ async function findExistingPage() {
   return response.results[0]
 }
 
-  return response.results[0]
-}
-
 async function main() {
   const existingPage = await findExistingPage()
 
