@@ -10,19 +10,54 @@ console.log("Running Notion issue sync")
 console.log(`Issue #${issue.number}: ${issue.title}`)
 console.log(`Labels: ${issue.labels.map(label => label.name).join(", ")}`)
 
+function chunkText(text, size = 1800) {
+  const value = text || "No description."
+  const chunks = []
+
+  for (let i = 0; i < value.length; i += size) {
+    chunks.push(value.slice(i, i + size))
+  }
+
+  return chunks
+}
+
+function buildDescriptionBlocks() {
+  return [
+    {
+      object: "block",
+      type: "heading_2",
+      heading_2: {
+        rich_text: [
+          {
+            type: "text",
+            text: {
+              content: "GitHub Issue Description"
+            }
+          }
+        ]
+      }
+    },
+
+    ...chunkText(issue.body).map(chunk => ({
+      object: "block",
+      type: "paragraph",
+      paragraph: {
+        rich_text: [
+          {
+            type: "text",
+            text: {
+              content: chunk
+            }
+          }
+        ]
+      }
+    }))
+  ]
+}
+
 const properties = {
   Name: {
     title: [{ text: { content: issue.title } }]
-  },
-
-  Description: {
-    rich_text: [
-      {
-        text: {
-          content: issue.body || "No description."
-        }
-      }
-    ]
   },
 
   Tags: {
@@ -75,7 +110,8 @@ async function main() {
       parent: {
         database_id: process.env.NOTION_DATABASE_ID
       },
-      properties
+      properties,
+      children: buildDescriptionBlocks()
     })
 
     console.log(`Created Notion issue #${issue.number}`)
@@ -86,17 +122,9 @@ main().catch(err => {
   console.error("Notion sync failed:")
   console.error(err)
 
-  if (err.body) {
-    console.error("Body:", err.body)
-  }
-
-  if (err.code) {
-    console.error("Code:", err.code)
-  }
-
-  if (err.message) {
-    console.error("Message:", err.message)
-  }
+  if (err.body) console.error("Body:", err.body)
+  if (err.code) console.error("Code:", err.code)
+  if (err.message) console.error("Message:", err.message)
 
   process.exit(1)
 })
