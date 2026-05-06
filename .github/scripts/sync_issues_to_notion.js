@@ -51,7 +51,8 @@ async function main() {
   })
 }
 
-main().catch(error => {
-  console.error(error)
+main().catch(err => {
+  console.error("Notion sync failed:")
+  console.error(JSON.stringify(err, null, 2))
   process.exit(1)
 })
