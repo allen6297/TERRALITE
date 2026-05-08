@@ -8,6 +8,7 @@
 #include <quickjs.h>
 
 #include <array>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -35,6 +36,11 @@ BlockTextures parseBlockTextures(JSContext* ctx, JSValueConst render) {
         }
     }
     JS_FreeValue(ctx, tex);
+
+    jsValidate(ctx, "render.texture.albedo", t.albedo, "texture_path");
+    jsValidate(ctx, "render.texture.normal", t.normal, "texture_path");
+    jsValidate(ctx, "render.texture.roughness", t.roughness, "texture_path");
+    jsValidate(ctx, "render.texture.emissive", t.emissive, "texture_path");
     return t;
 }
 
@@ -49,6 +55,8 @@ std::vector<BlockDrop> parseBlockDrops(JSContext* ctx, JSValueConst obj) {
             BlockDrop drop;
             drop.item  = jsStr(ctx, entry, "item");
             drop.count = jsInt(ctx, entry, "count", 1);
+            jsValidate(ctx, "drops.item", drop.item, "item_id");
+            jsValidate(ctx, "drops.count", drop.count, "positive_int");
             drops.push_back(std::move(drop));
             JS_FreeValue(ctx, entry);
         }
@@ -90,6 +98,9 @@ BiomeClimateRange parseClimateRange(JSContext* ctx, JSValueConst obj, const char
     if (!JS_IsUndefined(v) && !JS_IsNull(v)) {
         r.min = jsFloat(ctx, v, "min", 0.0f);
         r.max = jsFloat(ctx, v, "max", 1.0f);
+        if (r.min < 0.0f || r.min > 1.0f || r.max < 0.0f || r.max > 1.0f || r.min > r.max) {
+            throw std::runtime_error(std::string("climate.") + key + " must be a 0..1 min/max range");
+        }
     }
     JS_FreeValue(ctx, v);
     return r;
@@ -109,6 +120,7 @@ std::unordered_map<std::string, std::array<float, 3>> parseBiomeColors(JSContext
                 c[j] = static_cast<float>(d);
                 JS_FreeValue(ctx, e);
             }
+            jsValidate(ctx, "colors", c, "rgb_0_1");
             colors[key] = c;
         });
     }

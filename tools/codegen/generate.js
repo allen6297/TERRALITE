@@ -17,7 +17,18 @@ const fs = require('fs')
 const path = require('path')
 
 const ROOT = path.join(__dirname, '../..')
-const SCHEMAS = ['block', 'item', 'biome', 'recipe'].map(n => require(`./schema/${n}`))
+const SCHEMA_DIR = path.join(__dirname, 'schema')
+const SCHEMAS = fs
+    .readdirSync(SCHEMA_DIR)
+    .filter(f => f.endsWith('.js'))
+    .sort()
+    .map(f => require(path.join(SCHEMA_DIR, f)))
+const SCHEMA_SOURCE_LABEL = `tools/codegen/schema/{${fs
+    .readdirSync(SCHEMA_DIR)
+    .filter(f => f.endsWith('.js'))
+    .map(f => path.basename(f, '.js'))
+    .sort()
+    .join(',')}}.js`
 
 // ── Type mappings ─────────────────────────────────────────────────────────────
 
@@ -33,6 +44,8 @@ const CPP_TYPES = {
 
 const DTS_TYPES = {
     string: 'string',
+    array: 'unknown[]',
+    object: 'Record<string, unknown>',
     bool: 'boolean',
     int: 'number',
     float: 'number',
@@ -80,6 +93,10 @@ function cppRequiredCheck(obj, jsKey) {
     return `voxel::js::jsRequire(ctx, ${obj}, "${jsKey}")`
 }
 
+function cppValidatorCheck(field, jsPath) {
+    return `voxel::js::jsValidate(ctx, "${jsPath}", out.${field.cpp}, "${field.validator}")`
+}
+
 function cppReadExpr(field, obj, jsKey) {
     const type = field.type
     const def = field.default
@@ -90,6 +107,11 @@ function cppReadExpr(field, obj, jsKey) {
             return `voxel::js::jsStr  (ctx, ${obj}, "${jsKey}"${dflt})`
         case 'enum':
             return `voxel::js::jsEnum (ctx, ${obj}, "${jsKey}", ${cppEnumValues(field.values)}, ${d ?? '""'})`
+        case 'array':
+            if (field.elementType === 'string') return `voxel::js::jsStringArray(ctx, ${obj}, "${jsKey}")`
+            throw new Error(`Unsupported array elementType for ${field.jsPath}: ${field.elementType}`)
+        case 'object':
+            return `${field.parser}(ctx, ${obj})`
         case 'bool':
             return `voxel::js::jsBool (ctx, ${obj}, "${jsKey}"${dflt})`
         case 'int':
@@ -146,6 +168,9 @@ function genParseBody(schema) {
         } else {
             writeLine(`out.${f.cpp} = ${cppReadExpr(f, 'obj', f.jsPath)};`)
         }
+        if (f.validator) {
+            writeLine(cppValidatorCheck(f, f.jsPath) + ';')
+        }
     }
 
     // Sub-object groups
@@ -164,6 +189,9 @@ function genParseBody(schema) {
             } else {
                 writeLine(`    out.${f.cpp} = ${cppReadExpr(f, 'sub', f.jsKey)};`)
             }
+            if (f.validator) {
+                writeLine('    ' + cppValidatorCheck(f, f.jsPath) + ';')
+            }
         }
         writeLine('    JS_FreeValue(ctx, sub);')
         writeLine('}')
@@ -178,7 +206,7 @@ function genParseBody(schema) {
 function genCppSource(schemas) {
     const banner = [
         '// GENERATED FILE — do not edit by hand.',
-        '// Source:      tools/codegen/schema/{block,item,biome,recipe}.js',
+        `// Source:      ${SCHEMA_SOURCE_LABEL}`,
         '// Regenerate:  node tools/codegen/generate.js',
         '',
     ].join('\n')
@@ -203,7 +231,7 @@ function genCppSource(schemas) {
     const parserSigs = new Map()
     for (const s of schemas) {
         for (const f of s.fields) {
-            if (f.type !== 'custom') continue
+            if (f.type !== 'custom' && f.type !== 'object') continue
             if (parserSigs.has(f.parser)) continue
             const extraArg = f.parserPassKey ? ', const char*' : ''
             parserSigs.set(f.parser, `extern ${f.cppType} ${f.parser}(JSContext*, JSValueConst${extraArg});`)
@@ -271,6 +299,10 @@ function dtsOptional(f) {
 function dtsFieldType(f) {
     if (f.dtsType) return f.dtsType
     if (f.type === 'enum') return dtsEnumType(f.values)
+    if (f.type === 'array') {
+        const elementType = f.elementDtsType ?? DTS_TYPES[f.elementType] ?? 'unknown'
+        return `${elementType}[]`
+    }
     return DTS_TYPES[f.type] ?? 'unknown'
 }
 
@@ -335,7 +367,7 @@ function genDts(schemas) {
         ' * Voxel Game — Pack Scripting API',
         ' *',
         ' * GENERATED FILE — do not edit by hand.',
-        ' * Source:      tools/codegen/schema/{block,item,biome,recipe}.js',
+        ` * Source:      ${SCHEMA_SOURCE_LABEL}`,
         ' * Regenerate:  node tools/codegen/generate.js   (or: cmake --build . --target generate_bindings)',
         ' */',
         '',
@@ -357,6 +389,9 @@ type TagId = Brand<NamespacedId, 'TagId'>
 type RecipeId = Brand<NamespacedId, 'RecipeId'>
 type TexturePath = Brand<string, 'TexturePath'>
 type ModelPath = Brand<string, 'ModelPath'>
+type BlockMaterial = 'terrain' | 'rock' | 'liquid' | 'plant'
+type BlockRenderType = 'cube' | 'model'
+type RecipeType = 'crafting' | 'smelting'
 
 /** A min/max range for a climate axis, normalised to [0, 1]. */
 interface ClimateRange { min: number; max: number }
@@ -439,11 +474,11 @@ interface BlockBuilder {
   color(r: number, g: number, b: number): BlockBuilder
   texture(pathOrObj: TexturePath | BlockTextures): BlockBuilder
   model(path: ModelPath): BlockBuilder
-  renderType(type: "cube" | "model"): BlockBuilder
+  renderType(type: BlockRenderType): BlockBuilder
   solid(value: boolean): BlockBuilder
   translucent(value: boolean): BlockBuilder
   tintKey(value: boolean): BlockBuilder
-  material(value: string): BlockBuilder
+  material(value: BlockMaterial): BlockBuilder
   drops(entries: BlockDrop | BlockDrop[]): BlockBuilder
   states(states: Record<string, BlockStateProp>): BlockBuilder
   variants(variants: Record<string, BlockStateVariant>): BlockBuilder
@@ -483,8 +518,122 @@ function write(filePath, content) {
     console.log(`  wrote ${path.relative(ROOT, filePath)}`)
 }
 
+function schemaFieldRows(schema) {
+    return schema.fields.map(f => {
+        const type = f.dtsType ?? (f.type === 'enum' ? dtsEnumType(f.values) : f.type)
+        const required = f.required ? 'yes' : 'no'
+        const def = f.default === undefined ? '' : JSON.stringify(f.default)
+        return `| \`${f.jsPath}\` | \`${type}\` | ${required} | ${def} | ${f.validator ?? ''} | ${f.doc ?? ''} |`
+    }).join('\n')
+}
+
+function genMarkdownDocs(schemas) {
+    const sections = schemas.map(s => [
+        `## ${s.dtsInterface}`,
+        '',
+        '| Field | Type | Required | Default | Validator | Description |',
+        '| --- | --- | --- | --- | --- | --- |',
+        schemaFieldRows(s),
+        '',
+    ].join('\n'))
+
+    return [
+        '<!-- GENERATED FILE - do not edit by hand. -->',
+        '# Pack Schema Reference',
+        '',
+        `Source: \`${SCHEMA_SOURCE_LABEL}\``,
+        '',
+        ...sections,
+    ].join('\n')
+}
+
+function jsonSchemaType(f) {
+    if (f.type === 'enum') return {type: 'string', enum: f.values}
+    if (f.type === 'array') return {type: 'array', items: {type: f.elementType ?? 'string'}}
+    if (f.type === 'object' || f.type === 'custom') return {type: ['object', 'array', 'string']}
+    if (f.type === 'bool') return {type: 'boolean'}
+    if (f.type === 'int') return {type: 'integer'}
+    if (f.type === 'float') return {type: 'number'}
+    if (f.type === 'rgb') return {type: 'array', items: {type: 'number'}, minItems: 3, maxItems: 3}
+    return {type: 'string'}
+}
+
+function assignNestedProperty(root, pathText, schema) {
+    const parts = pathText.split('.')
+    let cursor = root
+    for (let i = 0; i < parts.length - 1; ++i) {
+        const part = parts[i]
+        cursor.properties ??= {}
+        cursor.properties[part] ??= {type: 'object', properties: {}}
+        cursor = cursor.properties[part]
+    }
+    cursor.properties ??= {}
+    cursor.properties[parts[parts.length - 1]] = schema
+}
+
+function genJsonSchema(schemas) {
+    const definitions = {}
+    for (const schema of schemas) {
+        const def = {type: 'object', properties: {}, required: []}
+        for (const field of schema.fields) {
+            assignNestedProperty(def, field.jsPath, {
+                ...jsonSchemaType(field),
+                description: field.doc,
+                default: field.default,
+            })
+            if (field.required) def.required.push(field.jsPath)
+        }
+        if (def.required.length === 0) delete def.required
+        definitions[schema.dtsInterface] = def
+    }
+    return JSON.stringify({
+        $schema: 'https://json-schema.org/draft/2020-12/schema',
+        $id: 'https://terralite.local/pack.schema.json',
+        title: 'TERRALITE Pack Schema',
+        definitions,
+    }, null, 2) + '\n'
+}
+
+function genSchemaDump(schemas) {
+    return JSON.stringify(schemas, null, 2) + '\n'
+}
+
+function genSnippets() {
+    return JSON.stringify({
+        'TERRALITE block registration': {
+            prefix: 'tl-block',
+            body: [
+                "StartupEvents.registry('block', event => {",
+                "  event.create('${1:pack:block_id}')",
+                "    .displayName('${2:Block Name}')",
+                "    .solid(true)",
+                "    .model('${3:models/blocks/block.json}')",
+                "    .texture('${4:textures/blocks/block.ppm}')",
+                "})",
+            ],
+            description: 'Register a TERRALITE block.',
+        },
+        'TERRALITE item registration': {
+            prefix: 'tl-item',
+            body: [
+                "StartupEvents.registry('item', event => {",
+                "  event.create('${1:pack:item_id}')",
+                "    .displayName('${2:Item Name}')",
+                "    .stackSize(${3:64})",
+                "    .icon('${4:textures/items/item.ppm}')",
+                "})",
+            ],
+            description: 'Register a TERRALITE item.',
+        },
+    }, null, 2) + '\n'
+}
+
 console.log('codegen: generating bindings...')
 write(path.join(ROOT, 'include/common/pack/generated/ParseBindings.hpp'), genCppHeader(SCHEMAS))
 write(path.join(ROOT, 'src/common/pack/generated/ParseBindings.cpp'), genCppSource(SCHEMAS))
 write(path.join(ROOT, 'packs/types/voxel.d.ts'), genDts(SCHEMAS))
+write(path.join(ROOT, 'documentation/PackSchema.md'), genMarkdownDocs(SCHEMAS))
+write(path.join(ROOT, 'packs/types/pack.schema.json'), genJsonSchema(SCHEMAS))
+write(path.join(ROOT, 'packs/types/schema-dump.json'), genSchemaDump(SCHEMAS))
+write(path.join(ROOT, 'packs/types/voxel.code-snippets'), genSnippets())
 console.log('codegen: done.')

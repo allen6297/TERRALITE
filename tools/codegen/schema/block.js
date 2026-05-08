@@ -1,5 +1,5 @@
 // Schema for BlockDefinition / BlockDef
-// Each field: { cpp, jsPath, type, default?, required?, cppType?, parser?, dtsType?, dtsGroup?, dtsKey?, doc? }
+// Each field: { cpp, jsPath, type, default?, required?, validator?, cppType?, parser?, dtsType?, dtsGroup?, dtsKey?, doc? }
 //
 // type:     'string' | 'enum' | 'bool' | 'int' | 'float' | 'rgb' | 'string?' | 'custom'
 // jsPath:   dot-separated path into the JS object  (e.g. 'render.color')
@@ -21,7 +21,7 @@ module.exports = {
     // ── Top-level ────────────────────────────────────────────────────────────
     {
       cpp: 'id',   jsPath: 'id',   type: 'string', required: true,
-      dtsType: 'BlockId',
+      validator: 'block_id', dtsType: 'BlockId',
       doc: 'Unique namespaced identifier. @example "base:grass"',
     },
     {
@@ -39,18 +39,20 @@ module.exports = {
       dtsGroup: 'voxel',  doc: 'Whether light passes through this block.',
     },
     {
-      cpp: 'material',    jsPath: 'voxel.material',     type: 'string', default: 'terrain',
-      dtsGroup: 'voxel',  doc: 'Physics/sound material group. @example "terrain" "rock" "liquid" "plant"',
+      cpp: 'material',    jsPath: 'voxel.material',     type: 'enum',
+      values: ['terrain', 'rock', 'liquid', 'plant'], default: 'terrain',
+      dtsGroup: 'voxel', dtsType: 'BlockMaterial',
+      doc: 'Physics/sound material group. @example "terrain" "rock" "liquid" "plant"',
     },
 
     // ── render group ─────────────────────────────────────────────────────────
     {
       cpp: 'color',      jsPath: 'render.color',   type: 'rgb',    default: [1, 1, 1],
-      dtsGroup: 'render', doc: 'Base tint colour (linear RGB). Applied when tintKey is false.',
+      dtsGroup: 'render', validator: 'rgb_0_1', doc: 'Base tint colour (linear RGB). Applied when tintKey is false.',
     },
     {
       cpp: 'opacity',    jsPath: 'render.opacity', type: 'float',  default: 1.0,
-      dtsGroup: 'render', doc: 'Alpha opacity. 1 = fully opaque, 0 = invisible.',
+      dtsGroup: 'render', validator: 'opacity_0_1', doc: 'Alpha opacity. 1 = fully opaque, 0 = invisible.',
     },
     {
       cpp: 'tintKey',    jsPath: 'render.tintKey', type: 'bool',   default: false,
@@ -58,18 +60,18 @@ module.exports = {
     },
     {
       cpp: 'renderType', jsPath: 'render.type',    type: 'enum', values: ['cube', 'model'], default: 'cube',
-      dtsGroup: 'render', dtsKey: 'type',
+      dtsGroup: 'render', dtsKey: 'type', dtsType: 'BlockRenderType',
       doc: 'Render geometry type. "cube" = full block, "model" = custom model.',
     },
     {
       cpp: 'modelPath',  jsPath: 'render.model',   type: 'string', default: '',
-      dtsGroup: 'render', dtsKey: 'model', dtsType: 'ModelPath',
+      dtsGroup: 'render', dtsKey: 'model', dtsType: 'ModelPath', validator: 'model_path',
       doc: 'Path to the block model JSON, relative to the pack assets folder.',
     },
 
     // ── render group — custom fields ──────────────────────────────────────────
     {
-      cpp: 'textures',   jsPath: 'render.texture', type: 'custom',
+      cpp: 'textures',   jsPath: 'render.texture', type: 'object',
       cppType: 'BlockTextures', cppDefault: '{}',
       parser: 'parseBlockTextures',
       dtsGroup: 'render', dtsKey: 'texture', dtsType: 'TexturePath | BlockTextures',

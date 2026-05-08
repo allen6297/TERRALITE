@@ -14,10 +14,10 @@ module.exports = {
 
   fields: [
     // ── Top-level ────────────────────────────────────────────────────────────
-    { cpp: 'id',       jsPath: 'id',       type: 'string', required: true, dtsType: 'BiomeId', doc: 'Unique namespaced identifier.' },
+    { cpp: 'id',       jsPath: 'id',       type: 'string', required: true, validator: 'biome_id', dtsType: 'BiomeId', doc: 'Unique namespaced identifier.' },
     { cpp: 'name',     jsPath: 'name',     type: 'string', required: true, doc: 'Human-readable display name.' },
-    { cpp: 'priority', jsPath: 'priority', type: 'float',  default: 0.0,   doc: 'Tie-breaker when two biomes score equally.' },
-    { cpp: 'rarity',   jsPath: 'rarity',   type: 'float',  default: 1.0,   doc: 'Score multiplier — values below 1 make the biome rarer.' },
+    { cpp: 'priority', jsPath: 'priority', type: 'float',  default: 0.0, validator: 'non_negative_float', doc: 'Tie-breaker when two biomes score equally.' },
+    { cpp: 'rarity',   jsPath: 'rarity',   type: 'float',  default: 1.0, validator: 'non_negative_float', doc: 'Score multiplier — values below 1 make the biome rarer.' },
 
     // ── climate group — each axis is a custom ClimateRange sub-object ────────
     { cpp: 'climate.temperature', jsPath: 'climate.temperature', type: 'custom',
@@ -47,29 +47,29 @@ module.exports = {
 
     // ── surface group ────────────────────────────────────────────────────────
     { cpp: 'surface.top',         jsPath: 'surface.top',         type: 'string', default: 'base:grass',
-      dtsGroup: 'surface', dtsKey: 'top',         dtsType: 'BlockId', doc: 'Block on the very top of the terrain column.' },
+      dtsGroup: 'surface', dtsKey: 'top',         validator: 'block_id', dtsType: 'BlockId', doc: 'Block on the very top of the terrain column.' },
     { cpp: 'surface.middle',      jsPath: 'surface.middle',      type: 'string', default: 'base:dirt',
-      dtsGroup: 'surface', dtsKey: 'middle',      dtsType: 'BlockId', doc: 'Block filling the middle layer.' },
+      dtsGroup: 'surface', dtsKey: 'middle',      validator: 'block_id', dtsType: 'BlockId', doc: 'Block filling the middle layer.' },
     { cpp: 'surface.base',        jsPath: 'surface.base',        type: 'string', default: 'base:stone',
-      dtsGroup: 'surface', dtsKey: 'base',        dtsType: 'BlockId', doc: 'Block below the middle layer.' },
+      dtsGroup: 'surface', dtsKey: 'base',        validator: 'block_id', dtsType: 'BlockId', doc: 'Block below the middle layer.' },
     { cpp: 'surface.middleDepth', jsPath: 'surface.middleDepth', type: 'int',    default: 3,
-      dtsGroup: 'surface', dtsKey: 'middleDepth',                           doc: 'Depth of the middle layer in blocks.' },
+      dtsGroup: 'surface', dtsKey: 'middleDepth', validator: 'positive_int', doc: 'Depth of the middle layer in blocks.' },
 
     // ── atmosphere group ─────────────────────────────────────────────────────
     { cpp: 'atmosphere.skyColor',   jsPath: 'atmosphere.skyColor',   type: 'rgb', default: [0.58, 0.78, 0.98],
-      dtsGroup: 'atmosphere', dtsKey: 'skyColor',   doc: 'Sky gradient colour (linear RGB).' },
+      dtsGroup: 'atmosphere', dtsKey: 'skyColor', validator: 'rgb_0_1', doc: 'Sky gradient colour (linear RGB).' },
     { cpp: 'atmosphere.fogColor',   jsPath: 'atmosphere.fogColor',   type: 'rgb', default: [0.75, 0.85, 0.95],
-      dtsGroup: 'atmosphere', dtsKey: 'fogColor',   doc: 'Distance fog colour (linear RGB).' },
+      dtsGroup: 'atmosphere', dtsKey: 'fogColor', validator: 'rgb_0_1', doc: 'Distance fog colour (linear RGB).' },
     { cpp: 'atmosphere.waterColor', jsPath: 'atmosphere.waterColor', type: 'rgb', default: [0.20, 0.45, 0.80],
-      dtsGroup: 'atmosphere', dtsKey: 'waterColor', doc: 'Water tint colour (linear RGB).' },
+      dtsGroup: 'atmosphere', dtsKey: 'waterColor', validator: 'rgb_0_1', doc: 'Water tint colour (linear RGB).' },
 
     // ── fertility group ───────────────────────────────────────────────────────
-    { cpp: 'fertility.nitrogen',   jsPath: 'fertility.nitrogen',   type: 'float', default: 0.5, dtsGroup: 'fertility', dtsKey: 'nitrogen' },
-    { cpp: 'fertility.phosphorus', jsPath: 'fertility.phosphorus', type: 'float', default: 0.5, dtsGroup: 'fertility', dtsKey: 'phosphorus' },
-    { cpp: 'fertility.potassium',  jsPath: 'fertility.potassium',  type: 'float', default: 0.5, dtsGroup: 'fertility', dtsKey: 'potassium' },
-    { cpp: 'fertility.magnesium',  jsPath: 'fertility.magnesium',  type: 'float', default: 0.5, dtsGroup: 'fertility', dtsKey: 'magnesium' },
-    { cpp: 'fertility.calcium',    jsPath: 'fertility.calcium',    type: 'float', default: 0.5, dtsGroup: 'fertility', dtsKey: 'calcium' },
-    { cpp: 'fertility.sulfur',     jsPath: 'fertility.sulfur',     type: 'float', default: 0.2, dtsGroup: 'fertility', dtsKey: 'sulfur' },
+    { cpp: 'fertility.nitrogen',   jsPath: 'fertility.nitrogen',   type: 'float', default: 0.5, validator: 'non_negative_float', dtsGroup: 'fertility', dtsKey: 'nitrogen' },
+    { cpp: 'fertility.phosphorus', jsPath: 'fertility.phosphorus', type: 'float', default: 0.5, validator: 'non_negative_float', dtsGroup: 'fertility', dtsKey: 'phosphorus' },
+    { cpp: 'fertility.potassium',  jsPath: 'fertility.potassium',  type: 'float', default: 0.5, validator: 'non_negative_float', dtsGroup: 'fertility', dtsKey: 'potassium' },
+    { cpp: 'fertility.magnesium',  jsPath: 'fertility.magnesium',  type: 'float', default: 0.5, validator: 'non_negative_float', dtsGroup: 'fertility', dtsKey: 'magnesium' },
+    { cpp: 'fertility.calcium',    jsPath: 'fertility.calcium',    type: 'float', default: 0.5, validator: 'non_negative_float', dtsGroup: 'fertility', dtsKey: 'calcium' },
+    { cpp: 'fertility.sulfur',     jsPath: 'fertility.sulfur',     type: 'float', default: 0.2, validator: 'non_negative_float', dtsGroup: 'fertility', dtsKey: 'sulfur' },
 
     // ── Top-level — custom ────────────────────────────────────────────────────
     {

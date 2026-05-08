@@ -2,7 +2,7 @@
  * Voxel Game — Pack Scripting API
  *
  * GENERATED FILE — do not edit by hand.
- * Source:      tools/codegen/schema/{block,item,biome,recipe}.js
+ * Source:      tools/codegen/schema/{biome,block,item,recipe}.js
  * Regenerate:  node tools/codegen/generate.js   (or: cmake --build . --target generate_bindings)
  */
 
@@ -22,6 +22,9 @@ type TagId = Brand<NamespacedId, 'TagId'>
 type RecipeId = Brand<NamespacedId, 'RecipeId'>
 type TexturePath = Brand<string, 'TexturePath'>
 type ModelPath = Brand<string, 'ModelPath'>
+type BlockMaterial = 'terrain' | 'rock' | 'liquid' | 'plant'
+type BlockRenderType = 'cube' | 'model'
+type RecipeType = 'crafting' | 'smelting'
 
 /** A min/max range for a climate axis, normalised to [0, 1]. */
 interface ClimateRange { min: number; max: number }
@@ -45,34 +48,6 @@ interface BlockStatePropString { type: 'string'; values: string[];  default?: st
 type BlockStateProp = BlockStatePropInt | BlockStatePropBool | BlockStatePropString
 
 interface BlockStateVariant { model?: ModelPath }
-
-/** Physics and voxel-space properties. */
-
-interface BlockVoxel {
-  /** Whether this block has a solid collision box. */
-  solid?: boolean
-  /** Whether light passes through this block. */
-  translucent?: boolean
-  /** Physics/sound material group. @example "terrain" "rock" "liquid" "plant" */
-  material?: string
-}
-
-/** Visual and rendering configuration. */
-
-interface BlockRender {
-  /** Base tint colour (linear RGB). Applied when tintKey is false. */
-  color?: RGB
-  /** Alpha opacity. 1 = fully opaque, 0 = invisible. */
-  opacity?: number
-  /** When true the engine uses the biome tint colour instead of color. */
-  tintKey?: boolean
-  /** Render geometry type. "cube" = full block, "model" = custom model. */
-  type?: 'cube' | 'model'
-  /** Path to the block model JSON, relative to the pack assets folder. */
-  model?: ModelPath
-  /** Texture paths. Pass a string to set the albedo only, or an object for named maps. */
-  texture?: TexturePath | BlockTextures
-}
 
 /** Climate axis ranges this biome occupies (each normalised to [0,1]). */
 
@@ -135,6 +110,52 @@ interface BiomeFertility {
   sulfur?: number
 }
 
+/** Physics and voxel-space properties. */
+
+interface BlockVoxel {
+  /** Whether this block has a solid collision box. */
+  solid?: boolean
+  /** Whether light passes through this block. */
+  translucent?: boolean
+  /** Physics/sound material group. @example "terrain" "rock" "liquid" "plant" */
+  material?: BlockMaterial
+}
+
+/** Visual and rendering configuration. */
+
+interface BlockRender {
+  /** Base tint colour (linear RGB). Applied when tintKey is false. */
+  color?: RGB
+  /** Alpha opacity. 1 = fully opaque, 0 = invisible. */
+  opacity?: number
+  /** When true the engine uses the biome tint colour instead of color. */
+  tintKey?: boolean
+  /** Render geometry type. "cube" = full block, "model" = custom model. */
+  type?: BlockRenderType
+  /** Path to the block model JSON, relative to the pack assets folder. */
+  model?: ModelPath
+  /** Texture paths. Pass a string to set the albedo only, or an object for named maps. */
+  texture?: TexturePath | BlockTextures
+}
+
+interface BiomeDef {
+  /** Unique namespaced identifier. */
+  id: BiomeId
+  /** Human-readable display name. */
+  name: string
+  /** Tie-breaker when two biomes score equally. */
+  priority?: number
+  /** Score multiplier — values below 1 make the biome rarer. */
+  rarity?: number
+  /** Named tint colours applied to blocks that opt in via tintKey. @example { grass: [0.3, 0.76, 0.22] } */
+  colors?: Record<string, RGB>
+  climate?: BiomeClimate
+  terrain?: BiomeTerrain
+  surface?: BiomeSurface
+  atmosphere?: BiomeAtmosphere
+  fertility?: BiomeFertility
+}
+
 interface BlockDef {
   states?:   Record<string, BlockStateProp>
   variants?: Record<string, BlockStateVariant>
@@ -163,29 +184,11 @@ interface ItemDef {
   placeableBlock?: BlockId
 }
 
-interface BiomeDef {
-  /** Unique namespaced identifier. */
-  id: BiomeId
-  /** Human-readable display name. */
-  name: string
-  /** Tie-breaker when two biomes score equally. */
-  priority?: number
-  /** Score multiplier — values below 1 make the biome rarer. */
-  rarity?: number
-  /** Named tint colours applied to blocks that opt in via tintKey. @example { grass: [0.3, 0.76, 0.22] } */
-  colors?: Record<string, RGB>
-  climate?: BiomeClimate
-  terrain?: BiomeTerrain
-  surface?: BiomeSurface
-  atmosphere?: BiomeAtmosphere
-  fertility?: BiomeFertility
-}
-
 interface RecipeDef {
   /** Namespaced recipe id */
   id: RecipeId
   /** Recipe type (crafting, smelting, etc.) */
-  type: string
+  type: RecipeType
   /** Output item id */
   output: ItemId
   /** Output count */
@@ -229,11 +232,11 @@ interface BlockBuilder {
   color(r: number, g: number, b: number): BlockBuilder
   texture(pathOrObj: TexturePath | BlockTextures): BlockBuilder
   model(path: ModelPath): BlockBuilder
-  renderType(type: "cube" | "model"): BlockBuilder
+  renderType(type: BlockRenderType): BlockBuilder
   solid(value: boolean): BlockBuilder
   translucent(value: boolean): BlockBuilder
   tintKey(value: boolean): BlockBuilder
-  material(value: string): BlockBuilder
+  material(value: BlockMaterial): BlockBuilder
   drops(entries: BlockDrop | BlockDrop[]): BlockBuilder
   states(states: Record<string, BlockStateProp>): BlockBuilder
   variants(variants: Record<string, BlockStateVariant>): BlockBuilder

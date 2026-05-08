@@ -8,14 +8,17 @@ module.exports = {
             jsPath: "id",
             type: "string",
             required: true,
+            validator: "recipe_id",
             dtsType: "RecipeId",
             doc: "Namespaced recipe id"
         },
         {
             cpp: "type",
             jsPath: "type",
-            type: "string",
+            type: "enum",
+            values: ["crafting", "smelting"],
             required: true,
+            dtsType: "RecipeType",
             doc: "Recipe type (crafting, smelting, etc.)"
         },
         {
@@ -23,6 +26,7 @@ module.exports = {
             jsPath: "output",
             type: "string",
             required: true,
+            validator: "item_id",
             dtsType: "ItemId",
             doc: "Output item id"
         },
@@ -31,14 +35,16 @@ module.exports = {
             jsPath: "count",
             type: "int",
             default: 1,
+            validator: "positive_int",
             doc: "Output count"
         },
         {
             cpp: "ingredients",
             jsPath: "ingredients",
-            type: "custom",
-            parser: "parseStringArray",
+            type: "array",
+            elementType: "string",
             cppType: "std::vector<std::string>",
+            validator: "item_id",
             dtsType: "ItemId[]",
             doc: "List of ingredient item ids"
         }

@@ -210,13 +210,20 @@ BlockStateDefinition ScriptManager::parseBlockState(JSValueConst obj, const std:
                 }
                 JS_FreeValue(ctx, vals);
                 pd.defaultValue = jsStr(ctx, propDef, "default");
-            } else {
+            } else if (type == "int") {
                 // int range: min..max
                 int minV = jsInt(ctx, propDef, "min", 0);
                 int maxV = jsInt(ctx, propDef, "max", 0);
+                if (maxV < minV) {
+                    throw std::runtime_error(std::string("Block state property '") + propName +
+                                             "' has max below min");
+                }
                 int defV = jsInt(ctx, propDef, "default", minV);
                 for (int v = minV; v <= maxV; ++v) pd.values.push_back(v);
                 pd.defaultValue = defV;
+            } else {
+                throw std::runtime_error(std::string("Block state property '") + propName +
+                                         "' has invalid type '" + type + "'");
             }
 
             bsd.props.emplace_back(propName, std::move(pd));
@@ -323,7 +330,12 @@ JSValue ScriptManager::jsRegisterBlock(JSContext* ctx, JSValueConst, int argc, J
     // states + variants → BlockStateDefinition (if present)
     JSValue states = JS_GetPropertyStr(ctx, argv[0], "states");
     if (!JS_IsUndefined(states) && !JS_IsNull(states)) {
-        self->pendingBlockStates_.push_back(self->parseBlockState(argv[0], block.id));
+        try {
+            self->pendingBlockStates_.push_back(self->parseBlockState(argv[0], block.id));
+        } catch (const std::exception& e) {
+            JS_FreeValue(ctx, states);
+            return JS_ThrowTypeError(ctx, "Registry.registerBlock: %s", e.what());
+        }
     }
     JS_FreeValue(ctx, states);
 

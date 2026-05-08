@@ -275,15 +275,15 @@ endif()
 # ── Code generation ───────────────────────────────────────────────────────────
 find_program(NODEJS node)
 if(NODEJS)
+    file(GLOB CODEGEN_SCHEMA_FILES CONFIGURE_DEPENDS
+        ${CMAKE_SOURCE_DIR}/tools/codegen/schema/*.js
+    )
     add_custom_target(generate_bindings
         COMMAND ${NODEJS} ${CMAKE_SOURCE_DIR}/tools/codegen/generate.js
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         SOURCES
             ${CMAKE_SOURCE_DIR}/tools/codegen/generate.js
-            ${CMAKE_SOURCE_DIR}/tools/codegen/schema/block.js
-            ${CMAKE_SOURCE_DIR}/tools/codegen/schema/item.js
-            ${CMAKE_SOURCE_DIR}/tools/codegen/schema/biome.js
-            ${CMAKE_SOURCE_DIR}/tools/codegen/schema/recipe.js
+            ${CODEGEN_SCHEMA_FILES}
         COMMENT "Regenerating parse bindings and voxel.d.ts from schema (cmake --build . --target generate_bindings)"
     )
 else()
