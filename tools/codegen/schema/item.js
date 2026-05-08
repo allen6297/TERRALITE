@@ -7,6 +7,7 @@ module.exports = {
   fields: [
     {
       cpp: 'id',        jsPath: 'id',        type: 'string',  required: true,
+      dtsType: 'ItemId',
       doc: 'Unique namespaced identifier. @example "base:wheat_seeds"',
     },
     {
@@ -19,11 +20,12 @@ module.exports = {
     },
     {
       cpp: 'icon',      jsPath: 'icon',      type: 'string',  default: '',
+      dtsType: 'TexturePath',
       doc: 'Icon texture path relative to the pack assets folder.',
     },
     {
       cpp: 'placeableBlock', jsPath: 'placeableBlock', type: 'string?',
-      dtsType: 'NamespacedId',
+      dtsType: 'BlockId',
       doc: 'If set, using this item places the named block in the world.',
     },
   ],

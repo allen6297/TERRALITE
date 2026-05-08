@@ -21,6 +21,7 @@ module.exports = {
     // ── Top-level ────────────────────────────────────────────────────────────
     {
       cpp: 'id',   jsPath: 'id',   type: 'string', required: true,
+      dtsType: 'BlockId',
       doc: 'Unique namespaced identifier. @example "base:grass"',
     },
     {
@@ -62,7 +63,7 @@ module.exports = {
     },
     {
       cpp: 'modelPath',  jsPath: 'render.model',   type: 'string', default: '',
-      dtsGroup: 'render', dtsKey: 'model',
+      dtsGroup: 'render', dtsKey: 'model', dtsType: 'ModelPath',
       doc: 'Path to the block model JSON, relative to the pack assets folder.',
     },
 
@@ -71,7 +72,7 @@ module.exports = {
       cpp: 'textures',   jsPath: 'render.texture', type: 'custom',
       cppType: 'BlockTextures', cppDefault: '{}',
       parser: 'parseBlockTextures',
-      dtsGroup: 'render', dtsKey: 'texture', dtsType: 'string | BlockTextures',
+      dtsGroup: 'render', dtsKey: 'texture', dtsType: 'TexturePath | BlockTextures',
       doc: 'Texture paths. Pass a string to set the albedo only, or an object for named maps.',
     },
 

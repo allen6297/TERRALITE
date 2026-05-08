@@ -283,6 +283,7 @@ if(NODEJS)
             ${CMAKE_SOURCE_DIR}/tools/codegen/schema/block.js
             ${CMAKE_SOURCE_DIR}/tools/codegen/schema/item.js
             ${CMAKE_SOURCE_DIR}/tools/codegen/schema/biome.js
+            ${CMAKE_SOURCE_DIR}/tools/codegen/schema/recipe.js
         COMMENT "Regenerating parse bindings and voxel.d.ts from schema (cmake --build . --target generate_bindings)"
     )
 else()

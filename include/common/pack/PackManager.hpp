@@ -39,6 +39,7 @@ private:
     std::vector<std::string> buildOrder()                                    const;
     void                     saveOrder(const std::vector<std::string>& order) const;
     void                     applyOrder(const std::vector<std::string>& order);
+    void                     validateDependencies()                          const;
 };
 
 }  // namespace voxel

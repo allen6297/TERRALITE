@@ -2,7 +2,7 @@
  * Voxel Game — Pack Scripting API
  *
  * GENERATED FILE — do not edit by hand.
- * Source:      tools/codegen/schema/{block,item,biome}.js
+ * Source:      tools/codegen/schema/{block,item,biome,recipe}.js
  * Regenerate:  node tools/codegen/generate.js   (or: cmake --build . --target generate_bindings)
  */
 
@@ -10,22 +10,32 @@
 /** RGB colour in linear space, each channel in [0, 1]. */
 type RGB = [number, number, number]
 
+/** Creates a nominal string type for editor-only safety. */
+type Brand<T, Name extends string> = T & { readonly __brand: Name }
+
 /** Namespaced identifier: "pack:name". @example "base:grass" */
-type NamespacedId = string
+type NamespacedId = Brand<string, 'NamespacedId'>
+type BlockId = Brand<NamespacedId, 'BlockId'>
+type ItemId = Brand<NamespacedId, 'ItemId'>
+type BiomeId = Brand<NamespacedId, 'BiomeId'>
+type TagId = Brand<NamespacedId, 'TagId'>
+type RecipeId = Brand<NamespacedId, 'RecipeId'>
+type TexturePath = Brand<string, 'TexturePath'>
+type ModelPath = Brand<string, 'ModelPath'>
 
 /** A min/max range for a climate axis, normalised to [0, 1]. */
 interface ClimateRange { min: number; max: number }
 
 interface BlockTextures {
-  albedo?:    string
-  normal?:    string
-  roughness?: string
-  emissive?:  string
+  albedo?:    TexturePath
+  normal?:    TexturePath
+  roughness?: TexturePath
+  emissive?:  TexturePath
 }
 
 interface BlockDrop {
   /** Namespaced item ID. */
-  item: NamespacedId
+  item: ItemId
   count: number
 }
 
@@ -34,7 +44,7 @@ interface BlockStatePropBool   { type: 'bool';   default?: boolean }
 interface BlockStatePropString { type: 'string'; values: string[];  default?: string }
 type BlockStateProp = BlockStatePropInt | BlockStatePropBool | BlockStatePropString
 
-interface BlockStateVariant { model?: string }
+interface BlockStateVariant { model?: ModelPath }
 
 /** Physics and voxel-space properties. */
 
@@ -59,9 +69,9 @@ interface BlockRender {
   /** Render geometry type. "cube" = full block, "model" = custom model. */
   type?: "cube" | "model"
   /** Path to the block model JSON, relative to the pack assets folder. */
-  model?: string
+  model?: ModelPath
   /** Texture paths. Pass a string to set the albedo only, or an object for named maps. */
-  texture?: string | BlockTextures
+  texture?: TexturePath | BlockTextures
 }
 
 /** Climate axis ranges this biome occupies (each normalised to [0,1]). */
@@ -94,11 +104,11 @@ interface BiomeTerrain {
 
 interface BiomeSurface {
   /** Block on the very top of the terrain column. */
-  top?: NamespacedId
+  top?: BlockId
   /** Block filling the middle layer. */
-  middle?: NamespacedId
+  middle?: BlockId
   /** Block below the middle layer. */
-  base?: NamespacedId
+  base?: BlockId
   /** Depth of the middle layer in blocks. */
   middleDepth?: number
 }
@@ -129,7 +139,7 @@ interface BlockDef {
   states?:   Record<string, BlockStateProp>
   variants?: Record<string, BlockStateVariant>
   /** Unique namespaced identifier. @example "base:grass" */
-  id: string
+  id: BlockId
   /** Human-readable display name. */
   name: string
   /** Items dropped when this block is broken. */
@@ -142,20 +152,20 @@ interface BlockDef {
 
 interface ItemDef {
   /** Unique namespaced identifier. @example "base:wheat_seeds" */
-  id: string
+  id: ItemId
   /** Human-readable display name. */
   name: string
   /** Maximum number of this item per inventory slot. */
   stackSize?: number
   /** Icon texture path relative to the pack assets folder. */
-  icon?: string
+  icon?: TexturePath
   /** If set, using this item places the named block in the world. */
-  placeableBlock?: NamespacedId
+  placeableBlock?: BlockId
 }
 
 interface BiomeDef {
   /** Unique namespaced identifier. */
-  id: string
+  id: BiomeId
   /** Human-readable display name. */
   name: string
   /** Tie-breaker when two biomes score equally. */
@@ -173,15 +183,15 @@ interface BiomeDef {
 
 interface RecipeDef {
   /** Namespaced recipe id */
-  id: string
+  id: RecipeId
   /** Recipe type (crafting, smelting, etc.) */
   type: string
   /** Output item id */
-  output: string
+  output: ItemId
   /** Output count */
   count?: number
   /** List of ingredient item ids */
-  ingredients?: unknown
+  ingredients?: ItemId[]
 }
 
 
@@ -200,29 +210,53 @@ declare const Utils: {
   isValidId(id: string): boolean
   climate(min: number, max: number): ClimateRange
   makeClimate(overrides?: Partial<BiomeClimate>): BiomeClimate
-  drop(itemId: NamespacedId, count?: number): BlockDrop
+  drop(itemId: ItemId, count?: number): BlockDrop
 }
 
 // ── Globals ───────────────────────────────────────────────────────────────────
 
 interface TagDef {
   /** Namespaced identifier, e.g. "base:flammable". */
-  id: NamespacedId
+  id: TagId
   /** Optional human-readable description. */
   description?: string
 }
 
-declare const Startup: {
-  registerBlock(def: BlockDef): void
-  registerItem(def: ItemDef): void
-  registerBiome(def: BiomeDef): void
-  /** Register a tag. Pass a namespaced id string or a TagDef object. */
-  registerTag(idOrDef: NamespacedId | TagDef): void
+interface BlockBuilder {
+  displayName(name: string): BlockBuilder
+  hardness(value: number): BlockBuilder
+  opacity(value: number): BlockBuilder
+  color(r: number, g: number, b: number): BlockBuilder
+  texture(pathOrObj: TexturePath | BlockTextures): BlockBuilder
+  model(path: ModelPath): BlockBuilder
+  renderType(type: "cube" | "model"): BlockBuilder
+  solid(value: boolean): BlockBuilder
+  translucent(value: boolean): BlockBuilder
+  tintKey(value: boolean): BlockBuilder
+  material(value: string): BlockBuilder
+  drops(entries: BlockDrop | BlockDrop[]): BlockBuilder
+  states(states: Record<string, BlockStateProp>): BlockBuilder
+  variants(variants: Record<string, BlockStateVariant>): BlockBuilder
+  property(key: string, value: boolean | number | string): BlockBuilder
+}
+
+interface ItemBuilder {
+  displayName(name: string): ItemBuilder
+  stackSize(value: number): ItemBuilder
+  icon(path: TexturePath): ItemBuilder
+  placesBlock(blockId: BlockId): ItemBuilder
+}
+
+declare const StartupEvents: {
+  registry(type: 'block', fn: (event: { create(id: BlockId): BlockBuilder }) => void): void
+  registry(type: 'item', fn: (event: { create(id: ItemId): ItemBuilder }) => void): void
+  registry(type: 'biome', fn: (event: { register(def: BiomeDef): void }) => void): void
+  registry(type: 'tag', fn: (event: { register(idOrDef: TagId | TagDef): void }) => void): void
 }
 
 declare const Registry: {
-  getBlock(id: NamespacedId): BlockDef | null
-  getItem(id: NamespacedId):  ItemDef  | null
-  getBiome(id: NamespacedId): BiomeDef | null
-  getTag(id: NamespacedId):   TagDef   | null
+  getBlock(id: BlockId): BlockDef | null
+  getItem(id: ItemId):   ItemDef  | null
+  getBiome(id: BiomeId): BiomeDef | null
+  getTag(id: TagId):     TagDef   | null
 }

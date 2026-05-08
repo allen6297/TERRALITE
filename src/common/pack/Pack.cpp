@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <cctype>
 
 #include "data/JsonValue.hpp"
 #include "miniz.h"
@@ -22,6 +23,16 @@ static std::string readStream(std::ifstream& stream) {
     std::ostringstream buf;
     buf << stream.rdbuf();
     return buf.str();
+}
+
+static bool isValidPackId(const std::string& id) {
+    if (id.empty()) return false;
+    for (const char c : id) {
+        const auto ch = static_cast<unsigned char>(c);
+        if (std::isalnum(ch) || c == '_' || c == '-' || c == '.') continue;
+        return false;
+    }
+    return true;
 }
 
 // ── Pack ──────────────────────────────────────────────────────────────────────
@@ -51,14 +62,75 @@ void Pack::loadManifest() {
         return (it != obj.end() && it->second.isString()) ? it->second.asString() : "";
     };
 
+    const auto integer = [&](const char* key, const int fallback) -> int {
+        const auto it = obj.find(key);
+        return (it != obj.end() && it->second.isNumber()) ? static_cast<int>(it->second.asNumber()) : fallback;
+    };
+
+    const auto stringList = [&](const char* key) -> std::vector<std::string> {
+        std::vector<std::string> values;
+        const auto it = obj.find(key);
+        if (it == obj.end() || !it->second.isArray()) return values;
+
+        for (const auto& value : it->second.asArray()) {
+            if (value.isString()) values.push_back(value.asString());
+        }
+        return values;
+    };
+
+    if (const std::string manifestId = str("id"); !manifestId.empty()) {
+        if (isValidPackId(manifestId)) {
+            manifest_.id = manifestId;
+            id_ = manifestId;
+        } else {
+            std::cerr << "Pack '" << id_ << "': invalid manifest id '" << manifestId
+                      << "'; using folder/archive id\n";
+        }
+    } else {
+        std::cerr << "Pack '" << id_ << "': missing manifest id; using folder/archive id\n";
+    }
+
+    if (manifest_.id.empty()) manifest_.id = id_;
+
     manifest_.name        = str("name");
     manifest_.version     = str("version");
     manifest_.description = str("description");
-    manifest_.gameVersion = str("game_version");
+    manifest_.gameVersion = str("gameVersion");
+    if (manifest_.gameVersion.empty()) manifest_.gameVersion = str("game_version");
+    manifest_.apiVersion = integer("apiVersion", 1);
 
-    if (const auto it = obj.find("dependencies"); it != obj.end() && it->second.isArray()) {
-        for (const auto& dep : it->second.asArray()) {
-            if (dep.isString()) manifest_.dependencies.push_back(dep.asString());
+    if (manifest_.name.empty()) std::cerr << "Pack '" << id_ << "': missing manifest name\n";
+    if (manifest_.version.empty()) std::cerr << "Pack '" << id_ << "': missing manifest version\n";
+    if (manifest_.apiVersion < 1) {
+        std::cerr << "Pack '" << id_ << "': apiVersion must be >= 1; using 1\n";
+        manifest_.apiVersion = 1;
+    }
+
+    manifest_.dependencies         = stringList("dependencies");
+    manifest_.optionalDependencies = stringList("optionalDependencies");
+
+    if (const auto scriptsIt = obj.find("scripts"); scriptsIt != obj.end() && scriptsIt->second.isObject()) {
+        const auto& scripts = scriptsIt->second.asObject();
+        const auto scriptFlag = [&](const char* key, const bool fallback) {
+            const auto it = scripts.find(key);
+            return (it != scripts.end() && it->second.isBool()) ? it->second.asBool() : fallback;
+        };
+
+        manifest_.scripts.startup = scriptFlag("startup", manifest_.scripts.startup);
+        manifest_.scripts.server  = scriptFlag("server",  manifest_.scripts.server);
+        manifest_.scripts.client  = scriptFlag("client",  manifest_.scripts.client);
+    } else if (const auto scriptsIt = obj.find("scripts"); scriptsIt != obj.end()) {
+        std::cerr << "Pack '" << id_ << "': manifest scripts must be an object\n";
+    }
+
+    for (const auto& dep : manifest_.dependencies) {
+        if (!isValidPackId(dep)) {
+            std::cerr << "Pack '" << id_ << "': invalid dependency id '" << dep << "'\n";
+        }
+    }
+    for (const auto& dep : manifest_.optionalDependencies) {
+        if (!isValidPackId(dep)) {
+            std::cerr << "Pack '" << id_ << "': invalid optional dependency id '" << dep << "'\n";
         }
     }
 }

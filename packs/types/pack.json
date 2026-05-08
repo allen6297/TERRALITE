@@ -1,7 +1,15 @@
 {
+  "id": "types",
   "name": "Types",
   "version": "0.1.0",
+  "apiVersion": 1,
   "description": "Scripting type definitions",
-  "game_version": "0.1.0",
-  "dependencies": []
+  "gameVersion": "0.1.0",
+  "dependencies": [],
+  "optionalDependencies": [],
+  "scripts": {
+    "startup": false,
+    "server": false,
+    "client": false
+  }
 }

@@ -10,7 +10,7 @@
 
 namespace voxel {
 
-// Embeds a QuickJS runtime, exposes Startup and Registry globals to JavaScript,
+// Embeds a QuickJS runtime, exposes Registry and StartupEvents globals to JavaScript,
 // executes all pack scripts in load order, and produces a populated GameData.
 //
 // JS globals (C++ primitives — don't call these directly from pack scripts):
@@ -19,10 +19,10 @@ namespace voxel {
 //   __modifyBlock(id, patch) — partial-update a pending block registration
 //
 // High-level JS globals (defined in engine/scripts/):
-//   Startup.registerBlock(def)       Registry.getBlock(id)
-//   Startup.registerItem(def)        Registry.getItem(id)
-//   Startup.registerBiome(def)       Registry.getBiome(id)
-//   StartupEvents.registry(type, fn) Registry.modifyBlock(id, fn)
+//   StartupEvents.registry(type, fn) Registry.getBlock(id)
+//                                    Registry.getItem(id)
+//                                    Registry.getBiome(id)
+//                                    Registry.modifyBlock(id, fn)
 class WorldSimulation;
 struct Player;
 
@@ -62,7 +62,7 @@ private:
     void executeScript(const std::string& source, const std::string& filename);
     bool checkException(JSContext* ctx, int result, const std::string& context);
 
-    // Startup.* — write-side callbacks (called during pack script execution)
+    // __register* — private write-side callbacks used by StartupEvents.
     static JSValue jsRegisterBlock(JSContext*, JSValueConst, int, JSValueConst*);
     static JSValue jsRegisterItem (JSContext*, JSValueConst, int, JSValueConst*);
     static JSValue jsRegisterBiome(JSContext*, JSValueConst, int, JSValueConst*);

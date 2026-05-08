@@ -270,7 +270,7 @@ int main(int argc, char** argv) {
             static_cast<voxel::GameUI*>(glfwGetWindowUserPointer(w))->onScroll(xoff, yoff);
         });
 
-        float lastTime   = static_cast<float>(glfwGetTime());
+        auto  lastTime   = static_cast<float>(glfwGetTime());
         bool  escWasDown = false;
         bool  enterWasDown = false;
         bool  gWasDown = false;
@@ -283,7 +283,7 @@ int main(int argc, char** argv) {
         }
 
         while (!glfwWindowShouldClose(window)) {
-            const float currentTime = static_cast<float>(glfwGetTime());
+            const auto  currentTime = static_cast<float>(glfwGetTime());
             const float rawDelta    = currentTime - lastTime;
             const float deltaTime   = std::min(rawDelta, 0.05f);
             lastTime = currentTime;

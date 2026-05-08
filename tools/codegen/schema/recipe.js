@@ -8,6 +8,7 @@ module.exports = {
             jsPath: "id",
             type: "string",
             required: true,
+            dtsType: "RecipeId",
             doc: "Namespaced recipe id"
         },
         {
@@ -22,6 +23,7 @@ module.exports = {
             jsPath: "output",
             type: "string",
             required: true,
+            dtsType: "ItemId",
             doc: "Output item id"
         },
         {
@@ -37,6 +39,7 @@ module.exports = {
             type: "custom",
             parser: "parseStringArray",
             cppType: "std::vector<std::string>",
+            dtsType: "ItemId[]",
             doc: "List of ingredient item ids"
         }
     ]

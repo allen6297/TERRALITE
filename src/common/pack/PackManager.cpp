@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <unordered_map>
 #include <unordered_set>
 
 #include "data/JsonValue.hpp"
@@ -37,12 +38,14 @@ void PackManager::discover(const std::filesystem::path& packsDir) {
 
     const auto order = loadOrder();
     applyOrder(order);
+    validateDependencies();
     saveOrder(buildOrder());
 
     std::cout << "PackManager: loaded " << packs_.size() << " pack(s)\n";
     for (const auto& pack : packs_) {
         std::cout << "  [" << pack.id() << "] " << pack.manifest().name
-                  << " v" << pack.manifest().version << "\n";
+                  << " v" << pack.manifest().version
+                  << " api" << pack.manifest().apiVersion << "\n";
     }
 }
 
@@ -121,6 +124,35 @@ void PackManager::applyOrder(const std::vector<std::string>& order) {
     std::stable_sort(packs_.begin(), packs_.end(), [&](const Pack& a, const Pack& b) {
         return priority[a.id()] < priority[b.id()];
     });
+}
+
+void PackManager::validateDependencies() const {
+    std::unordered_set<std::string> loaded;
+    std::unordered_map<std::string, std::size_t> positions;
+    for (std::size_t i = 0; i < packs_.size(); ++i) {
+        loaded.insert(packs_[i].id());
+        positions[packs_[i].id()] = i;
+    }
+
+    for (const auto& pack : packs_) {
+        for (const auto& dep : pack.manifest().dependencies) {
+            if (!loaded.count(dep)) {
+                std::cerr << "PackManager: pack '" << pack.id()
+                          << "' requires missing dependency '" << dep << "'\n";
+            } else if (positions.at(dep) < positions.at(pack.id())) {
+                std::cerr << "PackManager: pack '" << pack.id()
+                          << "' depends on '" << dep
+                          << "', but pack_order.json gives the dependency higher priority\n";
+            }
+        }
+
+        for (const auto& dep : pack.manifest().optionalDependencies) {
+            if (!loaded.count(dep)) {
+                std::cerr << "PackManager: pack '" << pack.id()
+                          << "' optional dependency not loaded: '" << dep << "'\n";
+            }
+        }
+    }
 }
 
 // ── Queries ───────────────────────────────────────────────────────────────────

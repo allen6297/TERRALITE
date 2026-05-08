@@ -56,7 +56,7 @@ ScriptManager::~ScriptManager() {
 
 GameData ScriptManager::loadGameData(const PackManager& packManager,
                                      const std::filesystem::path& engineScriptsPath) {
-    // Execute engine scripts first (defines Startup, Registry, etc.) in sorted order.
+    // Execute engine scripts first (defines StartupEvents, Registry, etc.) in sorted order.
     if (std::filesystem::is_directory(engineScriptsPath)) {
         std::vector<std::filesystem::path> engineFiles;
         for (const auto& entry : std::filesystem::directory_iterator(engineScriptsPath)) {
@@ -87,20 +87,22 @@ GameData ScriptManager::loadGameData(const PackManager& packManager,
         loadPackJsonRecipes(pack);
 
         // ── 2. Run startup scripts ────────────────────────────────────────────
-        if (pack.hasFile("scripts/startup/main.js")) {
-            auto src = pack.readFile("scripts/startup/main.js");
-            if (src) {
-                executeScript(*src, pack.id() + ":scripts/startup/main.js");
-            }
-        } else {
-            // Execute every .js file in scripts/startup/ in alphabetical order.
-            auto files = pack.listFiles("scripts/startup");
-            std::sort(files.begin(), files.end());
-            for (const auto& f : files) {
-                if (f.size() > 3 && f.compare(f.size() - 3, 3, ".js") == 0) {
-                    auto src = pack.readFile(f);
-                    if (src) {
-                        executeScript(*src, pack.id() + ":" + f);
+        if (pack.manifest().scripts.startup) {
+            if (pack.hasFile("scripts/startup/main.js")) {
+                auto src = pack.readFile("scripts/startup/main.js");
+                if (src) {
+                    executeScript(*src, pack.id() + ":scripts/startup/main.js");
+                }
+            } else {
+                // Execute every .js file in scripts/startup/ in alphabetical order.
+                auto files = pack.listFiles("scripts/startup");
+                std::sort(files.begin(), files.end());
+                for (const auto& f : files) {
+                    if (f.size() > 3 && f.compare(f.size() - 3, 3, ".js") == 0) {
+                        auto src = pack.readFile(f);
+                        if (src) {
+                            executeScript(*src, pack.id() + ":" + f);
+                        }
                     }
                 }
             }
@@ -352,7 +354,7 @@ JSValue ScriptManager::jsRegisterBiome(JSContext* ctx, JSValueConst, int argc, J
 
 JSValue ScriptManager::jsRegisterTag(JSContext* ctx, JSValueConst, int argc, JSValueConst* argv) {
     if (argc < 1)
-        return JS_ThrowTypeError(ctx, "Startup.registerTag: expected an id string or object");
+        return JS_ThrowTypeError(ctx, "__registerTag: expected an id string or object");
 
     auto* self = static_cast<ScriptManager*>(JS_GetContextOpaque(ctx));
     TagDefinition tag;
@@ -366,11 +368,11 @@ JSValue ScriptManager::jsRegisterTag(JSContext* ctx, JSValueConst, int argc, JSV
         tag.id          = jsStr(ctx, argv[0], "id");
         tag.description = jsStr(ctx, argv[0], "description");
     } else {
-        return JS_ThrowTypeError(ctx, "Startup.registerTag: expected a string id or {id, description} object");
+        return JS_ThrowTypeError(ctx, "__registerTag: expected a string id or {id, description} object");
     }
 
     if (tag.id.empty() || tag.id.find(':') == std::string::npos)
-        return JS_ThrowTypeError(ctx, "Startup.registerTag: id must be namespaced (e.g. \"base:flammable\")");
+        return JS_ThrowTypeError(ctx, "__registerTag: id must be namespaced (e.g. \"base:flammable\")");
 
     self->pendingTags_.push_back(std::move(tag));
     return JS_UNDEFINED;
@@ -545,7 +547,7 @@ JSValue ScriptManager::jsModifyBlock(JSContext* ctx, JSValueConst,
 // ── loadPackJsonBlocks ────────────────────────────────────────────────────────
 //
 // Reads every *.json file under the pack's blocks/ directory and pushes the
-// result into pendingBlocks_.  The JSON format mirrors the JS Startup.registerBlock
+// result into pendingBlocks_.  The JSON format mirrors StartupEvents block registration
 // object shape so pack authors can choose either JSON or JS registration.
 //
 // Block id rules:
@@ -856,6 +858,8 @@ JSValue ScriptManager::jsPlayerGetInventory(JSContext* ctx, JSValueConst, int, J
 void ScriptManager::loadRuntimeScripts(const PackManager& packManager) {
     for (auto it = packManager.packs().rbegin(); it != packManager.packs().rend(); ++it) {
         const Pack& pack = *it;
+        if (!pack.manifest().scripts.server) continue;
+
         if (pack.hasFile("scripts/main.js")) {
             auto src = pack.readFile("scripts/main.js");
             if (src) {

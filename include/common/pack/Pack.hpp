@@ -8,11 +8,20 @@
 namespace voxel {
 
 struct PackManifest {
+    std::string              id;
     std::string              name;
     std::string              version;
     std::string              description;
     std::string              gameVersion;
+    int                      apiVersion = 1;
     std::vector<std::string> dependencies;
+    std::vector<std::string> optionalDependencies;
+
+    struct Scripts {
+        bool startup = true;
+        bool server  = true;
+        bool client  = true;
+    } scripts;
 };
 
 // A single pack — either a folder or a zip file.

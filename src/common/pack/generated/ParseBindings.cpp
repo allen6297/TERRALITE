@@ -1,5 +1,5 @@
 // GENERATED FILE — do not edit by hand.
-// Source:      tools/codegen/schema/{block,item,biome}.js
+// Source:      tools/codegen/schema/{block,item,biome,recipe}.js
 // Regenerate:  node tools/codegen/generate.js
 
 #include "pack/generated/ParseBindings.hpp"
