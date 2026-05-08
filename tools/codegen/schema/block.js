@@ -1,7 +1,7 @@
 // Schema for BlockDefinition / BlockDef
 // Each field: { cpp, jsPath, type, default?, required?, cppType?, parser?, dtsType?, dtsGroup?, dtsKey?, doc? }
 //
-// type:     'string' | 'bool' | 'int' | 'float' | 'rgb' | 'string?' | 'custom'
+// type:     'string' | 'enum' | 'bool' | 'int' | 'float' | 'rgb' | 'string?' | 'custom'
 // jsPath:   dot-separated path into the JS object  (e.g. 'render.color')
 // cpp:      dot-separated path into the C++ struct (e.g. 'color')
 // dtsGroup: which sub-interface this field lives in for the .d.ts output
@@ -57,8 +57,8 @@ module.exports = {
       dtsGroup: 'render', doc: 'When true the engine uses the biome tint colour instead of color.',
     },
     {
-      cpp: 'renderType', jsPath: 'render.type',    type: 'string', default: 'cube',
-      dtsGroup: 'render', dtsKey: 'type', dtsType: '"cube" | "model"',
+      cpp: 'renderType', jsPath: 'render.type',    type: 'enum', values: ['cube', 'model'], default: 'cube',
+      dtsGroup: 'render', dtsKey: 'type',
       doc: 'Render geometry type. "cube" = full block, "model" = custom model.',
     },
     {

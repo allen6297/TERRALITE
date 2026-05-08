@@ -311,7 +311,12 @@ JSValue ScriptManager::jsRegisterBlock(JSContext* ctx, JSValueConst, int argc, J
         return JS_ThrowTypeError(ctx, "Registry.registerBlock: expected an object argument");
 
     auto* self = static_cast<ScriptManager*>(JS_GetContextOpaque(ctx));
-    BlockDefinition block = voxel::generated::parseBlockDefinition(ctx, argv[0]);
+    BlockDefinition block;
+    try {
+        block = voxel::generated::parseBlockDefinition(ctx, argv[0]);
+    } catch (const std::exception& e) {
+        return JS_ThrowTypeError(ctx, "Registry.registerBlock: %s", e.what());
+    }
     if (block.id.empty())
         return JS_ThrowTypeError(ctx, "Registry.registerBlock: block must have an 'id' field");
 
@@ -331,7 +336,12 @@ JSValue ScriptManager::jsRegisterItem(JSContext* ctx, JSValueConst, int argc, JS
         return JS_ThrowTypeError(ctx, "Registry.registerItem: expected an object argument");
 
     auto* self = static_cast<ScriptManager*>(JS_GetContextOpaque(ctx));
-    ItemDefinition item = voxel::generated::parseItemDefinition(ctx, argv[0]);
+    ItemDefinition item;
+    try {
+        item = voxel::generated::parseItemDefinition(ctx, argv[0]);
+    } catch (const std::exception& e) {
+        return JS_ThrowTypeError(ctx, "Registry.registerItem: %s", e.what());
+    }
     if (item.id.empty())
         return JS_ThrowTypeError(ctx, "Registry.registerItem: item must have an 'id' field");
 
@@ -344,7 +354,12 @@ JSValue ScriptManager::jsRegisterBiome(JSContext* ctx, JSValueConst, int argc, J
         return JS_ThrowTypeError(ctx, "Registry.registerBiome: expected an object argument");
 
     auto* self = static_cast<ScriptManager*>(JS_GetContextOpaque(ctx));
-    BiomeDefinition biome = voxel::generated::parseBiomeDefinition(ctx, argv[0]);
+    BiomeDefinition biome;
+    try {
+        biome = voxel::generated::parseBiomeDefinition(ctx, argv[0]);
+    } catch (const std::exception& e) {
+        return JS_ThrowTypeError(ctx, "Registry.registerBiome: %s", e.what());
+    }
     if (biome.id.empty())
         return JS_ThrowTypeError(ctx, "Registry.registerBiome: biome must have an 'id' field");
 

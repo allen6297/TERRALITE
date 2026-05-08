@@ -4,7 +4,10 @@
 // Used by ScriptManager.cpp and generated parse bindings.
 
 #include <array>
+#include <initializer_list>
+#include <iostream>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <quickjs.h>
 
@@ -28,6 +31,28 @@ inline std::optional<std::string> jsOptStr(JSContext* ctx, JSValueConst obj, con
     JS_FreeCString(ctx, s);
     JS_FreeValue(ctx, v);
     return r;
+}
+
+inline void jsRequire(JSContext* ctx, JSValueConst obj, const char* key) {
+    JSValue v = JS_GetPropertyStr(ctx, obj, key);
+    const bool missing = JS_IsUndefined(v) || JS_IsNull(v);
+    JS_FreeValue(ctx, v);
+
+    if (missing) {
+        throw std::runtime_error(std::string("missing required field '") + key + "'");
+    }
+}
+
+inline std::string jsEnum(JSContext* ctx, JSValueConst obj, const char* key,
+                          std::initializer_list<const char*> values, const char* def = "") {
+    std::string value = jsStr(ctx, obj, key, def);
+    for (const char* allowed : values) {
+        if (value == allowed) return value;
+    }
+
+    std::cerr << "[ScriptManager] Invalid enum value for '" << key << "': '" << value
+              << "', using default '" << def << "'\n";
+    return def;
 }
 
 inline bool jsBool(JSContext* ctx, JSValueConst obj, const char* key, bool def = false) {

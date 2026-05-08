@@ -67,7 +67,7 @@ interface BlockRender {
   /** When true the engine uses the biome tint colour instead of color. */
   tintKey?: boolean
   /** Render geometry type. "cube" = full block, "model" = custom model. */
-  type?: "cube" | "model"
+  type?: 'cube' | 'model'
   /** Path to the block model JSON, relative to the pack assets folder. */
   model?: ModelPath
   /** Texture paths. Pass a string to set the albedo only, or an object for named maps. */

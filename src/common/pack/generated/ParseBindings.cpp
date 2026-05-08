@@ -22,7 +22,9 @@ namespace generated {
 BlockDefinition parseBlockDefinition(JSContext* ctx, JSValueConst obj) {
     BlockDefinition out{};
 
+    voxel::js::jsRequire(ctx, obj, "id");
     out.id = voxel::js::jsStr  (ctx, obj, "id");
+    voxel::js::jsRequire(ctx, obj, "name");
     out.name = voxel::js::jsStr  (ctx, obj, "name");
     out.drops = parseBlockDrops(ctx, obj);
     out.properties = parseBlockProperties(ctx, obj);
@@ -42,7 +44,7 @@ BlockDefinition parseBlockDefinition(JSContext* ctx, JSValueConst obj) {
         out.color = voxel::js::jsColor(ctx, sub, "color", {1.0f, 1.0f, 1.0f});
         out.opacity = voxel::js::jsFloat(ctx, sub, "opacity", 1.0f);
         out.tintKey = voxel::js::jsBool (ctx, sub, "tintKey", false);
-        out.renderType = voxel::js::jsStr  (ctx, sub, "type", "cube");
+        out.renderType = voxel::js::jsEnum (ctx, sub, "type", {"cube", "model"}, "cube");
         out.modelPath = voxel::js::jsStr  (ctx, sub, "model", "");
         out.textures = parseBlockTextures(ctx, sub);
         JS_FreeValue(ctx, sub);
@@ -54,7 +56,9 @@ BlockDefinition parseBlockDefinition(JSContext* ctx, JSValueConst obj) {
 ItemDefinition parseItemDefinition(JSContext* ctx, JSValueConst obj) {
     ItemDefinition out{};
 
+    voxel::js::jsRequire(ctx, obj, "id");
     out.id = voxel::js::jsStr  (ctx, obj, "id");
+    voxel::js::jsRequire(ctx, obj, "name");
     out.name = voxel::js::jsStr  (ctx, obj, "name");
     out.stackSize = voxel::js::jsInt  (ctx, obj, "stackSize", 1);
     out.icon = voxel::js::jsStr  (ctx, obj, "icon", "");
@@ -66,7 +70,9 @@ ItemDefinition parseItemDefinition(JSContext* ctx, JSValueConst obj) {
 BiomeDefinition parseBiomeDefinition(JSContext* ctx, JSValueConst obj) {
     BiomeDefinition out{};
 
+    voxel::js::jsRequire(ctx, obj, "id");
     out.id = voxel::js::jsStr  (ctx, obj, "id");
+    voxel::js::jsRequire(ctx, obj, "name");
     out.name = voxel::js::jsStr  (ctx, obj, "name");
     out.priority = voxel::js::jsFloat(ctx, obj, "priority", 0.0f);
     out.rarity = voxel::js::jsFloat(ctx, obj, "rarity", 1.0f);
@@ -129,8 +135,11 @@ BiomeDefinition parseBiomeDefinition(JSContext* ctx, JSValueConst obj) {
 RecipeDefinition parseRecipeDefinition(JSContext* ctx, JSValueConst obj) {
     RecipeDefinition out{};
 
+    voxel::js::jsRequire(ctx, obj, "id");
     out.id = voxel::js::jsStr  (ctx, obj, "id");
+    voxel::js::jsRequire(ctx, obj, "type");
     out.type = voxel::js::jsStr  (ctx, obj, "type");
+    voxel::js::jsRequire(ctx, obj, "output");
     out.output = voxel::js::jsStr  (ctx, obj, "output");
     out.count = voxel::js::jsInt  (ctx, obj, "count", 1);
     out.ingredients = parseStringArray(ctx, obj);

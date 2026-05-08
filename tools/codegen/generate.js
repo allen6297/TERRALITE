@@ -23,6 +23,7 @@ const SCHEMAS = ['block', 'item', 'biome', 'recipe'].map(n => require(`./schema/
 
 const CPP_TYPES = {
     string: 'std::string',
+    enum: 'std::string',
     bool: 'bool',
     int: 'int',
     float: 'float',
@@ -49,6 +50,7 @@ function fmtDefault(type, def) {
     if (def === undefined) return null
     switch (type) {
         case 'string':
+        case 'enum':
             return `"${def}"`
         case 'bool':
             return def ? 'true' : 'false'
@@ -66,12 +68,28 @@ function fmtDefault(type, def) {
 }
 
 // Build the C++ read expression for a simple (non-custom) field.
-function cppReadExpr(type, obj, jsKey, def) {
+function dtsEnumType(values) {
+    return values.map(v => `'${v}'`).join(' | ')
+}
+
+function cppEnumValues(values) {
+    return `{${values.map(v => `"${v}"`).join(', ')}}`
+}
+
+function cppRequiredCheck(obj, jsKey) {
+    return `voxel::js::jsRequire(ctx, ${obj}, "${jsKey}")`
+}
+
+function cppReadExpr(field, obj, jsKey) {
+    const type = field.type
+    const def = field.default
     const d = fmtDefault(type, def)
     const dflt = d !== null ? `, ${d}` : ''
     switch (type) {
         case 'string':
             return `voxel::js::jsStr  (ctx, ${obj}, "${jsKey}"${dflt})`
+        case 'enum':
+            return `voxel::js::jsEnum (ctx, ${obj}, "${jsKey}", ${cppEnumValues(field.values)}, ${d ?? '""'})`
         case 'bool':
             return `voxel::js::jsBool (ctx, ${obj}, "${jsKey}"${dflt})`
         case 'int':
@@ -120,10 +138,13 @@ function genParseBody(schema) {
 
     // Top-level fields
     for (const f of topLevel) {
+        if (f.required) {
+            writeLine(cppRequiredCheck('obj', f.jsPath) + ';')
+        }
         if (f.type === 'custom') {
             writeLine(`out.${f.cpp} = ${f.parser}(ctx, obj);`)
         } else {
-            writeLine(`out.${f.cpp} = ${cppReadExpr(f.type, 'obj', f.jsPath, f.default)};`)
+            writeLine(`out.${f.cpp} = ${cppReadExpr(f, 'obj', f.jsPath)};`)
         }
     }
 
@@ -134,11 +155,14 @@ function genParseBody(schema) {
         writeLine('{')
         writeLine(`    JSValue sub = JS_GetPropertyStr(ctx, obj, "${prefix}");`)
         for (const f of fields) {
+            if (f.required) {
+                writeLine('    ' + cppRequiredCheck('sub', f.jsKey) + ';')
+            }
             if (f.type === 'custom') {
                 const keyArg = f.parserPassKey ? `, "${f.jsKey}"` : ''
                 writeLine(`    out.${f.cpp} = ${f.parser}(ctx, sub${keyArg});`)
             } else {
-                writeLine(`    out.${f.cpp} = ${cppReadExpr(f.type, 'sub', f.jsKey, f.default)};`)
+                writeLine(`    out.${f.cpp} = ${cppReadExpr(f, 'sub', f.jsKey)};`)
             }
         }
         writeLine('    JS_FreeValue(ctx, sub);')
@@ -246,6 +270,7 @@ function dtsOptional(f) {
 
 function dtsFieldType(f) {
     if (f.dtsType) return f.dtsType
+    if (f.type === 'enum') return dtsEnumType(f.values)
     return DTS_TYPES[f.type] ?? 'unknown'
 }
 
