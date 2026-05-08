@@ -1,5 +1,3 @@
-#include <GLFW/glfw3.h>
-
 #include <algorithm>
 #include <atomic>
 #include <chrono>
@@ -18,6 +16,7 @@
 #include "common/pack/ScriptManager.hpp"
 #include "server/HeadlessServer.hpp"
 #include "server/ServerBootstrap.hpp"
+#include "platform/glfw/GlfwClientWindow.hpp"
 #include "platform/glfw/GlfwInput.hpp"
 #include "client/ui/GameUI.hpp"
 
@@ -110,70 +109,6 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    if (!glfwInit()) {
-        std::cerr << "Failed to initialize GLFW.\n";
-        return 1;
-    }
-
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-    glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-
-    GLFWmonitor*       monitor = nullptr;
-    for (int i = 1; i < argc; ++i) {
-        if (std::string(argv[i]) == "--fullscreen") {
-            monitor = glfwGetPrimaryMonitor();
-        }
-    }
-
-    GLFWmonitor*       primaryMonitor = glfwGetPrimaryMonitor();
-    const GLFWvidmode* mode           = glfwGetVideoMode(primaryMonitor);
-    glfwWindowHint(GLFW_RED_BITS,     mode->redBits);
-    glfwWindowHint(GLFW_GREEN_BITS,   mode->greenBits);
-    glfwWindowHint(GLFW_BLUE_BITS,    mode->blueBits);
-    int swapInterval = 1;
-    for (int i = 1; i < argc; ++i) {
-        const std::string arg = argv[i];
-        if (arg == "--limit-fps") {
-            if (i + 1 < argc) {
-                swapInterval = std::stoi(argv[++i]);
-            }
-        }
-    }
-
-    if (swapInterval > 0) {
-        glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-    }
-
-    GLFWwindow* window = glfwCreateWindow(
-        mode->width, mode->height, "Voxel Game", monitor, nullptr);
-    if (window == nullptr) {
-        std::cerr << "Failed to create the window. Make sure GLFW and an OpenGL driver are installed.\n";
-        glfwTerminate();
-        return 1;
-    }
-
-    int monitorX = 0, monitorY = 0;
-    if (monitor == nullptr) {
-        glfwGetMonitorPos(primaryMonitor, &monitorX, &monitorY);
-        glfwSetWindowPos(window, monitorX, monitorY);
-        glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_TRUE);
-    }
-
-
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(swapInterval);
-    std::cout << "[Main] glfwSwapInterval set to " << swapInterval << std::endl;
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    if (glfwRawMouseMotionSupported()) {
-        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-    }
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-
     std::string playerName = "Player";
     for (int i = 1; i < argc; ++i) {
         const std::string arg = argv[i];
@@ -183,6 +118,8 @@ int main(int argc, char** argv) {
     }
 
     try {
+        voxel::GlfwClientWindow window(voxel::parseGlfwClientWindowConfig(argc, argv));
+
         // ── Pack system ───────────────────────────────────────────────────────
         const std::filesystem::path projectRoot = findClientProjectRoot();
         const std::filesystem::path packsDir    = projectRoot / "packs";
@@ -208,7 +145,7 @@ int main(int argc, char** argv) {
 
         // ── Game & UI ─────────────────────────────────────────────────────────
         int fbWidth = 0, fbHeight = 0;
-        glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+        window.framebufferSize(fbWidth, fbHeight);
 
         voxel::NetworkManager network;
         voxel::NetworkManager* activeNetwork = nullptr;
@@ -240,7 +177,7 @@ int main(int argc, char** argv) {
         }
 
         voxel::Game   game(std::move(gameData), assetsRoot, playerName, activeNetwork);
-        voxel::GameUI ui(window, fbWidth, fbHeight, assetsRoot);
+        voxel::GameUI ui(window.handle(), fbWidth, fbHeight, assetsRoot);
 
         const bool runLocalRuntimeScripts =
             activeNetwork == nullptr || activeNetwork->mode() == voxel::NetworkManager::Mode::Server;
@@ -252,37 +189,9 @@ int main(int argc, char** argv) {
             scriptManager.loadRuntimeScripts(packManager);
         }
 
-        // Forward GLFW events to RmlUI — use window user pointer so lambdas
-        // need no captures (required for GLFW's C-style callback signature).
-        glfwSetWindowUserPointer(window, &ui);
+        window.installUiCallbacks(ui);
 
-        glfwSetFramebufferSizeCallback(window, [](GLFWwindow* w, int width, int height) {
-            static_cast<voxel::GameUI*>(glfwGetWindowUserPointer(w))
-                ->onFramebufferSize(width, height);
-        });
-        glfwSetWindowContentScaleCallback(window, [](GLFWwindow* w, float xscale, float yscale) {
-            static_cast<voxel::GameUI*>(glfwGetWindowUserPointer(w))
-                ->onContentScale(xscale, yscale);
-        });
-        glfwSetKeyCallback(window, [](GLFWwindow* w, int key, int sc, int action, int mods) {
-            static_cast<voxel::GameUI*>(glfwGetWindowUserPointer(w))
-                ->onKey(key, sc, action, mods);
-        });
-        glfwSetCharCallback(window, [](GLFWwindow* w, unsigned int cp) {
-            static_cast<voxel::GameUI*>(glfwGetWindowUserPointer(w))->onChar(cp);
-        });
-        glfwSetCursorPosCallback(window, [](GLFWwindow* w, double x, double y) {
-            static_cast<voxel::GameUI*>(glfwGetWindowUserPointer(w))->onCursorPos(x, y);
-        });
-        glfwSetMouseButtonCallback(window, [](GLFWwindow* w, int btn, int action, int mods) {
-            static_cast<voxel::GameUI*>(glfwGetWindowUserPointer(w))
-                ->onMouseButton(btn, action, mods);
-        });
-        glfwSetScrollCallback(window, [](GLFWwindow* w, double xoff, double yoff) {
-            static_cast<voxel::GameUI*>(glfwGetWindowUserPointer(w))->onScroll(xoff, yoff);
-        });
-
-        auto  lastTime   = static_cast<float>(glfwGetTime());
+        auto  lastTime   = window.time();
         bool  escWasDown = false;
         bool  enterWasDown = false;
         bool  tWasDown = false;
@@ -296,40 +205,31 @@ int main(int argc, char** argv) {
             ui.setRecipes(recipes);
         }
 
-        while (!glfwWindowShouldClose(window)) {
-            const auto  currentTime = static_cast<float>(glfwGetTime());
+        while (!window.shouldClose()) {
+            const auto  currentTime = window.time();
             const float rawDelta    = currentTime - lastTime;
             const float deltaTime   = std::min(rawDelta, 0.05f);
             lastTime = currentTime;
 
             auto syncCursorForUI = [&]() {
-                if (ui.isChatOpen() || ui.isCraftingOpen()) {
-                    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-                } else {
-                    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                }
+                window.setCursorCaptured(!ui.isChatOpen() && !ui.isCraftingOpen());
             };
 
             // ESC closes chat if open; otherwise it edge-triggers cursor capture toggle.
-            const bool escDown = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+            const bool escDown = window.escapeDown();
             if (escDown && !escWasDown) {
                 if (ui.isChatOpen()) {
                     ui.setChatOpen(false);
                     syncCursorForUI();
                 } else {
-                    const bool captured =
-                        glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
-                    glfwSetInputMode(window, GLFW_CURSOR,
-                        captured ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
-                    if (!captured && glfwRawMouseMotionSupported())
-                        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+                    window.toggleCursorCaptured();
                 }
             }
             escWasDown = escDown;
 
             // ENTER opens chat; T opens chat.
-            const bool enterDown = glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS;
-            const bool tDown = glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS;
+            const bool enterDown = window.enterDown();
+            const bool tDown = window.chatToggleDown();
             if (!ui.isChatOpen() && ((enterDown && !enterWasDown) || (tDown && !tWasDown))) {
                 ui.setChatOpen(true);
                 syncCursorForUI();
@@ -338,14 +238,14 @@ int main(int argc, char** argv) {
             tWasDown = tDown;
 
             // G opens/closes crafting
-            const bool gDown = glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS;
+            const bool gDown = window.craftingToggleDown();
             if (gDown && !gWasDown) {
                 ui.setCraftingOpen(!ui.isCraftingOpen());
                 syncCursorForUI();
             }
             gWasDown = gDown;
 
-            const voxel::ClientInputFrame inputFrame = inputCollector.poll(window);
+            const voxel::ClientInputFrame inputFrame = inputCollector.poll(window.handle());
             game.update(inputFrame, deltaTime);
 
             if (runLocalRuntimeScripts) {
@@ -410,22 +310,18 @@ int main(int argc, char** argv) {
             ui.setInventory(game.getInventory());
             ui.update();
 
-            glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+            window.framebufferSize(fbWidth, fbHeight);
             game.render(fbWidth, fbHeight);
             game.renderHotbarIcons(fbWidth, fbHeight);
             ui.render();
 
-            glfwSwapBuffers(window);
-            glfwPollEvents();
+            window.swapBuffers();
+            window.pollEvents();
         }
     } catch (const std::exception& error) {
         std::cerr << "Fatal error: " << error.what() << '\n';
-        glfwDestroyWindow(window);
-        glfwTerminate();
         return 1;
     }
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
     return 0;
 }
