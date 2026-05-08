@@ -1,0 +1,390 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://terralite.local/pack.schema.json",
+  "title": "TERRALITE Pack Schema",
+  "definitions": {
+    "BiomeDef": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique namespaced identifier."
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name."
+        },
+        "priority": {
+          "type": "number",
+          "description": "Tie-breaker when two biomes score equally.",
+          "default": 0
+        },
+        "rarity": {
+          "type": "number",
+          "description": "Score multiplier — values below 1 make the biome rarer.",
+          "default": 1
+        },
+        "climate": {
+          "type": "object",
+          "properties": {
+            "temperature": {
+              "type": [
+                "object",
+                "array",
+                "string"
+              ],
+              "description": "Temperature range."
+            },
+            "humidity": {
+              "type": [
+                "object",
+                "array",
+                "string"
+              ],
+              "description": "Humidity range."
+            },
+            "rainfall": {
+              "type": [
+                "object",
+                "array",
+                "string"
+              ],
+              "description": "Rainfall range."
+            },
+            "elevation": {
+              "type": [
+                "object",
+                "array",
+                "string"
+              ],
+              "description": "Elevation range."
+            },
+            "drainage": {
+              "type": [
+                "object",
+                "array",
+                "string"
+              ],
+              "description": "Drainage range."
+            },
+            "waterTable": {
+              "type": [
+                "object",
+                "array",
+                "string"
+              ],
+              "description": "Water table range."
+            }
+          }
+        },
+        "terrain": {
+          "type": "object",
+          "properties": {
+            "baseHeight": {
+              "type": "number",
+              "description": "Average surface height in blocks.",
+              "default": 48
+            },
+            "heightVariation": {
+              "type": "number",
+              "description": "Amplitude of height noise.",
+              "default": 12
+            }
+          }
+        },
+        "surface": {
+          "type": "object",
+          "properties": {
+            "top": {
+              "type": "string",
+              "description": "Block on the very top of the terrain column.",
+              "default": "base:grass"
+            },
+            "middle": {
+              "type": "string",
+              "description": "Block filling the middle layer.",
+              "default": "base:dirt"
+            },
+            "base": {
+              "type": "string",
+              "description": "Block below the middle layer.",
+              "default": "base:stone"
+            },
+            "middleDepth": {
+              "type": "integer",
+              "description": "Depth of the middle layer in blocks.",
+              "default": 3
+            }
+          }
+        },
+        "atmosphere": {
+          "type": "object",
+          "properties": {
+            "skyColor": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3,
+              "description": "Sky gradient colour (linear RGB).",
+              "default": [
+                0.58,
+                0.78,
+                0.98
+              ]
+            },
+            "fogColor": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3,
+              "description": "Distance fog colour (linear RGB).",
+              "default": [
+                0.75,
+                0.85,
+                0.95
+              ]
+            },
+            "waterColor": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3,
+              "description": "Water tint colour (linear RGB).",
+              "default": [
+                0.2,
+                0.45,
+                0.8
+              ]
+            }
+          }
+        },
+        "fertility": {
+          "type": "object",
+          "properties": {
+            "nitrogen": {
+              "type": "number",
+              "default": 0.5
+            },
+            "phosphorus": {
+              "type": "number",
+              "default": 0.5
+            },
+            "potassium": {
+              "type": "number",
+              "default": 0.5
+            },
+            "magnesium": {
+              "type": "number",
+              "default": 0.5
+            },
+            "calcium": {
+              "type": "number",
+              "default": 0.5
+            },
+            "sulfur": {
+              "type": "number",
+              "default": 0.2
+            }
+          }
+        },
+        "colors": {
+          "type": [
+            "object",
+            "array",
+            "string"
+          ],
+          "description": "Named tint colours applied to blocks that opt in via tintKey. @example { grass: [0.3, 0.76, 0.22] }"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "BlockDef": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique namespaced identifier. @example \"base:grass\""
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name."
+        },
+        "voxel": {
+          "type": "object",
+          "properties": {
+            "solid": {
+              "type": "boolean",
+              "description": "Whether this block has a solid collision box.",
+              "default": false
+            },
+            "translucent": {
+              "type": "boolean",
+              "description": "Whether light passes through this block.",
+              "default": false
+            },
+            "material": {
+              "type": "string",
+              "enum": [
+                "terrain",
+                "rock",
+                "liquid",
+                "plant"
+              ],
+              "description": "Physics/sound material group. @example \"terrain\" \"rock\" \"liquid\" \"plant\"",
+              "default": "terrain"
+            }
+          }
+        },
+        "render": {
+          "type": "object",
+          "properties": {
+            "color": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3,
+              "description": "Base tint colour (linear RGB). Applied when tintKey is false.",
+              "default": [
+                1,
+                1,
+                1
+              ]
+            },
+            "opacity": {
+              "type": "number",
+              "description": "Alpha opacity. 1 = fully opaque, 0 = invisible.",
+              "default": 1
+            },
+            "tintKey": {
+              "type": "boolean",
+              "description": "When true the engine uses the biome tint colour instead of color.",
+              "default": false
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "cube",
+                "model"
+              ],
+              "description": "Render geometry type. \"cube\" = full block, \"model\" = custom model.",
+              "default": "cube"
+            },
+            "model": {
+              "type": "string",
+              "description": "Path to the block model JSON, relative to the pack assets folder.",
+              "default": ""
+            },
+            "texture": {
+              "type": [
+                "object",
+                "array",
+                "string"
+              ],
+              "description": "Texture paths. Pass a string to set the albedo only, or an object for named maps."
+            }
+          }
+        },
+        "drops": {
+          "type": [
+            "object",
+            "array",
+            "string"
+          ],
+          "description": "Items dropped when this block is broken."
+        },
+        "properties": {
+          "type": [
+            "object",
+            "array",
+            "string"
+          ],
+          "description": "Arbitrary key–value properties accessible from gameplay code."
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "ItemDef": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique namespaced identifier. @example \"base:wheat_seeds\""
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name."
+        },
+        "stackSize": {
+          "type": "integer",
+          "description": "Maximum number of this item per inventory slot.",
+          "default": 1
+        },
+        "icon": {
+          "type": "string",
+          "description": "Icon texture path relative to the pack assets folder.",
+          "default": ""
+        },
+        "placeableBlock": {
+          "type": "string",
+          "description": "If set, using this item places the named block in the world."
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "RecipeDef": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Namespaced recipe id"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "crafting",
+            "smelting"
+          ],
+          "description": "Recipe type (crafting, smelting, etc.)"
+        },
+        "output": {
+          "type": "string",
+          "description": "Output item id"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Output count",
+          "default": 1
+        },
+        "ingredients": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of ingredient item ids"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "output"
+      ]
+    }
+  }
+}

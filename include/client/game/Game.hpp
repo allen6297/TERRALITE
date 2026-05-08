@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 
 #include "data/GameData.hpp"
+#include "ecs/EntitySystem.hpp"
 #include "network/NetworkManager.hpp"
 #include "Player.hpp"
 #include "render/Mesh.hpp"
@@ -33,6 +34,8 @@ public:
     DebugOverlayData getDebugData() const;
     const Inventory& getInventory() const { return player_.inventory; }
     const GameData& gameData() const { return gameData_; }
+    ecs::EntitySystem& entitySystem() { return entitySystem_; }
+    const ecs::EntitySystem& entitySystem() const { return entitySystem_; }
     WorldSimulation& simulation() { return simulation_; }
     const WorldSimulation& simulation() const { return simulation_; }
 
@@ -74,6 +77,7 @@ private:
     TextureManager textureManager_;
     ModelManager modelManager_;
     NetworkManager* network_ = nullptr;
+    ecs::EntitySystem entitySystem_;
     WorldSimulation simulation_;
     std::unordered_map<ChunkCoord, ChunkMesh, ChunkCoordHash> meshes_;
     std::unordered_map<ChunkCoord, std::future<Chunk>, ChunkCoordHash> pendingTerrain_;

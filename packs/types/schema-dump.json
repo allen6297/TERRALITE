@@ -1,0 +1,559 @@
+[
+  {
+    "cppStruct": "BiomeDefinition",
+    "dtsInterface": "BiomeDef",
+    "dtsGroups": {
+      "climate": {
+        "name": "BiomeClimate",
+        "doc": "Climate axis ranges this biome occupies (each normalised to [0,1])."
+      },
+      "terrain": {
+        "name": "BiomeTerrain",
+        "doc": "Terrain height parameters."
+      },
+      "surface": {
+        "name": "BiomeSurface",
+        "doc": "Surface block layers."
+      },
+      "atmosphere": {
+        "name": "BiomeAtmosphere",
+        "doc": "Sky, fog, and water colours."
+      },
+      "fertility": {
+        "name": "BiomeFertility",
+        "doc": "Soil nutrient values for agriculture."
+      }
+    },
+    "fields": [
+      {
+        "cpp": "id",
+        "jsPath": "id",
+        "type": "string",
+        "required": true,
+        "validator": "biome_id",
+        "dtsType": "BiomeId",
+        "doc": "Unique namespaced identifier."
+      },
+      {
+        "cpp": "name",
+        "jsPath": "name",
+        "type": "string",
+        "required": true,
+        "doc": "Human-readable display name."
+      },
+      {
+        "cpp": "priority",
+        "jsPath": "priority",
+        "type": "float",
+        "default": 0,
+        "validator": "non_negative_float",
+        "doc": "Tie-breaker when two biomes score equally."
+      },
+      {
+        "cpp": "rarity",
+        "jsPath": "rarity",
+        "type": "float",
+        "default": 1,
+        "validator": "non_negative_float",
+        "doc": "Score multiplier — values below 1 make the biome rarer."
+      },
+      {
+        "cpp": "climate.temperature",
+        "jsPath": "climate.temperature",
+        "type": "custom",
+        "cppType": "BiomeClimateRange",
+        "cppDefault": "{}",
+        "parser": "parseClimateRange",
+        "parserPassKey": true,
+        "dtsGroup": "climate",
+        "dtsKey": "temperature",
+        "dtsType": "ClimateRange",
+        "doc": "Temperature range."
+      },
+      {
+        "cpp": "climate.humidity",
+        "jsPath": "climate.humidity",
+        "type": "custom",
+        "cppType": "BiomeClimateRange",
+        "cppDefault": "{}",
+        "parser": "parseClimateRange",
+        "parserPassKey": true,
+        "dtsGroup": "climate",
+        "dtsKey": "humidity",
+        "dtsType": "ClimateRange",
+        "doc": "Humidity range."
+      },
+      {
+        "cpp": "climate.rainfall",
+        "jsPath": "climate.rainfall",
+        "type": "custom",
+        "cppType": "BiomeClimateRange",
+        "cppDefault": "{}",
+        "parser": "parseClimateRange",
+        "parserPassKey": true,
+        "dtsGroup": "climate",
+        "dtsKey": "rainfall",
+        "dtsType": "ClimateRange",
+        "doc": "Rainfall range."
+      },
+      {
+        "cpp": "climate.elevation",
+        "jsPath": "climate.elevation",
+        "type": "custom",
+        "cppType": "BiomeClimateRange",
+        "cppDefault": "{}",
+        "parser": "parseClimateRange",
+        "parserPassKey": true,
+        "dtsGroup": "climate",
+        "dtsKey": "elevation",
+        "dtsType": "ClimateRange",
+        "doc": "Elevation range."
+      },
+      {
+        "cpp": "climate.drainage",
+        "jsPath": "climate.drainage",
+        "type": "custom",
+        "cppType": "BiomeClimateRange",
+        "cppDefault": "{}",
+        "parser": "parseClimateRange",
+        "parserPassKey": true,
+        "dtsGroup": "climate",
+        "dtsKey": "drainage",
+        "dtsType": "ClimateRange",
+        "doc": "Drainage range."
+      },
+      {
+        "cpp": "climate.waterTable",
+        "jsPath": "climate.waterTable",
+        "type": "custom",
+        "cppType": "BiomeClimateRange",
+        "cppDefault": "{}",
+        "parser": "parseClimateRange",
+        "parserPassKey": true,
+        "dtsGroup": "climate",
+        "dtsKey": "waterTable",
+        "dtsType": "ClimateRange",
+        "doc": "Water table range."
+      },
+      {
+        "cpp": "terrain.baseHeight",
+        "jsPath": "terrain.baseHeight",
+        "type": "float",
+        "default": 48,
+        "dtsGroup": "terrain",
+        "dtsKey": "baseHeight",
+        "doc": "Average surface height in blocks."
+      },
+      {
+        "cpp": "terrain.heightVariation",
+        "jsPath": "terrain.heightVariation",
+        "type": "float",
+        "default": 12,
+        "dtsGroup": "terrain",
+        "dtsKey": "heightVariation",
+        "doc": "Amplitude of height noise."
+      },
+      {
+        "cpp": "surface.top",
+        "jsPath": "surface.top",
+        "type": "string",
+        "default": "base:grass",
+        "dtsGroup": "surface",
+        "dtsKey": "top",
+        "validator": "block_id",
+        "dtsType": "BlockId",
+        "doc": "Block on the very top of the terrain column."
+      },
+      {
+        "cpp": "surface.middle",
+        "jsPath": "surface.middle",
+        "type": "string",
+        "default": "base:dirt",
+        "dtsGroup": "surface",
+        "dtsKey": "middle",
+        "validator": "block_id",
+        "dtsType": "BlockId",
+        "doc": "Block filling the middle layer."
+      },
+      {
+        "cpp": "surface.base",
+        "jsPath": "surface.base",
+        "type": "string",
+        "default": "base:stone",
+        "dtsGroup": "surface",
+        "dtsKey": "base",
+        "validator": "block_id",
+        "dtsType": "BlockId",
+        "doc": "Block below the middle layer."
+      },
+      {
+        "cpp": "surface.middleDepth",
+        "jsPath": "surface.middleDepth",
+        "type": "int",
+        "default": 3,
+        "dtsGroup": "surface",
+        "dtsKey": "middleDepth",
+        "validator": "positive_int",
+        "doc": "Depth of the middle layer in blocks."
+      },
+      {
+        "cpp": "atmosphere.skyColor",
+        "jsPath": "atmosphere.skyColor",
+        "type": "rgb",
+        "default": [
+          0.58,
+          0.78,
+          0.98
+        ],
+        "dtsGroup": "atmosphere",
+        "dtsKey": "skyColor",
+        "validator": "rgb_0_1",
+        "doc": "Sky gradient colour (linear RGB)."
+      },
+      {
+        "cpp": "atmosphere.fogColor",
+        "jsPath": "atmosphere.fogColor",
+        "type": "rgb",
+        "default": [
+          0.75,
+          0.85,
+          0.95
+        ],
+        "dtsGroup": "atmosphere",
+        "dtsKey": "fogColor",
+        "validator": "rgb_0_1",
+        "doc": "Distance fog colour (linear RGB)."
+      },
+      {
+        "cpp": "atmosphere.waterColor",
+        "jsPath": "atmosphere.waterColor",
+        "type": "rgb",
+        "default": [
+          0.2,
+          0.45,
+          0.8
+        ],
+        "dtsGroup": "atmosphere",
+        "dtsKey": "waterColor",
+        "validator": "rgb_0_1",
+        "doc": "Water tint colour (linear RGB)."
+      },
+      {
+        "cpp": "fertility.nitrogen",
+        "jsPath": "fertility.nitrogen",
+        "type": "float",
+        "default": 0.5,
+        "validator": "non_negative_float",
+        "dtsGroup": "fertility",
+        "dtsKey": "nitrogen"
+      },
+      {
+        "cpp": "fertility.phosphorus",
+        "jsPath": "fertility.phosphorus",
+        "type": "float",
+        "default": 0.5,
+        "validator": "non_negative_float",
+        "dtsGroup": "fertility",
+        "dtsKey": "phosphorus"
+      },
+      {
+        "cpp": "fertility.potassium",
+        "jsPath": "fertility.potassium",
+        "type": "float",
+        "default": 0.5,
+        "validator": "non_negative_float",
+        "dtsGroup": "fertility",
+        "dtsKey": "potassium"
+      },
+      {
+        "cpp": "fertility.magnesium",
+        "jsPath": "fertility.magnesium",
+        "type": "float",
+        "default": 0.5,
+        "validator": "non_negative_float",
+        "dtsGroup": "fertility",
+        "dtsKey": "magnesium"
+      },
+      {
+        "cpp": "fertility.calcium",
+        "jsPath": "fertility.calcium",
+        "type": "float",
+        "default": 0.5,
+        "validator": "non_negative_float",
+        "dtsGroup": "fertility",
+        "dtsKey": "calcium"
+      },
+      {
+        "cpp": "fertility.sulfur",
+        "jsPath": "fertility.sulfur",
+        "type": "float",
+        "default": 0.2,
+        "validator": "non_negative_float",
+        "dtsGroup": "fertility",
+        "dtsKey": "sulfur"
+      },
+      {
+        "cpp": "colors",
+        "jsPath": "colors",
+        "type": "custom",
+        "cppType": "std::unordered_map<std::string, std::array<float, 3>>",
+        "cppDefault": "{}",
+        "parser": "parseBiomeColors",
+        "dtsType": "Record<string, RGB>",
+        "doc": "Named tint colours applied to blocks that opt in via tintKey. @example { grass: [0.3, 0.76, 0.22] }"
+      }
+    ]
+  },
+  {
+    "cppStruct": "BlockDefinition",
+    "dtsInterface": "BlockDef",
+    "dtsGroups": {
+      "voxel": {
+        "name": "BlockVoxel",
+        "doc": "Physics and voxel-space properties."
+      },
+      "render": {
+        "name": "BlockRender",
+        "doc": "Visual and rendering configuration."
+      }
+    },
+    "fields": [
+      {
+        "cpp": "id",
+        "jsPath": "id",
+        "type": "string",
+        "required": true,
+        "validator": "block_id",
+        "dtsType": "BlockId",
+        "doc": "Unique namespaced identifier. @example \"base:grass\""
+      },
+      {
+        "cpp": "name",
+        "jsPath": "name",
+        "type": "string",
+        "required": true,
+        "doc": "Human-readable display name."
+      },
+      {
+        "cpp": "solid",
+        "jsPath": "voxel.solid",
+        "type": "bool",
+        "default": false,
+        "dtsGroup": "voxel",
+        "doc": "Whether this block has a solid collision box."
+      },
+      {
+        "cpp": "translucent",
+        "jsPath": "voxel.translucent",
+        "type": "bool",
+        "default": false,
+        "dtsGroup": "voxel",
+        "doc": "Whether light passes through this block."
+      },
+      {
+        "cpp": "material",
+        "jsPath": "voxel.material",
+        "type": "enum",
+        "values": [
+          "terrain",
+          "rock",
+          "liquid",
+          "plant"
+        ],
+        "default": "terrain",
+        "dtsGroup": "voxel",
+        "dtsType": "BlockMaterial",
+        "doc": "Physics/sound material group. @example \"terrain\" \"rock\" \"liquid\" \"plant\""
+      },
+      {
+        "cpp": "color",
+        "jsPath": "render.color",
+        "type": "rgb",
+        "default": [
+          1,
+          1,
+          1
+        ],
+        "dtsGroup": "render",
+        "validator": "rgb_0_1",
+        "doc": "Base tint colour (linear RGB). Applied when tintKey is false."
+      },
+      {
+        "cpp": "opacity",
+        "jsPath": "render.opacity",
+        "type": "float",
+        "default": 1,
+        "dtsGroup": "render",
+        "validator": "opacity_0_1",
+        "doc": "Alpha opacity. 1 = fully opaque, 0 = invisible."
+      },
+      {
+        "cpp": "tintKey",
+        "jsPath": "render.tintKey",
+        "type": "bool",
+        "default": false,
+        "dtsGroup": "render",
+        "doc": "When true the engine uses the biome tint colour instead of color."
+      },
+      {
+        "cpp": "renderType",
+        "jsPath": "render.type",
+        "type": "enum",
+        "values": [
+          "cube",
+          "model"
+        ],
+        "default": "cube",
+        "dtsGroup": "render",
+        "dtsKey": "type",
+        "dtsType": "BlockRenderType",
+        "doc": "Render geometry type. \"cube\" = full block, \"model\" = custom model."
+      },
+      {
+        "cpp": "modelPath",
+        "jsPath": "render.model",
+        "type": "string",
+        "default": "",
+        "dtsGroup": "render",
+        "dtsKey": "model",
+        "dtsType": "ModelPath",
+        "validator": "model_path",
+        "doc": "Path to the block model JSON, relative to the pack assets folder."
+      },
+      {
+        "cpp": "textures",
+        "jsPath": "render.texture",
+        "type": "object",
+        "cppType": "BlockTextures",
+        "cppDefault": "{}",
+        "parser": "parseBlockTextures",
+        "dtsGroup": "render",
+        "dtsKey": "texture",
+        "dtsType": "TexturePath | BlockTextures",
+        "doc": "Texture paths. Pass a string to set the albedo only, or an object for named maps."
+      },
+      {
+        "cpp": "drops",
+        "jsPath": "drops",
+        "type": "custom",
+        "cppType": "std::vector<BlockDrop>",
+        "cppDefault": "{}",
+        "parser": "parseBlockDrops",
+        "dtsType": "BlockDrop[]",
+        "doc": "Items dropped when this block is broken."
+      },
+      {
+        "cpp": "properties",
+        "jsPath": "properties",
+        "type": "custom",
+        "cppType": "std::unordered_map<std::string, BlockProperty>",
+        "cppDefault": "{}",
+        "parser": "parseBlockProperties",
+        "dtsType": "Record<string, boolean | number | string>",
+        "doc": "Arbitrary key–value properties accessible from gameplay code."
+      }
+    ]
+  },
+  {
+    "cppStruct": "ItemDefinition",
+    "dtsInterface": "ItemDef",
+    "dtsGroups": {},
+    "fields": [
+      {
+        "cpp": "id",
+        "jsPath": "id",
+        "type": "string",
+        "required": true,
+        "validator": "item_id",
+        "dtsType": "ItemId",
+        "doc": "Unique namespaced identifier. @example \"base:wheat_seeds\""
+      },
+      {
+        "cpp": "name",
+        "jsPath": "name",
+        "type": "string",
+        "required": true,
+        "doc": "Human-readable display name."
+      },
+      {
+        "cpp": "stackSize",
+        "jsPath": "stackSize",
+        "type": "int",
+        "default": 1,
+        "validator": "positive_int",
+        "doc": "Maximum number of this item per inventory slot."
+      },
+      {
+        "cpp": "icon",
+        "jsPath": "icon",
+        "type": "string",
+        "default": "",
+        "validator": "texture_path",
+        "dtsType": "TexturePath",
+        "doc": "Icon texture path relative to the pack assets folder."
+      },
+      {
+        "cpp": "placeableBlock",
+        "jsPath": "placeableBlock",
+        "type": "string?",
+        "validator": "block_id",
+        "dtsType": "BlockId",
+        "doc": "If set, using this item places the named block in the world."
+      }
+    ]
+  },
+  {
+    "cppStruct": "RecipeDefinition",
+    "dtsInterface": "RecipeDef",
+    "fields": [
+      {
+        "cpp": "id",
+        "jsPath": "id",
+        "type": "string",
+        "required": true,
+        "validator": "recipe_id",
+        "dtsType": "RecipeId",
+        "doc": "Namespaced recipe id"
+      },
+      {
+        "cpp": "type",
+        "jsPath": "type",
+        "type": "enum",
+        "values": [
+          "crafting",
+          "smelting"
+        ],
+        "required": true,
+        "dtsType": "RecipeType",
+        "doc": "Recipe type (crafting, smelting, etc.)"
+      },
+      {
+        "cpp": "output",
+        "jsPath": "output",
+        "type": "string",
+        "required": true,
+        "validator": "item_id",
+        "dtsType": "ItemId",
+        "doc": "Output item id"
+      },
+      {
+        "cpp": "count",
+        "jsPath": "count",
+        "type": "int",
+        "default": 1,
+        "validator": "positive_int",
+        "doc": "Output count"
+      },
+      {
+        "cpp": "ingredients",
+        "jsPath": "ingredients",
+        "type": "array",
+        "elementType": "string",
+        "cppType": "std::vector<std::string>",
+        "validator": "item_id",
+        "dtsType": "ItemId[]",
+        "doc": "List of ingredient item ids"
+      }
+    ]
+  }
+]

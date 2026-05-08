@@ -48,6 +48,15 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(enet)
 
+# ── EnTT (gameplay ECS for dynamic entities) ─────────────────────────────────
+FetchContent_Declare(
+    EnTT
+    GIT_REPOSITORY https://github.com/skypjack/entt.git
+    GIT_TAG        v3.16.0
+    GIT_SHALLOW    TRUE
+)
+FetchContent_MakeAvailable(EnTT)
+
 # ── FreeType (required by RmlUI font engine) ──────────────────────────────────
 find_package(Freetype QUIET)
 if(NOT Freetype_FOUND)
@@ -176,6 +185,8 @@ add_executable(VoxelGame
     src/common/pack/ScriptManager.cpp
     src/common/pack/ScriptBindingsCustom.cpp
     src/common/pack/generated/ParseBindings.cpp
+    src/common/ecs/EntitySystem.cpp
+    src/common/ecs/Systems.cpp
     src/main.cpp
     src/client/game/Game.cpp
     src/client/game/GameBlocks.cpp
@@ -223,6 +234,7 @@ target_compile_features(VoxelGame PRIVATE cxx_std_20)
 target_compile_definitions(VoxelGame PRIVATE VOXEL_CLIENT)
 target_link_libraries(VoxelGame PRIVATE
     enet
+    EnTT::EnTT
     miniz
     qjs
     ${GLFW_TARGET}
@@ -246,6 +258,8 @@ add_executable(VoxelServer
     src/common/pack/ScriptBindingCustom.cpp
     src/common/pack/ScriptBindingsCustom.cpp
     src/common/pack/generated/ParseBindings.cpp
+    src/common/ecs/EntitySystem.cpp
+    src/common/ecs/Systems.cpp
     src/common/Math.cpp
     src/common/OSUtils.cpp
     src/common/Player.cpp
@@ -267,7 +281,7 @@ target_include_directories(VoxelServer PRIVATE
     ${quickjs_SOURCE_DIR}
 )
 target_compile_features(VoxelServer PRIVATE cxx_std_20)
-target_link_libraries(VoxelServer PRIVATE enet miniz qjs)
+target_link_libraries(VoxelServer PRIVATE enet EnTT::EnTT miniz qjs)
 if(WIN32)
     target_link_libraries(VoxelServer PRIVATE ws2_32 winmm)
 endif()

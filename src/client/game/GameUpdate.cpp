@@ -65,6 +65,7 @@ void Game::update(GLFWwindow* window, const float deltaTime) {
     handleInventorySelection(window);
     jump(player_, input_);
     updateMovement(window, simulation_.world(), gameData_, player_, deltaTime);
+    entitySystem_.update(deltaTime);
     if (!receivesAuthoritativeChunks(network_)) {
         simulateLiquids(deltaTime);
         processBlockTicks();

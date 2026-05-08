@@ -1,0 +1,27 @@
+{
+  "TERRALITE block registration": {
+    "prefix": "tl-block",
+    "body": [
+      "StartupEvents.registry('block', event => {",
+      "  event.create('${1:pack:block_id}')",
+      "    .displayName('${2:Block Name}')",
+      "    .solid(true)",
+      "    .model('${3:models/blocks/block.json}')",
+      "    .texture('${4:textures/blocks/block.ppm}')",
+      "})"
+    ],
+    "description": "Register a TERRALITE block."
+  },
+  "TERRALITE item registration": {
+    "prefix": "tl-item",
+    "body": [
+      "StartupEvents.registry('item', event => {",
+      "  event.create('${1:pack:item_id}')",
+      "    .displayName('${2:Item Name}')",
+      "    .stackSize(${3:64})",
+      "    .icon('${4:textures/items/item.ppm}')",
+      "})"
+    ],
+    "description": "Register a TERRALITE item."
+  }
+}
