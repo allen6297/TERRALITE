@@ -6,6 +6,8 @@
 #include <vector>
 
 #include "render/Mesh.hpp"
+#include "render/TextureManager.hpp"
+#include "world/Chunk.hpp"
 
 #if TERRALITE_ENABLE_DILIGENT
 #    include <unordered_map>
@@ -75,7 +77,6 @@ void normalize3(float& x, float& y, float& z) {
 #if TERRALITE_ENABLE_DILIGENT
 namespace {
 
-// Vertex shader: transforms position by MVP, passes vertex color to PS.
 // Uses row_major so C++ float[16] uploads match what the shader expects.
 constexpr const char* kChunkVS = R"HLSL(
 cbuffer Constants : register(b0)
@@ -96,25 +97,32 @@ struct PSInput
 {
     float4 pos : SV_POSITION;
     float3 col : COLOR;
+    float2 uv  : TEXCOORD;
 };
 
 void main(in VSInput vsIn, out PSInput psIn)
 {
     psIn.pos = mul(float4(vsIn.pos, 1.0), gMVP);
     psIn.col = vsIn.col;
+    psIn.uv  = float2(vsIn.u, vsIn.v);
 }
 )HLSL";
 
 constexpr const char* kChunkPS = R"HLSL(
+Texture2D    gAlbedo         : register(t0);
+SamplerState gAlbedo_sampler : register(s0);
+
 struct PSInput
 {
     float4 pos : SV_POSITION;
     float3 col : COLOR;
+    float2 uv  : TEXCOORD;
 };
 
 float4 main(in PSInput psIn) : SV_TARGET
 {
-    return float4(psIn.col, 1.0);
+    float4 tex = gAlbedo.Sample(gAlbedo_sampler, psIn.uv);
+    return float4(tex.rgb * psIn.col, tex.a);
 }
 )HLSL";
 
@@ -131,9 +139,15 @@ struct DiligentRenderBackend::Impl {
     Diligent::RefCntAutoPtr<Diligent::ISwapChain>              swapChain;
     Diligent::RefCntAutoPtr<Diligent::IPipelineState>          pso;
     Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding>  srb;
+    Diligent::RefCntAutoPtr<Diligent::IPipelineState>          translucentPso;
+    Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding>  translucentSrb;
+    Diligent::IShaderResourceVariable*                         translucentAlbedoVar = nullptr;
     Diligent::RefCntAutoPtr<Diligent::IBuffer>                 vsConstants;
     Diligent::RefCntAutoPtr<Diligent::ITexture>                depthBuffer;
-    Diligent::ITextureView*                                    depthView = nullptr;
+    Diligent::ITextureView*                                    depthView  = nullptr;
+    Diligent::RefCntAutoPtr<Diligent::ITexture>                whiteFallback;
+    Diligent::ITextureView*                                    whiteSrv   = nullptr;
+    Diligent::IShaderResourceVariable*                         albedoVar  = nullptr;
     std::unordered_map<std::uintptr_t, Diligent::RefCntAutoPtr<Diligent::IBuffer>>   buffers;
     std::unordered_map<std::uintptr_t, Diligent::RefCntAutoPtr<Diligent::ITexture>>  textures;
     std::uintptr_t nextResourceId = 1;
@@ -293,24 +307,70 @@ void DiligentRenderBackend::initialize(GLFWwindow* window, const int width, cons
         {4, 0, 1, Diligent::VT_FLOAT32, Diligent::False},  // v
     };
 
+    Diligent::ShaderResourceVariableDesc varDescs[] = {
+        {Diligent::SHADER_TYPE_VERTEX, "Constants", Diligent::SHADER_RESOURCE_VARIABLE_TYPE_STATIC},
+        {Diligent::SHADER_TYPE_PIXEL,  "gAlbedo",   Diligent::SHADER_RESOURCE_VARIABLE_TYPE_DYNAMIC},
+    };
+
+    Diligent::SamplerDesc pointSampler;
+    pointSampler.MinFilter = Diligent::FILTER_TYPE_POINT;
+    pointSampler.MagFilter = Diligent::FILTER_TYPE_POINT;
+    pointSampler.MipFilter = Diligent::FILTER_TYPE_POINT;
+    pointSampler.AddressU  = Diligent::TEXTURE_ADDRESS_WRAP;
+    pointSampler.AddressV  = Diligent::TEXTURE_ADDRESS_WRAP;
+    pointSampler.AddressW  = Diligent::TEXTURE_ADDRESS_WRAP;
+
+    Diligent::ImmutableSamplerDesc samplerDescs[] = {
+        {Diligent::SHADER_TYPE_PIXEL, "gAlbedo_sampler", pointSampler},
+    };
+
     Diligent::GraphicsPipelineStateCreateInfo psoCI;
     psoCI.PSODesc.Name                         = "TERRALITE chunk PSO";
     psoCI.PSODesc.PipelineType                 = Diligent::PIPELINE_TYPE_GRAPHICS;
+    psoCI.PSODesc.ResourceLayout.Variables            = varDescs;
+    psoCI.PSODesc.ResourceLayout.NumVariables         = 2;
+    psoCI.PSODesc.ResourceLayout.ImmutableSamplers    = samplerDescs;
+    psoCI.PSODesc.ResourceLayout.NumImmutableSamplers = 1;
     psoCI.pVS                                  = vs;
     psoCI.pPS                                  = ps;
     psoCI.GraphicsPipeline.NumRenderTargets    = 1;
     psoCI.GraphicsPipeline.RTVFormats[0]       = Diligent::TEX_FORMAT_RGBA8_UNORM;
     psoCI.GraphicsPipeline.DSVFormat           = Diligent::TEX_FORMAT_D32_FLOAT;
     psoCI.GraphicsPipeline.PrimitiveTopology   = Diligent::PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-    psoCI.GraphicsPipeline.RasterizerDesc.CullMode         = Diligent::CULL_MODE_NONE;
-    psoCI.GraphicsPipeline.DepthStencilDesc.DepthEnable    = Diligent::True;
+    psoCI.GraphicsPipeline.RasterizerDesc.CullMode           = Diligent::CULL_MODE_NONE;
+    psoCI.GraphicsPipeline.DepthStencilDesc.DepthEnable      = Diligent::True;
     psoCI.GraphicsPipeline.DepthStencilDesc.DepthWriteEnable = Diligent::True;
-    psoCI.GraphicsPipeline.InputLayout.NumElements         = 5;
-    psoCI.GraphicsPipeline.InputLayout.LayoutElements      = layoutElems;
+    psoCI.GraphicsPipeline.InputLayout.NumElements           = 5;
+    psoCI.GraphicsPipeline.InputLayout.LayoutElements        = layoutElems;
     impl_->device->CreateGraphicsPipelineState(psoCI, impl_->pso.RawDblPtr());
 
     if (impl_->pso == nullptr) {
         throw std::runtime_error("Diligent: failed to create chunk pipeline state.");
+    }
+
+    // ---- Translucent PSO (same shaders, blending on, no depth write) --------
+    {
+        auto& rt = psoCI.GraphicsPipeline.BlendDesc.RenderTargets[0];
+        rt.BlendEnable    = Diligent::True;
+        rt.SrcBlend       = Diligent::BLEND_FACTOR_SRC_ALPHA;
+        rt.DestBlend      = Diligent::BLEND_FACTOR_INV_SRC_ALPHA;
+        rt.BlendOp        = Diligent::BLEND_OPERATION_ADD;
+        rt.SrcBlendAlpha  = Diligent::BLEND_FACTOR_ONE;
+        rt.DestBlendAlpha = Diligent::BLEND_FACTOR_INV_SRC_ALPHA;
+        rt.BlendOpAlpha   = Diligent::BLEND_OPERATION_ADD;
+        psoCI.GraphicsPipeline.DepthStencilDesc.DepthWriteEnable = Diligent::False;
+        psoCI.PSODesc.Name = "TERRALITE chunk PSO (translucent)";
+        impl_->device->CreateGraphicsPipelineState(psoCI, impl_->translucentPso.RawDblPtr());
+    }
+    if (impl_->translucentPso != nullptr) {
+        impl_->translucentPso->GetStaticVariableByName(Diligent::SHADER_TYPE_VERTEX, "Constants")
+            ->Set(impl_->vsConstants);
+        impl_->translucentPso->CreateShaderResourceBinding(impl_->translucentSrb.RawDblPtr(), true);
+        impl_->translucentAlbedoVar =
+            impl_->translucentSrb->GetVariableByName(Diligent::SHADER_TYPE_PIXEL, "gAlbedo");
+        if (impl_->translucentAlbedoVar && impl_->whiteSrv) {
+            impl_->translucentAlbedoVar->Set(impl_->whiteSrv);
+        }
     }
 
     // ---- Constant buffer (MVP matrix = 64 bytes) ----------------------------
@@ -332,6 +392,36 @@ void DiligentRenderBackend::initialize(GLFWwindow* window, const int width, cons
         ->Set(impl_->vsConstants);
     impl_->pso->CreateShaderResourceBinding(impl_->srb.RawDblPtr(), true);
 
+    // ---- White fallback texture (1×1 RGBA) ----------------------------------
+    {
+        const unsigned char white[4] = {255, 255, 255, 255};
+        Diligent::TextureDesc wDesc;
+        wDesc.Name      = "TERRALITE white fallback";
+        wDesc.Type      = Diligent::RESOURCE_DIM_TEX_2D;
+        wDesc.Width     = 1;
+        wDesc.Height    = 1;
+        wDesc.MipLevels = 1;
+        wDesc.Format    = Diligent::TEX_FORMAT_RGBA8_UNORM;
+        wDesc.BindFlags = Diligent::BIND_SHADER_RESOURCE;
+        wDesc.Usage     = Diligent::USAGE_IMMUTABLE;
+        Diligent::TextureSubResData subres;
+        subres.pData  = white;
+        subres.Stride = 4;
+        Diligent::TextureData initData;
+        initData.NumSubresources = 1;
+        initData.pSubResources   = &subres;
+        impl_->device->CreateTexture(wDesc, &initData, impl_->whiteFallback.RawDblPtr());
+        if (impl_->whiteFallback) {
+            impl_->whiteSrv = impl_->whiteFallback->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE);
+        }
+    }
+
+    // Cache the dynamic albedo variable and prime it with the fallback.
+    impl_->albedoVar = impl_->srb->GetVariableByName(Diligent::SHADER_TYPE_PIXEL, "gAlbedo");
+    if (impl_->albedoVar && impl_->whiteSrv) {
+        impl_->albedoVar->Set(impl_->whiteSrv);
+    }
+
 #else
     (void)window;
     (void)width;
@@ -341,36 +431,22 @@ void DiligentRenderBackend::initialize(GLFWwindow* window, const int width, cons
 }
 
 // ---------------------------------------------------------------------------
-// resize
+// beginFrame  (resize if needed, then clear)
 // ---------------------------------------------------------------------------
-void DiligentRenderBackend::resize(const int width, const int height) {
+void DiligentRenderBackend::beginFrame(const int width, const int height, const Color& clearColor) const {
 #if TERRALITE_ENABLE_DILIGENT
-    if (impl_->swapChain == nullptr || width <= 0 || height <= 0) return;
-    if (impl_->width == width && impl_->height == height) return;
-
-    impl_->swapChain->Resize(static_cast<Diligent::Uint32>(width), static_cast<Diligent::Uint32>(height));
-    impl_->width  = width;
-    impl_->height = height;
-
-    createDepthBuffer(impl_->device, width, height, impl_->depthBuffer, impl_->depthView);
-#else
-    (void)width;
-    (void)height;
-#endif
-}
-
-// ---------------------------------------------------------------------------
-// clearFrame
-// ---------------------------------------------------------------------------
-void DiligentRenderBackend::clearFrame(const Color& clearColor) {
-#if TERRALITE_ENABLE_DILIGENT
+    if (impl_->swapChain != nullptr && width > 0 && height > 0) {
+        if (impl_->width != width || impl_->height != height) {
+            impl_->swapChain->Resize(static_cast<Diligent::Uint32>(width), static_cast<Diligent::Uint32>(height));
+            impl_->width  = width;
+            impl_->height = height;
+            createDepthBuffer(impl_->device, width, height, impl_->depthBuffer, impl_->depthView);
+        }
+    }
     if (impl_->context == nullptr || impl_->swapChain == nullptr) return;
-
     Diligent::ITextureView* rtv = impl_->swapChain->GetCurrentBackBufferRTV();
     impl_->context->SetRenderTargets(
-        1,
-        &rtv,
-        impl_->depthView,
+        1, &rtv, impl_->depthView,
         Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION
     );
     const float color[] = {clearColor.r, clearColor.g, clearColor.b, 1.0f};
@@ -379,25 +455,31 @@ void DiligentRenderBackend::clearFrame(const Color& clearColor) {
         impl_->context->ClearDepthStencil(
             impl_->depthView,
             Diligent::CLEAR_DEPTH_FLAG,
-            1.f,
-            0,
+            1.f, 0,
             Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION
         );
     }
 #else
-    (void)clearColor;
+    (void)width; (void)height; (void)clearColor;
 #endif
 }
 
 // ---------------------------------------------------------------------------
-// present
+// endFrame  (present)
 // ---------------------------------------------------------------------------
-void DiligentRenderBackend::present() {
+void DiligentRenderBackend::endFrame() const {
 #if TERRALITE_ENABLE_DILIGENT
     if (impl_->swapChain != nullptr) {
         impl_->swapChain->Present();
     }
 #endif
+}
+
+// ---------------------------------------------------------------------------
+// currentViewport
+// ---------------------------------------------------------------------------
+RenderViewport DiligentRenderBackend::currentViewport() const {
+    return {0, 0, impl_->width, impl_->height};
 }
 
 // ---------------------------------------------------------------------------
@@ -408,7 +490,7 @@ void DiligentRenderBackend::setPerspective(
     const float aspect,
     const float nearPlane,
     const float farPlane
-) {
+) const {
 #if TERRALITE_ENABLE_DILIGENT
     const float f = 1.0f / std::tan(fovYDegrees * kPi / 360.0f);
     float* P = impl_->proj;
@@ -426,7 +508,7 @@ void DiligentRenderBackend::setPerspective(
 // ---------------------------------------------------------------------------
 // applyCameraView  (row-major LookAtLH)
 // ---------------------------------------------------------------------------
-void DiligentRenderBackend::applyCameraView(const Vec3& eye, const Vec3& lookDirection) {
+void DiligentRenderBackend::applyCameraView(const Vec3& eye, const Vec3& lookDirection) const {
 #if TERRALITE_ENABLE_DILIGENT
     float zx = lookDirection.x, zy = lookDirection.y, zz = lookDirection.z;
     normalize3(zx, zy, zz);
@@ -456,14 +538,20 @@ void DiligentRenderBackend::applyCameraView(const Vec3& eye, const Vec3& lookDir
 // ---------------------------------------------------------------------------
 // renderMesh
 // ---------------------------------------------------------------------------
-void DiligentRenderBackend::renderMesh(const ChunkMesh& mesh) {
+void DiligentRenderBackend::renderMesh(const ChunkMesh& mesh, const TextureManager& textures) const {
 #if TERRALITE_ENABLE_DILIGENT
     if (impl_->pso == nullptr || impl_->srb == nullptr || impl_->vsConstants == nullptr) return;
-    if (impl_->context == nullptr) return;
+    if (impl_->context == nullptr || impl_->albedoVar == nullptr) return;
 
-    // Build MVP = view * proj
-    float mvp[16];
-    matMul(impl_->view, impl_->proj, mvp);
+    // Build MVP = translation(chunkWorldPos) * view * proj
+    float model[16];
+    matIdentity(model);
+    model[12] = static_cast<float>(mesh.coord.x * kChunkX);
+    model[13] = static_cast<float>(mesh.coord.y * kChunkY);
+    model[14] = static_cast<float>(mesh.coord.z * kChunkZ);
+
+    float mv[16];  matMul(model, impl_->view, mv);
+    float mvp[16]; matMul(mv,    impl_->proj,  mvp);
 
     // Upload MVP to constant buffer
     {
@@ -475,39 +563,74 @@ void DiligentRenderBackend::renderMesh(const ChunkMesh& mesh) {
         }
     }
 
-    impl_->context->SetPipelineState(impl_->pso);
-    impl_->context->CommitShaderResources(impl_->srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+    // Helper: resolve albedo SRV from TextureManager (falls back to white).
+    auto resolveSrv = [&](const std::string& path) -> Diligent::ITextureView* {
+        if (!path.empty()) {
+            const TextureResource* res = textures.find(path);
+            if (res != nullptr) {
+                auto texIt = impl_->textures.find(res->handle.diligentId());
+                if (texIt != impl_->textures.end()) {
+                    return texIt->second->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE);
+                }
+            }
+        }
+        return impl_->whiteSrv;
+    };
 
-    for (const MeshSurface& surface : mesh.surfaces) {
-        if (surface.vertexCount <= 0) continue;
+    // Helper: draw one surface given its albedo variable and SRB.
+    auto drawSurface = [&](
+        const MeshSurface& surface,
+        Diligent::IShaderResourceVariable* albedoVar,
+        Diligent::IShaderResourceBinding*  srb
+    ) {
+        if (surface.vertexCount <= 0) return;
         const std::uintptr_t bufferId = surface.vertexBuffer.diligentId();
-        if (bufferId == 0) continue;
-
+        if (bufferId == 0) return;
         auto it = impl_->buffers.find(bufferId);
-        if (it == impl_->buffers.end()) continue;
+        if (it == impl_->buffers.end()) return;
 
-        Diligent::IBuffer* vb     = it->second;
+        albedoVar->Set(resolveSrv(surface.albedoTexturePath));
+        impl_->context->CommitShaderResources(srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+
+        Diligent::IBuffer* vb         = it->second;
         const Diligent::Uint64 offset = 0;
         impl_->context->SetVertexBuffers(
             0, 1, &vb, &offset,
             Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION,
             Diligent::SET_VERTEX_BUFFERS_FLAG_RESET
         );
+        Diligent::DrawAttribs da;
+        da.NumVertices = static_cast<Diligent::Uint32>(surface.vertexCount);
+        da.Flags       = Diligent::DRAW_FLAG_VERIFY_ALL;
+        impl_->context->Draw(da);
+    };
 
-        Diligent::DrawAttribs drawAttribs;
-        drawAttribs.NumVertices = static_cast<Diligent::Uint32>(surface.vertexCount);
-        drawAttribs.Flags       = Diligent::DRAW_FLAG_VERIFY_ALL;
-        impl_->context->Draw(drawAttribs);
+    // Pass 1: opaque surfaces (depth write on).
+    impl_->context->SetPipelineState(impl_->pso);
+    for (const MeshSurface& surface : mesh.surfaces) {
+        if (!surface.translucent) {
+            drawSurface(surface, impl_->albedoVar, impl_->srb);
+        }
+    }
+
+    // Pass 2: translucent surfaces (blending on, no depth write).
+    if (impl_->translucentPso && impl_->translucentSrb && impl_->translucentAlbedoVar) {
+        impl_->context->SetPipelineState(impl_->translucentPso);
+        for (const MeshSurface& surface : mesh.surfaces) {
+            if (surface.translucent) {
+                drawSurface(surface, impl_->translucentAlbedoVar, impl_->translucentSrb);
+            }
+        }
     }
 #else
-    (void)mesh;
+    (void)mesh; (void)textures;
 #endif
 }
 
 // ---------------------------------------------------------------------------
 // Buffer / texture resource management
 // ---------------------------------------------------------------------------
-RenderBufferHandle DiligentRenderBackend::createVertexBuffer(const std::size_t byteCount, const void* data) {
+RenderBufferHandle DiligentRenderBackend::createVertexBuffer(const std::size_t byteCount, const void* data) const {
 #if TERRALITE_ENABLE_DILIGENT
     if (impl_->device == nullptr || data == nullptr || byteCount == 0) return {};
 
@@ -534,7 +657,7 @@ RenderBufferHandle DiligentRenderBackend::createVertexBuffer(const std::size_t b
 #endif
 }
 
-void DiligentRenderBackend::destroyBuffer(RenderBufferHandle& buffer) {
+void DiligentRenderBackend::destroyBuffer(RenderBufferHandle& buffer) const {
 #if TERRALITE_ENABLE_DILIGENT
     const std::uintptr_t id = buffer.diligentId();
     if (id != 0) {
@@ -551,7 +674,7 @@ RenderTextureHandle DiligentRenderBackend::createTexture2D(
     const int height,
     const int channelCount,
     const unsigned char* pixels
-) {
+) const {
 #if TERRALITE_ENABLE_DILIGENT
     if (impl_->device == nullptr || pixels == nullptr || width <= 0 || height <= 0) return {};
     if (channelCount != 3 && channelCount != 4) return {};
@@ -600,7 +723,7 @@ RenderTextureHandle DiligentRenderBackend::createTexture2D(
 #endif
 }
 
-void DiligentRenderBackend::destroyTexture(RenderTextureHandle& texture) {
+void DiligentRenderBackend::destroyTexture(RenderTextureHandle& texture) const {
 #if TERRALITE_ENABLE_DILIGENT
     const std::uintptr_t id = texture.diligentId();
     if (id != 0) {
@@ -612,13 +735,13 @@ void DiligentRenderBackend::destroyTexture(RenderTextureHandle& texture) {
 #endif
 }
 
-void DiligentRenderBackend::uploadChunkMesh(ChunkMesh& mesh) {
+void DiligentRenderBackend::uploadChunkMesh(ChunkMesh& mesh) const {
     for (std::size_t surfaceIndex = 0; surfaceIndex < mesh.surfaces.size(); ++surfaceIndex) {
         uploadChunkMeshSurface(mesh, surfaceIndex);
     }
 }
 
-bool DiligentRenderBackend::uploadChunkMeshSurface(ChunkMesh& mesh, const std::size_t surfaceIndex) {
+bool DiligentRenderBackend::uploadChunkMeshSurface(ChunkMesh& mesh, const std::size_t surfaceIndex) const {
     if (surfaceIndex >= mesh.surfaces.size()) return false;
 
     MeshSurface& surface = mesh.surfaces[surfaceIndex];
@@ -638,7 +761,7 @@ bool DiligentRenderBackend::uploadChunkMeshSurface(ChunkMesh& mesh, const std::s
     return true;
 }
 
-void DiligentRenderBackend::destroyChunkMesh(ChunkMesh& mesh) {
+void DiligentRenderBackend::destroyChunkMesh(ChunkMesh& mesh) const {
     for (auto& surface : mesh.surfaces) {
         destroyBuffer(surface.vertexBuffer);
         surface.vertexCount = 0;
