@@ -5,10 +5,8 @@ Terralite is a voxel survival game prototype with a C++ engine, scriptable conte
 ## Build
 
 ```sh
-cmake -S . -B build
-cmake --build build --target TerraliteLauncher Terralite TerraliteServer TerraliteDataTests
-ctest --test-dir build --output-on-failure
-```
+cmake -B build -DTERRALITE_ENABLE_DILIGENT=ON
+cmake --build build
 
 The project uses CMake FetchContent for third-party dependencies. A clean out-of-tree build is supported and should not depend on the build directory being inside the repository.
 
