@@ -25,9 +25,14 @@ using terralite::launcher::PlayMode;
 
 struct LauncherRuntime {
     LaunchOptions launchOptions;
+    std::filesystem::path versionRoot;
+    std::filesystem::path sourceDirectory;
     std::array<char, 96> accountName {};
     std::array<char, 64> serverHost {};
     std::array<char, 16> port {};
+    std::array<char, 64> installVersionId {};
+    std::array<char, 96> installVersionName {};
+    std::array<char, 64> installVersionChannel {};
     std::array<char, 64> versionId {};
     std::array<char, 96> versionName {};
     std::array<char, 512> gameExecutable {};
@@ -37,6 +42,7 @@ struct LauncherRuntime {
     std::string loadedVersionId;
     std::string loadedAccountId;
     std::string status;
+    bool overwriteInstall = false;
 };
 
 void copyToBuffer(const std::string& text, auto& buffer) {
@@ -49,6 +55,15 @@ void syncRuntimeBuffers(LauncherState& state, LauncherRuntime& runtime) {
     }
     if (runtime.serverHost[0] == '\0') {
         copyToBuffer(runtime.launchOptions.hostName, runtime.serverHost);
+    }
+    if (runtime.installVersionId[0] == '\0') {
+        copyToBuffer("local-dev-install", runtime.installVersionId);
+    }
+    if (runtime.installVersionName[0] == '\0') {
+        copyToBuffer("Local Dev Install", runtime.installVersionName);
+    }
+    if (runtime.installVersionChannel[0] == '\0') {
+        copyToBuffer("local", runtime.installVersionChannel);
     }
 
     if (AccountProfile* account = terralite::launcher::selectedAccount(state);
@@ -94,6 +109,15 @@ LaunchOptions launchOptionsFromRuntime(LauncherRuntime& runtime) {
     return runtime.launchOptions;
 }
 
+const GameVersion* localDevVersion(const LauncherState& state) {
+    for (const GameVersion& version : state.versions) {
+        if (version.source == "local-dev") {
+            return &version;
+        }
+    }
+    return nullptr;
+}
+
 void drawAccounts(LauncherState& state, LauncherRuntime& runtime, const std::filesystem::path& configPath) {
     ImGui::TextUnformatted("Accounts");
     ImGui::Separator();
@@ -128,10 +152,13 @@ void drawAccounts(LauncherState& state, LauncherRuntime& runtime, const std::fil
 
 void drawVersions(LauncherState& state, LauncherRuntime& runtime, const std::filesystem::path& configPath) {
     ImGui::TextUnformatted("Game Versions");
+    ImGui::TextDisabled("%s", runtime.versionRoot.string().c_str());
     ImGui::Separator();
     for (const GameVersion& version : state.versions) {
         const bool selected = version.id == state.selectedVersionId;
-        if (ImGui::Selectable(version.name.c_str(), selected)) {
+        const std::string label = version.name + "  [" +
+            terralite::launcher::versionStatusLabel(terralite::launcher::versionStatus(version)) + "]";
+        if (ImGui::Selectable(label.c_str(), selected)) {
             state.selectedVersionId = version.id;
             runtime.loadedVersionId.clear();
         }
@@ -148,10 +175,57 @@ void drawVersions(LauncherState& state, LauncherRuntime& runtime, const std::fil
         runtime.loadedVersionId.clear();
         terralite::launcher::saveState(state, configPath);
     }
+    if (ImGui::Button("Refresh manifests")) {
+        terralite::launcher::mergeDiscoveredVersions(
+            state,
+            terralite::launcher::discoverInstalledVersions(runtime.versionRoot));
+        runtime.loadedVersionId.clear();
+        terralite::launcher::saveState(state, configPath);
+        runtime.status = "Refreshed version manifests.";
+    }
+
+    ImGui::Spacing();
+    ImGui::SeparatorText("Install Local Build");
+    ImGui::InputText("Install id", runtime.installVersionId.data(), runtime.installVersionId.size());
+    ImGui::InputText("Install name", runtime.installVersionName.data(), runtime.installVersionName.size());
+    ImGui::InputText("Install channel", runtime.installVersionChannel.data(), runtime.installVersionChannel.size());
+    ImGui::Checkbox("Overwrite existing", &runtime.overwriteInstall);
+    if (ImGui::Button("Install current local build")) {
+        const GameVersion* localVersion = localDevVersion(state);
+        if (localVersion == nullptr) {
+            runtime.status = "No local-dev version is available.";
+        } else {
+            try {
+                terralite::launcher::LocalBuildInstallRequest request;
+                request.id = runtime.installVersionId.data();
+                request.name = runtime.installVersionName.data();
+                request.channel = runtime.installVersionChannel.data();
+                request.versionRoot = runtime.versionRoot;
+                request.gameExecutable = localVersion->gameExecutable;
+                request.serverExecutable = localVersion->serverExecutable;
+                request.sourcePacksDirectory = runtime.sourceDirectory / "packs";
+                request.extraArguments = localVersion->extraArguments;
+                request.overwrite = runtime.overwriteInstall;
+
+                GameVersion installed = terralite::launcher::installLocalBuildVersion(request);
+                terralite::launcher::mergeDiscoveredVersions(state, {installed});
+                state.selectedVersionId = installed.id;
+                runtime.loadedVersionId.clear();
+                terralite::launcher::saveState(state, configPath);
+                runtime.status = "Installed local build as " + installed.id + ".";
+            } catch (const std::exception& error) {
+                runtime.status = error.what();
+            }
+        }
+    }
 
     ImGui::Spacing();
     ImGui::InputText("Version id", runtime.versionId.data(), runtime.versionId.size());
     ImGui::InputText("Name", runtime.versionName.data(), runtime.versionName.size());
+    if (const GameVersion* version = terralite::launcher::selectedVersion(state)) {
+        ImGui::Text("Status: %s", terralite::launcher::versionStatusLabel(
+            terralite::launcher::versionStatus(*version)).c_str());
+    }
     ImGui::InputText("Game executable", runtime.gameExecutable.data(), runtime.gameExecutable.size());
     ImGui::InputText("Server executable", runtime.serverExecutable.data(), runtime.serverExecutable.size());
     ImGui::InputText("Working directory", runtime.workingDirectory.data(), runtime.workingDirectory.size());
@@ -266,12 +340,19 @@ int main(int argc, char** argv) {
             terralite::launcher::executablePath(argc > 0 ? argv[0] : "TerraliteLauncher");
         const std::filesystem::path configPath =
             terralite::launcher::appDataDirectory() / "launcher.json";
+        const std::filesystem::path versionRoot =
+            terralite::launcher::appDataDirectory() / "versions";
 
         LauncherState state = terralite::launcher::loadState(
             configPath,
             launcherPath,
             std::filesystem::path(TERRALITE_SOURCE_DIR));
         LauncherRuntime runtime;
+        runtime.versionRoot = versionRoot;
+        runtime.sourceDirectory = std::filesystem::path(TERRALITE_SOURCE_DIR);
+        terralite::launcher::mergeDiscoveredVersions(
+            state,
+            terralite::launcher::discoverInstalledVersions(versionRoot));
 
         ImGuiGlfwApp app;
         while (!glfwWindowShouldClose(app.window())) {

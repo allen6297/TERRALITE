@@ -148,7 +148,6 @@ bool HeadlessServer::start(const std::uint16_t port, const std::filesystem::path
     scriptManager_->loadGameData(packManager_, projectRoot / "engine" / "scripts");
     scriptManager_->loadRuntimeScripts(packManager_);
 
-    ensureChunksAround({0, 0, 0});
     std::cout << "Headless world loaded with " << simulation_.world().chunks.size() << " chunk(s).\n";
     return true;
 }
@@ -165,35 +164,25 @@ void HeadlessServer::tick() {
     for (std::uint32_t playerId : network_.takePendingPlayerJoins()) {
         players_[playerId] = Player();
         players_[playerId].name = "Player_" + std::to_string(playerId);
+        pendingInitialSyncPlayers_.push_back(playerId);
         std::cout << "Player " << playerId << " joined.\n";
         network_.broadcastChatMessage(0, "Player_" + std::to_string(playerId) + " joined the game.");
     }
 
     // Handle player disconnects
-    static std::unordered_set<std::uint32_t> lastPlayers;
-    std::unordered_set<std::uint32_t> currentPlayers;
-    for (const auto& [id, player] : players_) {
-        currentPlayers.insert(id);
-    }
-
-    // This is a bit inefficient to do every tick, but players_ is small.
-    // Better way: Check who was in lastPlayers but NOT in network.remotePlayers() anymore.
-    // Wait, NetworkManager already removed them from its internal map.
-    // I need to know who was removed.
-    
-    // Actually, I'll just check if they are still in network.remotePlayers() OR if it's local (which it isn't here).
-    auto it = players_.begin();
-    while (it != players_.end()) {
-        if (network_.remotePlayers().find(it->first) == network_.remotePlayers().end()) {
-            std::cout << "Player " << it->second.name << " (" << it->first << ") disconnected. Saving data.\n";
+    for (std::uint32_t playerId : network_.takePendingPlayerDisconnects()) {
+        const auto it = players_.find(playerId);
+        if (it != players_.end()) {
+            std::cout << "Player " << it->second.name << " (" << playerId << ") disconnected. Saving data.\n";
             network_.broadcastChatMessage(0, it->second.name + " left the game.");
             persistence_->savePlayer(it->second);
-            lastSentChunkStateByPlayer_.erase(it->first);
-            knownEntitiesByPlayer_.erase(it->first);
-            it = players_.erase(it);
-        } else {
-            ++it;
+            players_.erase(it);
         }
+        lastSentChunkStateByPlayer_.erase(playerId);
+        knownEntitiesByPlayer_.erase(playerId);
+        pendingInitialSyncPlayers_.erase(
+            std::remove(pendingInitialSyncPlayers_.begin(), pendingInitialSyncPlayers_.end(), playerId),
+            pendingInitialSyncPlayers_.end());
     }
 
     // Handle player state updates
@@ -466,17 +455,24 @@ void HeadlessServer::processCraftRequests() {
 }
 
 void HeadlessServer::ensureChunksAroundPlayers() {
-    for (const std::uint32_t playerId : network_.takePendingPlayerJoins()) {
-        Player& player = players_[playerId];
+    std::vector<std::uint32_t> initialSyncPlayers;
+    initialSyncPlayers.swap(pendingInitialSyncPlayers_);
+
+    for (const std::uint32_t playerId : initialSyncPlayers) {
+        auto playerIt = players_.find(playerId);
+        if (playerIt == players_.end()) {
+            continue;
+        }
+        Player& player = playerIt->second;
         // Give some starting items for testing if empty
         if (player.inventory.slots[0].count == 0) {
-            addItem(player.inventory, gameData_, "base:grass_block", 64);
+            addItem(player.inventory, gameData_, "base:grass", 64);
             addItem(player.inventory, gameData_, "base:dirt", 64);
             addItem(player.inventory, gameData_, "base:stone", 64);
             addItem(player.inventory, gameData_, "base:oak_log", 64);
-            addItem(player.inventory, gameData_, "base:oak_leaves", 64);
+            addItem(player.inventory, gameData_, "base:oak_planks", 64);
             addItem(player.inventory, gameData_, "base:sand", 64);
-            addItem(player.inventory, gameData_, "base:water", 64);
+            addItem(player.inventory, gameData_, "base:wheat_seeds", 16);
         }
 
         // Sync initial inventory to player
@@ -485,15 +481,14 @@ void HeadlessServer::ensureChunksAroundPlayers() {
             network_.sendInventoryUpdate(playerId, i, slot.itemId, slot.count);
         }
 
-        sendLoadedChunksToPlayer(playerId, {0, 0, 0});
+        sendLoadedChunksToPlayer(playerId, chunkForPosition(player.position));
     }
 
-    if (network_.remotePlayers().empty()) {
-        ensureChunksAround({0, 0, 0});
+    if (players_.empty()) {
         return;
     }
 
-    for (const auto& [playerId, player] : network_.remotePlayers()) {
+    for (const auto& [playerId, player] : players_) {
         ensureChunksAroundPlayer(playerId, chunkForPosition(player.position), kServerChunkRadius);
     }
 }
@@ -566,7 +561,7 @@ void HeadlessServer::expireUnusedChunks() {
     for (auto& [coord, chunk] : simulation_.world().chunks) {
         // Find if any player is near this chunk
         bool nearAnyPlayer = false;
-        for (const auto& pair : network_.remotePlayers()) {
+        for (const auto& pair : players_) {
             const auto& player = pair.second;
             const ChunkCoord playerChunk = chunkForPosition(player.position);
             const int dx = coord.x - playerChunk.x;
@@ -599,7 +594,7 @@ void HeadlessServer::expireUnusedChunks() {
         }
 
         bool nearAnyPlayer = false;
-        for (const auto& pair : network_.remotePlayers()) {
+        for (const auto& pair : players_) {
             const auto& player = pair.second;
             const ChunkCoord playerChunk = chunkForPosition(player.position);
             const int dx = coord.x - playerChunk.x;
@@ -655,8 +650,8 @@ bool HeadlessServer::isKnownState(const std::uint16_t stateId) const {
 }
 
 bool HeadlessServer::isWithinReach(const NetworkBlockChange& request) const {
-    const auto playerIt = network_.remotePlayers().find(request.playerId);
-    if (playerIt == network_.remotePlayers().end()) {
+    const auto playerIt = players_.find(request.playerId);
+    if (playerIt == players_.end()) {
         return false;
     }
 
@@ -702,8 +697,8 @@ bool HeadlessServer::isValidBlockEditTarget(const NetworkBlockChange& request) {
     }
 
     if (gameData_.solidByRuntimeId[request.stateId]) {
-        const auto playerIt = network_.remotePlayers().find(request.playerId);
-        if (playerIt == network_.remotePlayers().end()) {
+        const auto playerIt = players_.find(request.playerId);
+        if (playerIt == players_.end()) {
             return false;
         }
 

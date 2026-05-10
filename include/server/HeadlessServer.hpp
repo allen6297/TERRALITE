@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 #include "common/data/GameData.hpp"
 #include "common/network/NetworkManager.hpp"
@@ -23,6 +24,7 @@ public:
 
     bool start(std::uint16_t port, const std::filesystem::path& projectRoot);
     void tick();
+    std::size_t loadedChunkCount() const { return simulation_.world().chunks.size(); }
 
 private:
     void processChunkRequests();
@@ -53,6 +55,7 @@ private:
     std::unordered_map<std::uint32_t, std::unordered_set<ChunkCoord, ChunkCoordHash>> sentChunksByPlayer_;
     std::unordered_map<std::uint32_t, std::unordered_map<ChunkCoord, Chunk, ChunkCoordHash>> lastSentChunkStateByPlayer_;
     std::unordered_map<std::uint32_t, std::unordered_set<std::uint32_t>> knownEntitiesByPlayer_;
+    std::vector<std::uint32_t> pendingInitialSyncPlayers_;
 };
 
 }  // namespace voxel

@@ -1,4 +1,10 @@
 StartupEvents.registry('item', event => {
+  event.create('base:grass')
+    .displayName('Grass Block')
+    .stackSize(99)
+    .placesBlock('base:grass')
+    .icon('textures/blocks/grass.ppm')
+
   event.create('base:dirt')
     .displayName('Dirt')
     .stackSize(99)
@@ -10,6 +16,29 @@ StartupEvents.registry('item', event => {
     .stackSize(99)
     .placesBlock('base:stone')
     .icon('textures/blocks/stone.ppm')
+
+  event.create('base:sand')
+    .displayName('Sand')
+    .stackSize(99)
+    .placesBlock('base:sand')
+    .icon('textures/blocks/sand.ppm')
+
+  event.create('base:oak_log')
+    .displayName('Oak Log')
+    .stackSize(99)
+    .placesBlock('base:oak_log')
+    .icon('textures/blocks/oak_log_side.ppm')
+
+  event.create('base:oak_planks')
+    .displayName('Oak Planks')
+    .stackSize(99)
+    .placesBlock('base:oak_planks')
+    .icon('textures/blocks/oak_planks.ppm')
+
+  event.create('base:stick')
+    .displayName('Stick')
+    .stackSize(99)
+    .icon('textures/blocks/oak_planks.ppm')
 
   event.create('base:wheat')
     .displayName('Wheat')
@@ -26,5 +55,16 @@ StartupEvents.registry('item', event => {
     .displayName('Door')
     .stackSize(99)
     .placesBlock('base:door')
-    .icon('textures/blocks/dirt.ppm')
+    .icon('textures/blocks/oak_planks.ppm')
+
+  event.create('base:crafting_table')
+    .displayName('Crafting Table')
+    .stackSize(99)
+    .placesBlock('base:crafting_table')
+    .icon('textures/blocks/crafting_table_top.ppm')
+
+  event.create('base:bread')
+    .displayName('Bread')
+    .stackSize(99)
+    .icon('textures/blocks/wheat_stage_3.ppm')
 })

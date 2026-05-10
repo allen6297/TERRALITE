@@ -6,7 +6,7 @@ StartupEvents.registry('block', event => {
     .tintKey(true)
     .model('models/blocks/grass_block.json')
     .texture({ albedo: 'textures/blocks/grass.ppm', normal: 'textures/blocks/grass_normal.ppm', roughness: 'textures/blocks/grass_roughness.ppm', emissive: 'textures/blocks/grass_emissive.ppm' })
-    .drops({ item: 'base:door', count: 1 })
+    .drops({ item: 'base:grass', count: 1 })
 
   event.create('base:dirt')
     .displayName('Dirt')
@@ -31,6 +31,27 @@ StartupEvents.registry('block', event => {
     .displayName('Sand')
     .solid(true)
     .color(0.85, 0.78, 0.50)
+    .model('models/blocks/sand.json')
+    .texture('textures/blocks/sand.ppm')
+    .drops({ item: 'base:sand', count: 1 })
+
+  event.create('base:oak_log')
+    .displayName('Oak Log')
+    .solid(true)
+    .material('terrain')
+    .color(0.52, 0.34, 0.18)
+    .model('models/blocks/oak_log.json')
+    .texture({ albedo: 'textures/blocks/oak_log_side.ppm' })
+    .drops({ item: 'base:oak_log', count: 1 })
+
+  event.create('base:oak_planks')
+    .displayName('Oak Planks')
+    .solid(true)
+    .material('terrain')
+    .color(0.72, 0.52, 0.28)
+    .model('models/blocks/oak_planks.json')
+    .texture('textures/blocks/oak_planks.ppm')
+    .drops({ item: 'base:oak_planks', count: 1 })
 
   event.create('base:water')
     .displayName('Water')
@@ -74,6 +95,14 @@ StartupEvents.registry('block', event => {
     .model('models/blocks/cube_test.json')
     .renderType('model')
     .drops({ item: 'base:door', count: 1 })
+
+  event.create('base:crafting_table')
+    .displayName('Crafting Table')
+    .solid(true)
+    .color(0.58, 0.39, 0.21)
+    .model('models/blocks/crafting_table.json')
+    .texture('textures/blocks/crafting_table_side.ppm')
+    .drops({ item: 'base:crafting_table', count: 1 })
 })
 
 StartupEvents.registry('tag', event => {

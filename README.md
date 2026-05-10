@@ -20,6 +20,12 @@ Launcher:
 ./build/TerraliteLauncher
 ```
 
+Native macOS Swift launcher:
+
+```sh
+./script/build_and_run.sh
+```
+
 Offline client:
 
 ```sh
@@ -50,6 +56,36 @@ Server bootstrap smoke test:
 ./build/TerraliteServer --bootstrap-only
 ```
 
+## Launcher Versions
+
+The launcher always creates a `local-dev` version for the current build. It also discovers installed versions from the launcher data directory:
+
+```text
+~/Library/Application Support/TERRALITE/Launcher/versions/<version-id>/manifest.json
+```
+
+Each manifest can describe a release installed in that folder:
+
+```json
+{
+  "id": "0.1.0",
+  "name": "Terralite 0.1.0",
+  "channel": "stable",
+  "source": "manifest",
+  "gameExecutable": "Terralite",
+  "serverExecutable": "TerraliteServer",
+  "workingDirectory": ".",
+  "extraArguments": "",
+  "installed": true
+}
+```
+
+Relative executable and working-directory paths are resolved from the manifest folder.
+
+The ImGui launcher can install the current local build into this layout with `Install current local build`. That copies the built `Terralite` and `TerraliteServer` executables plus the repo `packs/` directory into a version folder, then writes `manifest.json` for that installed copy.
+
+The Swift launcher lives at `platform/apple/TerraliteLauncherSwift` and uses the same `launcher.json` and version manifest layout as the ImGui launcher. The repo `Run` action is wired to `script/build_and_run.sh`, which builds the SwiftPM app, stages `dist/TerraliteLauncherSwift.app`, and opens it as a normal macOS app bundle.
+
 ## Project Layout
 
 - `src/common` and `include/common`: shared game data, scripting, networking, ECS, world simulation, and persistence.
@@ -57,6 +93,7 @@ Server bootstrap smoke test:
 - `src/server` and `include/server`: headless server bootstrap and server runtime.
 - `src/app`: executable entrypoints and app-layer wiring for client/server.
 - `src/launcher` and `include/launcher`: platform-neutral launcher core for accounts, versions, config, and process launch.
+- `platform/apple/TerraliteLauncherSwift`: native SwiftUI macOS launcher using the same launcher data files.
 - `engine/scripts`: built-in JavaScript APIs exposed to packs.
 - `packs/base`: base game content, scripts, models, textures, and UI assets.
 - `packs/types`: generated schema, TypeScript declarations, and editor snippets for pack authors.

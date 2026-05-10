@@ -136,6 +136,7 @@ public:
     std::vector<NetworkEntityPosition> takePendingEntityPositions();
     std::vector<std::uint32_t> takePendingEntityDestroys();
     std::vector<std::uint32_t> takePendingPlayerJoins();
+    std::vector<std::uint32_t> takePendingPlayerDisconnects();
     std::vector<RemotePlayerState> takePendingPlayerStates();
     std::vector<NetworkChatMessage> takePendingChatMessages();
     std::vector<NetworkCraftRequest> takePendingCraftRequests();
@@ -209,6 +210,7 @@ private:
     std::vector<NetworkEntityPosition> pendingEntityPositions_;
     std::vector<std::uint32_t> pendingEntityDestroys_;
     std::vector<std::uint32_t> pendingPlayerJoins_;
+    std::vector<std::uint32_t> pendingPlayerDisconnects_;
     std::vector<NetworkChatMessage> pendingChatMessages_;
     std::vector<NetworkCraftRequest> pendingCraftRequests_;
     std::optional<double> pendingWorldTime_;

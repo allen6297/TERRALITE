@@ -15,10 +15,36 @@ struct AccountProfile {
 struct GameVersion {
     std::string id;
     std::string name;
+    std::string channel = "local";
+    std::string source = "manual";
     std::filesystem::path gameExecutable;
     std::filesystem::path serverExecutable;
     std::filesystem::path workingDirectory;
     std::string extraArguments;
+};
+
+enum class VersionStatus {
+    LocalDev,
+    Installed,
+    MissingExecutable,
+    InvalidManifest,
+};
+
+struct VersionManifest {
+    GameVersion version;
+    bool installed = true;
+};
+
+struct LocalBuildInstallRequest {
+    std::string id;
+    std::string name;
+    std::string channel = "local";
+    std::filesystem::path versionRoot;
+    std::filesystem::path gameExecutable;
+    std::filesystem::path serverExecutable;
+    std::filesystem::path sourcePacksDirectory;
+    std::string extraArguments;
+    bool overwrite = false;
 };
 
 struct LauncherState {
@@ -45,6 +71,8 @@ std::filesystem::path appDataDirectory();
 std::filesystem::path siblingExecutable(const std::filesystem::path& launcherPath, const std::string& name);
 std::string pathString(const std::filesystem::path& path);
 std::string slugFromName(const std::string& name);
+std::string versionStatusLabel(VersionStatus status);
+VersionStatus versionStatus(const GameVersion& version);
 
 LauncherState defaultState(const std::filesystem::path& launcherPath, const std::filesystem::path& sourceDirectory);
 LauncherState loadState(
@@ -64,6 +92,12 @@ GameVersion addVersion(LauncherState& state);
 void removeSelectedVersion(LauncherState& state);
 void renameSelectedAccount(LauncherState& state, const std::string& displayName);
 void updateSelectedVersion(LauncherState& state, const GameVersion& updatedVersion);
+
+VersionManifest loadVersionManifest(const std::filesystem::path& manifestPath);
+void saveVersionManifest(const VersionManifest& manifest, const std::filesystem::path& manifestPath);
+std::vector<GameVersion> discoverInstalledVersions(const std::filesystem::path& versionRoot);
+void mergeDiscoveredVersions(LauncherState& state, const std::vector<GameVersion>& discoveredVersions);
+GameVersion installLocalBuildVersion(const LocalBuildInstallRequest& request);
 
 std::vector<std::string> gameArguments(
     const AccountProfile& account,

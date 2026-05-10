@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "apiVersion": 1,
   "description": "Base game content",
-  "gameVersion": "0.1.0",
+  "gameVersion": "0.2.0",
   "dependencies": [],
   "optionalDependencies": [],
   "scripts": {

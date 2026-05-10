@@ -50,12 +50,48 @@ voxel::JsonValue accountToJson(const AccountProfile& account) {
 
 voxel::JsonValue versionToJson(const GameVersion& version) {
     voxel::JsonValue::Object object;
+    object["channel"] = jsonString(version.channel);
     object["extraArguments"] = jsonString(version.extraArguments);
     object["gameExecutable"] = jsonString(pathString(version.gameExecutable));
     object["id"] = jsonString(version.id);
     object["name"] = jsonString(version.name);
     object["serverExecutable"] = jsonString(pathString(version.serverExecutable));
+    object["source"] = jsonString(version.source);
     object["workingDirectory"] = jsonString(pathString(version.workingDirectory));
+    return voxel::JsonValue {object};
+}
+
+GameVersion gameVersionFromObject(const voxel::JsonValue::Object& object, const std::filesystem::path& baseDirectory = {}) {
+    GameVersion version;
+    version.id = stringValue(object, "id");
+    version.name = stringValue(object, "name", version.id);
+    version.channel = stringValue(object, "channel", "local");
+    version.source = stringValue(object, "source", "manual");
+    version.gameExecutable = stringValue(object, "gameExecutable");
+    version.serverExecutable = stringValue(object, "serverExecutable");
+    version.workingDirectory = stringValue(object, "workingDirectory");
+    version.extraArguments = stringValue(object, "extraArguments");
+
+    if (!baseDirectory.empty()) {
+        if (version.gameExecutable.is_relative()) {
+            version.gameExecutable = baseDirectory / version.gameExecutable;
+        }
+        if (version.serverExecutable.is_relative()) {
+            version.serverExecutable = baseDirectory / version.serverExecutable;
+        }
+        if (version.workingDirectory.empty()) {
+            version.workingDirectory = baseDirectory;
+        } else if (version.workingDirectory.is_relative()) {
+            version.workingDirectory = baseDirectory / version.workingDirectory;
+        }
+    }
+
+    return version;
+}
+
+voxel::JsonValue manifestToJson(const VersionManifest& manifest) {
+    voxel::JsonValue::Object object = std::get<voxel::JsonValue::Object>(versionToJson(manifest.version).value);
+    object["installed"] = voxel::JsonValue {manifest.installed};
     return voxel::JsonValue {object};
 }
 
@@ -134,6 +170,39 @@ std::string launchProcess(
     }
 #endif
     return "Started " + executable.filename().string();
+}
+
+void copyRequiredFile(const std::filesystem::path& source, const std::filesystem::path& destination) {
+    if (source.empty() || !std::filesystem::exists(source)) {
+        throw std::runtime_error("Install source file not found: " + source.string());
+    }
+    std::filesystem::create_directories(destination.parent_path());
+    std::filesystem::copy_file(
+        source,
+        destination,
+        std::filesystem::copy_options::overwrite_existing);
+
+    std::error_code permissionsError;
+    std::filesystem::permissions(
+        destination,
+        std::filesystem::status(source).permissions(),
+        std::filesystem::perm_options::replace,
+        permissionsError);
+}
+
+void copyOptionalDirectory(const std::filesystem::path& source, const std::filesystem::path& destination) {
+    if (source.empty() || !std::filesystem::exists(source)) {
+        return;
+    }
+    if (!std::filesystem::is_directory(source)) {
+        throw std::runtime_error("Install source is not a directory: " + source.string());
+    }
+    std::filesystem::create_directories(destination.parent_path());
+    std::filesystem::copy(
+        source,
+        destination,
+        std::filesystem::copy_options::recursive |
+            std::filesystem::copy_options::overwrite_existing);
 }
 
 }  // namespace
@@ -220,6 +289,8 @@ LauncherState defaultState(const std::filesystem::path& launcherPath, const std:
     state.versions.push_back(GameVersion {
         .id = "local-dev",
         .name = "Local development build",
+        .channel = "dev",
+        .source = "local-dev",
         .gameExecutable = siblingExecutable(launcherPath, "Terralite"),
         .serverExecutable = siblingExecutable(launcherPath, "TerraliteServer"),
         .workingDirectory = sourceDirectory,
@@ -294,13 +365,7 @@ LauncherState loadState(
             for (const voxel::JsonValue& value : versions->asArray()) {
                 if (!value.isObject()) continue;
                 const auto& versionObject = value.asObject();
-                GameVersion version;
-                version.id = stringValue(versionObject, "id");
-                version.name = stringValue(versionObject, "name", version.id);
-                version.gameExecutable = stringValue(versionObject, "gameExecutable");
-                version.serverExecutable = stringValue(versionObject, "serverExecutable");
-                version.workingDirectory = stringValue(versionObject, "workingDirectory");
-                version.extraArguments = stringValue(versionObject, "extraArguments");
+                GameVersion version = gameVersionFromObject(versionObject);
                 if (!version.id.empty()) {
                     state.versions.push_back(version);
                 }
@@ -399,6 +464,158 @@ void updateSelectedVersion(LauncherState& state, const GameVersion& updatedVersi
     if (version == nullptr) return;
     *version = updatedVersion;
     state.selectedVersionId = version->id;
+}
+
+std::string versionStatusLabel(const VersionStatus status) {
+    switch (status) {
+        case VersionStatus::LocalDev: return "Local dev";
+        case VersionStatus::Installed: return "Installed";
+        case VersionStatus::MissingExecutable: return "Missing executable";
+        case VersionStatus::InvalidManifest: return "Invalid manifest";
+    }
+    return "Unknown";
+}
+
+VersionStatus versionStatus(const GameVersion& version) {
+    if (version.source == "invalid-manifest") {
+        return VersionStatus::InvalidManifest;
+    }
+    if (version.id.empty() || version.name.empty()) {
+        return VersionStatus::InvalidManifest;
+    }
+    if (version.source == "local-dev") {
+        return VersionStatus::LocalDev;
+    }
+    if (version.gameExecutable.empty() || !std::filesystem::exists(version.gameExecutable)) {
+        return VersionStatus::MissingExecutable;
+    }
+    if (version.serverExecutable.empty() || !std::filesystem::exists(version.serverExecutable)) {
+        return VersionStatus::MissingExecutable;
+    }
+    return VersionStatus::Installed;
+}
+
+VersionManifest loadVersionManifest(const std::filesystem::path& manifestPath) {
+    std::ifstream file(manifestPath);
+    if (!file) {
+        throw std::runtime_error("Could not read version manifest: " + manifestPath.string());
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    const voxel::JsonValue root = voxel::parseJson(buffer.str());
+    const auto& object = root.asObject();
+
+    VersionManifest manifest;
+    manifest.version = gameVersionFromObject(object, manifestPath.parent_path());
+    if (const voxel::JsonValue* installed = objectValue(object, "installed");
+        installed != nullptr && installed->isBool()) {
+        manifest.installed = installed->asBool();
+    }
+    manifest.version.source = stringValue(object, "source", "manifest");
+    return manifest;
+}
+
+void saveVersionManifest(const VersionManifest& manifest, const std::filesystem::path& manifestPath) {
+    std::filesystem::create_directories(manifestPath.parent_path());
+    std::ofstream file(manifestPath);
+    if (!file) {
+        throw std::runtime_error("Could not write version manifest: " + manifestPath.string());
+    }
+    file << voxel::serializeJson(manifestToJson(manifest)) << '\n';
+}
+
+std::vector<GameVersion> discoverInstalledVersions(const std::filesystem::path& versionRoot) {
+    std::vector<GameVersion> versions;
+    if (!std::filesystem::exists(versionRoot)) {
+        return versions;
+    }
+
+    for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(versionRoot)) {
+        if (!entry.is_directory()) {
+            continue;
+        }
+        const std::filesystem::path manifestPath = entry.path() / "manifest.json";
+        if (!std::filesystem::exists(manifestPath)) {
+            continue;
+        }
+
+        try {
+            VersionManifest manifest = loadVersionManifest(manifestPath);
+            if (manifest.installed && !manifest.version.id.empty()) {
+                versions.push_back(manifest.version);
+            }
+        } catch (const std::exception&) {
+            GameVersion invalid;
+            invalid.id = entry.path().filename().string();
+            invalid.name = invalid.id;
+            invalid.source = "invalid-manifest";
+            invalid.workingDirectory = entry.path();
+            versions.push_back(invalid);
+        }
+    }
+
+    std::sort(versions.begin(), versions.end(), [](const GameVersion& lhs, const GameVersion& rhs) {
+        return lhs.id < rhs.id;
+    });
+    return versions;
+}
+
+void mergeDiscoveredVersions(LauncherState& state, const std::vector<GameVersion>& discoveredVersions) {
+    for (const GameVersion& discovered : discoveredVersions) {
+        auto it = std::find_if(state.versions.begin(), state.versions.end(), [&](const GameVersion& version) {
+            return version.id == discovered.id;
+        });
+        if (it == state.versions.end()) {
+            state.versions.push_back(discovered);
+        } else if (it->source == "manifest" || it->source == "invalid-manifest") {
+            *it = discovered;
+        }
+    }
+}
+
+GameVersion installLocalBuildVersion(const LocalBuildInstallRequest& request) {
+    if (request.id.empty()) {
+        throw std::runtime_error("Version id is required.");
+    }
+    if (request.name.empty()) {
+        throw std::runtime_error("Version name is required.");
+    }
+    if (request.versionRoot.empty()) {
+        throw std::runtime_error("Version root is required.");
+    }
+
+    const std::filesystem::path installDirectory = request.versionRoot / request.id;
+    if (std::filesystem::exists(installDirectory)) {
+        if (!request.overwrite) {
+            throw std::runtime_error("Version already exists: " + installDirectory.string());
+        }
+        std::filesystem::remove_all(installDirectory);
+    }
+
+    std::filesystem::create_directories(installDirectory);
+    const std::filesystem::path gameFileName =
+        request.gameExecutable.empty() ? std::filesystem::path("Terralite") : request.gameExecutable.filename();
+    const std::filesystem::path serverFileName =
+        request.serverExecutable.empty() ? std::filesystem::path("TerraliteServer") : request.serverExecutable.filename();
+
+    copyRequiredFile(request.gameExecutable, installDirectory / gameFileName);
+    copyRequiredFile(request.serverExecutable, installDirectory / serverFileName);
+    copyOptionalDirectory(request.sourcePacksDirectory, installDirectory / "packs");
+
+    VersionManifest manifest;
+    manifest.version.id = request.id;
+    manifest.version.name = request.name;
+    manifest.version.channel = request.channel.empty() ? "local" : request.channel;
+    manifest.version.source = "manifest";
+    manifest.version.gameExecutable = gameFileName;
+    manifest.version.serverExecutable = serverFileName;
+    manifest.version.workingDirectory = ".";
+    manifest.version.extraArguments = request.extraArguments;
+    manifest.installed = true;
+    saveVersionManifest(manifest, installDirectory / "manifest.json");
+
+    return loadVersionManifest(installDirectory / "manifest.json").version;
 }
 
 std::vector<std::string> gameArguments(

@@ -94,6 +94,8 @@ int main() {
     GameVersion updatedVersion;
     updatedVersion.id = "stable-0-1";
     updatedVersion.name = "Stable 0.1";
+    updatedVersion.channel = "stable";
+    updatedVersion.source = "manifest";
     updatedVersion.gameExecutable = tempDir / "versions" / "0.1" / "Terralite";
     updatedVersion.serverExecutable = tempDir / "versions" / "0.1" / "TerraliteServer";
     updatedVersion.workingDirectory = tempDir / "versions" / "0.1";
@@ -103,6 +105,10 @@ int main() {
     ok &= expect(
         terralite::launcher::selectedVersion(state)->name == "Stable 0.1",
         "updateSelectedVersion should update selected version fields");
+    ok &= expect(
+        terralite::launcher::versionStatus(*terralite::launcher::selectedVersion(state)) ==
+            terralite::launcher::VersionStatus::MissingExecutable,
+        "versionStatus should detect missing executables");
 
     LaunchOptions offlineOptions;
     ok &= expectArgs(
@@ -159,6 +165,119 @@ int main() {
     ok &= expect(fallback.accounts.size() == 1, "invalid config should fall back to default account");
     ok &= expect(fallback.versions.size() == 1, "invalid config should fall back to default version");
     ok &= expect(fallback.selectedVersionId == "local-dev", "invalid config should select default version");
+
+    const std::filesystem::path versionRoot = tempDir / "installed-versions";
+    const std::filesystem::path releaseDir = versionRoot / "0.1.0";
+    std::filesystem::create_directories(releaseDir);
+    {
+        std::ofstream game(releaseDir / "Terralite");
+        game << "game";
+        std::ofstream server(releaseDir / "TerraliteServer");
+        server << "server";
+    }
+
+    terralite::launcher::VersionManifest manifest;
+    manifest.version.id = "0.1.0";
+    manifest.version.name = "Terralite 0.1.0";
+    manifest.version.channel = "stable";
+    manifest.version.source = "manifest";
+    manifest.version.gameExecutable = "Terralite";
+    manifest.version.serverExecutable = "TerraliteServer";
+    manifest.version.workingDirectory = ".";
+    manifest.version.extraArguments = "--limit-fps 1";
+    manifest.installed = true;
+    terralite::launcher::saveVersionManifest(manifest, releaseDir / "manifest.json");
+
+    terralite::launcher::VersionManifest loadedManifest =
+        terralite::launcher::loadVersionManifest(releaseDir / "manifest.json");
+    ok &= expect(loadedManifest.version.id == "0.1.0", "loadVersionManifest should preserve version id");
+    ok &= expect(
+        loadedManifest.version.gameExecutable == releaseDir / "Terralite",
+        "loadVersionManifest should resolve relative game executable");
+    ok &= expect(
+        terralite::launcher::versionStatus(loadedManifest.version) ==
+            terralite::launcher::VersionStatus::Installed,
+        "versionStatus should report installed when executables exist");
+
+    const std::filesystem::path brokenDir = versionRoot / "broken";
+    std::filesystem::create_directories(brokenDir);
+    {
+        std::ofstream brokenManifest(brokenDir / "manifest.json");
+        brokenManifest << "{ invalid manifest";
+    }
+
+    std::vector<GameVersion> discovered = terralite::launcher::discoverInstalledVersions(versionRoot);
+    ok &= expect(discovered.size() == 2, "discoverInstalledVersions should include valid and invalid manifests");
+    ok &= expect(discovered[0].id == "0.1.0", "discoverInstalledVersions should sort by id");
+    ok &= expect(discovered[1].source == "invalid-manifest", "invalid manifest should become status entry");
+    ok &= expect(
+        terralite::launcher::versionStatus(discovered[1]) ==
+            terralite::launcher::VersionStatus::InvalidManifest,
+        "versionStatus should report invalid manifest entries");
+
+    LauncherState discoveredState = terralite::launcher::defaultState(launcherPath, sourceDir);
+    terralite::launcher::mergeDiscoveredVersions(discoveredState, discovered);
+    ok &= expect(discoveredState.versions.size() == 3, "mergeDiscoveredVersions should append new versions");
+    terralite::launcher::mergeDiscoveredVersions(discoveredState, discovered);
+    ok &= expect(discoveredState.versions.size() == 3, "mergeDiscoveredVersions should not duplicate versions");
+
+    const std::filesystem::path fakeBuildDir = tempDir / "fake-build";
+    const std::filesystem::path fakeSourceDir = tempDir / "fake-source";
+    std::filesystem::create_directories(fakeBuildDir);
+    std::filesystem::create_directories(fakeSourceDir / "packs" / "base");
+    {
+        std::ofstream game(fakeBuildDir / "Terralite");
+        game << "game-binary";
+        std::ofstream server(fakeBuildDir / "TerraliteServer");
+        server << "server-binary";
+        std::ofstream pack(fakeSourceDir / "packs" / "base" / "pack.json");
+        pack << R"({"id":"base"})";
+    }
+
+    terralite::launcher::LocalBuildInstallRequest installRequest;
+    installRequest.id = "dev-copy";
+    installRequest.name = "Dev Copy";
+    installRequest.channel = "dev";
+    installRequest.versionRoot = tempDir / "install-root";
+    installRequest.gameExecutable = fakeBuildDir / "Terralite";
+    installRequest.serverExecutable = fakeBuildDir / "TerraliteServer";
+    installRequest.sourcePacksDirectory = fakeSourceDir / "packs";
+    installRequest.extraArguments = "--limit-fps 1";
+
+    GameVersion installed = terralite::launcher::installLocalBuildVersion(installRequest);
+    const std::filesystem::path installDir = installRequest.versionRoot / "dev-copy";
+    ok &= expect(installed.id == "dev-copy", "installLocalBuildVersion should return installed version");
+    ok &= expect(
+        std::filesystem::exists(installDir / "Terralite"),
+        "installLocalBuildVersion should copy game executable");
+    ok &= expect(
+        std::filesystem::exists(installDir / "TerraliteServer"),
+        "installLocalBuildVersion should copy server executable");
+    ok &= expect(
+        std::filesystem::exists(installDir / "packs" / "base" / "pack.json"),
+        "installLocalBuildVersion should copy packs directory");
+    ok &= expect(
+        std::filesystem::exists(installDir / "manifest.json"),
+        "installLocalBuildVersion should write manifest");
+    ok &= expect(
+        terralite::launcher::versionStatus(installed) == terralite::launcher::VersionStatus::Installed,
+        "installed local build should report installed status");
+
+    try {
+        (void)terralite::launcher::installLocalBuildVersion(installRequest);
+        std::cerr << "[FAIL] installLocalBuildVersion should reject existing install without overwrite\n";
+        ok = false;
+    } catch (const std::exception&) {
+        ok &= true;
+    }
+
+    installRequest.overwrite = true;
+    {
+        std::ofstream game(fakeBuildDir / "Terralite");
+        game << "game-binary-updated";
+    }
+    GameVersion overwritten = terralite::launcher::installLocalBuildVersion(installRequest);
+    ok &= expect(overwritten.id == "dev-copy", "overwrite install should preserve version id");
 
     std::error_code cleanupError;
     std::filesystem::remove_all(tempDir, cleanupError);

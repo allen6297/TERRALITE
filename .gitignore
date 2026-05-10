@@ -3,6 +3,8 @@
 /out/
 /bin/
 /cmake-build-*/
+/dist/
+**/.build/
 
 # Dependencies
 /_deps/

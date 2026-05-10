@@ -223,7 +223,7 @@ bool NetworkManager::startServer(const std::uint16_t port) {
     address.host = ENET_HOST_ANY;
     address.port = port;
 
-    host_ = enet_host_create(&address, 32, 2, 0, 0);
+    host_ = enet_host_create(&address, 32, 3, 0, 0);
     if (host_ == nullptr) {
         std::cerr << "Failed to start ENet server on port " << port << ".\n";
         return false;
@@ -238,7 +238,7 @@ bool NetworkManager::startServer(const std::uint16_t port) {
 bool NetworkManager::connectToServer(const std::string& hostName, const std::uint16_t port) {
     shutdown();
 
-    host_ = enet_host_create(nullptr, 1, 2, 0, 0);
+    host_ = enet_host_create(nullptr, 1, 3, 0, 0);
     if (host_ == nullptr) {
         std::cerr << "Failed to create ENet client.\n";
         return false;
@@ -252,7 +252,7 @@ bool NetworkManager::connectToServer(const std::string& hostName, const std::uin
     }
     address.port = port;
 
-    serverPeer_ = enet_host_connect(host_, &address, 2, 0);
+    serverPeer_ = enet_host_connect(host_, &address, 3, 0);
     if (serverPeer_ == nullptr) {
         std::cerr << "Failed to start connection to " << hostName << ":" << port << ".\n";
         shutdown();
@@ -282,6 +282,7 @@ void NetworkManager::shutdown() {
     pendingDeltaChunkSnapshots_.clear();
     pendingChunkRequests_.clear();
     pendingPlayerJoins_.clear();
+    pendingPlayerDisconnects_.clear();
     pendingPlayerStates_.clear();
     externalBlockAuthority_ = false;
 }
@@ -318,6 +319,7 @@ void NetworkManager::poll() {
                 if (mode_ == Mode::Server) {
                     const auto it = peerIds_.find(event.peer);
                     if (it != peerIds_.end()) {
+                        pendingPlayerDisconnects_.push_back(it->second);
                         remotePlayers_.erase(it->second);
                         playerStates_.erase(it->second);
                         peerIds_.erase(it);
@@ -604,6 +606,12 @@ std::vector<std::uint32_t> NetworkManager::takePendingPlayerJoins() {
     std::vector<std::uint32_t> joins;
     joins.swap(pendingPlayerJoins_);
     return joins;
+}
+
+std::vector<std::uint32_t> NetworkManager::takePendingPlayerDisconnects() {
+    std::vector<std::uint32_t> disconnects;
+    disconnects.swap(pendingPlayerDisconnects_);
+    return disconnects;
 }
 
 std::vector<RemotePlayerState> NetworkManager::takePendingPlayerStates() {
@@ -997,7 +1005,7 @@ void NetworkManager::sendChunkSnapshot(ENetPeer* peer, const Chunk& chunk) {
     offset += sizeof(chunk.blocks);
     std::memcpy(bytes.data() + offset, &chunk.tintColors, sizeof(chunk.tintColors));
 
-    ENetPacket* enetPacket = enet_packet_create(bytes.data(), bytes.size(), 0);
+    ENetPacket* enetPacket = enet_packet_create(bytes.data(), bytes.size(), ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send(peer, 2, enetPacket);
 }
 
@@ -1030,7 +1038,7 @@ void NetworkManager::sendCompressedChunkSnapshot(ENetPeer* peer, const Chunk& ch
     std::memcpy(packetData.data(), &header, sizeof(header));
     std::memcpy(packetData.data() + sizeof(header), compressed.data(), compressedLen);
 
-    ENetPacket* enetPacket = enet_packet_create(packetData.data(), packetData.size(), 0);
+    ENetPacket* enetPacket = enet_packet_create(packetData.data(), packetData.size(), ENET_PACKET_FLAG_RELIABLE);
     enet_peer_send(peer, 2, enetPacket);
 }
 

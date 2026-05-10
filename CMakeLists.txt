@@ -343,6 +343,14 @@ add_executable(TerraliteLauncherCoreTests
 )
 target_link_libraries(TerraliteLauncherCoreTests PRIVATE launcher_core)
 
+add_executable(TerraliteNetworkConnectionTests
+    tests/NetworkConnectionTests.cpp
+)
+target_link_libraries(TerraliteNetworkConnectionTests PRIVATE voxel_server_support)
+target_compile_definitions(TerraliteNetworkConnectionTests PRIVATE
+    TERRALITE_SOURCE_DIR="${CMAKE_SOURCE_DIR}"
+)
+
 # ── Code generation ───────────────────────────────────────────────────────────
 find_program(NODEJS node)
 if(NODEJS)
@@ -374,6 +382,7 @@ endif()
 enable_testing()
 add_test(NAME TerraliteDataTests COMMAND $<TARGET_FILE:TerraliteDataTests>)
 add_test(NAME TerraliteLauncherCoreTests COMMAND $<TARGET_FILE:TerraliteLauncherCoreTests>)
+add_test(NAME TerraliteNetworkConnectionTests COMMAND $<TARGET_FILE:TerraliteNetworkConnectionTests>)
 
 
 # ── Install & CPack (distributable package) ───────────────────────────────────
