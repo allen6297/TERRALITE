@@ -139,6 +139,9 @@ struct DiligentRenderBackend::Impl {
     Diligent::RefCntAutoPtr<Diligent::ISwapChain>              swapChain;
     Diligent::RefCntAutoPtr<Diligent::IPipelineState>          pso;
     Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding>  srb;
+    Diligent::RefCntAutoPtr<Diligent::IPipelineState>          translucentPso;
+    Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding>  translucentSrb;
+    Diligent::IShaderResourceVariable*                         translucentAlbedoVar = nullptr;
     Diligent::RefCntAutoPtr<Diligent::IBuffer>                 vsConstants;
     Diligent::RefCntAutoPtr<Diligent::ITexture>                depthBuffer;
     Diligent::ITextureView*                                    depthView  = nullptr;
@@ -345,6 +348,31 @@ void DiligentRenderBackend::initialize(GLFWwindow* window, const int width, cons
         throw std::runtime_error("Diligent: failed to create chunk pipeline state.");
     }
 
+    // ---- Translucent PSO (same shaders, blending on, no depth write) --------
+    {
+        auto& rt = psoCI.GraphicsPipeline.BlendDesc.RenderTargets[0];
+        rt.BlendEnable    = Diligent::True;
+        rt.SrcBlend       = Diligent::BLEND_FACTOR_SRC_ALPHA;
+        rt.DestBlend      = Diligent::BLEND_FACTOR_INV_SRC_ALPHA;
+        rt.BlendOp        = Diligent::BLEND_OPERATION_ADD;
+        rt.SrcBlendAlpha  = Diligent::BLEND_FACTOR_ONE;
+        rt.DestBlendAlpha = Diligent::BLEND_FACTOR_INV_SRC_ALPHA;
+        rt.BlendOpAlpha   = Diligent::BLEND_OPERATION_ADD;
+        psoCI.GraphicsPipeline.DepthStencilDesc.DepthWriteEnable = Diligent::False;
+        psoCI.PSODesc.Name = "TERRALITE chunk PSO (translucent)";
+        impl_->device->CreateGraphicsPipelineState(psoCI, impl_->translucentPso.RawDblPtr());
+    }
+    if (impl_->translucentPso != nullptr) {
+        impl_->translucentPso->GetStaticVariableByName(Diligent::SHADER_TYPE_VERTEX, "Constants")
+            ->Set(impl_->vsConstants);
+        impl_->translucentPso->CreateShaderResourceBinding(impl_->translucentSrb.RawDblPtr(), true);
+        impl_->translucentAlbedoVar =
+            impl_->translucentSrb->GetVariableByName(Diligent::SHADER_TYPE_PIXEL, "gAlbedo");
+        if (impl_->translucentAlbedoVar && impl_->whiteSrv) {
+            impl_->translucentAlbedoVar->Set(impl_->whiteSrv);
+        }
+    }
+
     // ---- Constant buffer (MVP matrix = 64 bytes) ----------------------------
     {
         Diligent::BufferDesc cbDesc;
@@ -543,42 +571,64 @@ void DiligentRenderBackend::renderMesh(const ChunkMesh& mesh, const TextureManag
         }
     }
 
-    impl_->context->SetPipelineState(impl_->pso);
-
-    for (const MeshSurface& surface : mesh.surfaces) {
-        if (surface.vertexCount <= 0) continue;
-        const std::uintptr_t bufferId = surface.vertexBuffer.diligentId();
-        if (bufferId == 0) continue;
-        auto it = impl_->buffers.find(bufferId);
-        if (it == impl_->buffers.end()) continue;
-
-        // Resolve albedo SRV — fall back to white if texture not available.
-        Diligent::ITextureView* srv = impl_->whiteSrv;
-        if (textures != nullptr && !surface.albedoTexturePath.empty()) {
-            const TextureResource* res = textures->find(surface.albedoTexturePath);
+    // Helper: resolve albedo SRV from TextureManager (falls back to white).
+    auto resolveSrv = [&](const std::string& path) -> Diligent::ITextureView* {
+        if (textures != nullptr && !path.empty()) {
+            const TextureResource* res = textures->find(path);
             if (res != nullptr) {
-                const std::uintptr_t texId = res->handle.diligentId();
-                auto texIt = impl_->textures.find(texId);
+                auto texIt = impl_->textures.find(res->handle.diligentId());
                 if (texIt != impl_->textures.end()) {
-                    srv = texIt->second->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE);
+                    return texIt->second->GetDefaultView(Diligent::TEXTURE_VIEW_SHADER_RESOURCE);
                 }
             }
         }
-        impl_->albedoVar->Set(srv);
-        impl_->context->CommitShaderResources(impl_->srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+        return impl_->whiteSrv;
+    };
 
-        Diligent::IBuffer* vb           = it->second;
-        const Diligent::Uint64 offset   = 0;
+    // Helper: draw one surface given its albedo variable and SRB.
+    auto drawSurface = [&](
+        const MeshSurface& surface,
+        Diligent::IShaderResourceVariable* albedoVar,
+        Diligent::IShaderResourceBinding*  srb
+    ) {
+        if (surface.vertexCount <= 0) return;
+        const std::uintptr_t bufferId = surface.vertexBuffer.diligentId();
+        if (bufferId == 0) return;
+        auto it = impl_->buffers.find(bufferId);
+        if (it == impl_->buffers.end()) return;
+
+        albedoVar->Set(resolveSrv(surface.albedoTexturePath));
+        impl_->context->CommitShaderResources(srb, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+
+        Diligent::IBuffer* vb         = it->second;
+        const Diligent::Uint64 offset = 0;
         impl_->context->SetVertexBuffers(
             0, 1, &vb, &offset,
             Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION,
             Diligent::SET_VERTEX_BUFFERS_FLAG_RESET
         );
+        Diligent::DrawAttribs da;
+        da.NumVertices = static_cast<Diligent::Uint32>(surface.vertexCount);
+        da.Flags       = Diligent::DRAW_FLAG_VERIFY_ALL;
+        impl_->context->Draw(da);
+    };
 
-        Diligent::DrawAttribs drawAttribs;
-        drawAttribs.NumVertices = static_cast<Diligent::Uint32>(surface.vertexCount);
-        drawAttribs.Flags       = Diligent::DRAW_FLAG_VERIFY_ALL;
-        impl_->context->Draw(drawAttribs);
+    // Pass 1: opaque surfaces (depth write on).
+    impl_->context->SetPipelineState(impl_->pso);
+    for (const MeshSurface& surface : mesh.surfaces) {
+        if (!surface.translucent) {
+            drawSurface(surface, impl_->albedoVar, impl_->srb);
+        }
+    }
+
+    // Pass 2: translucent surfaces (blending on, no depth write).
+    if (impl_->translucentPso && impl_->translucentSrb && impl_->translucentAlbedoVar) {
+        impl_->context->SetPipelineState(impl_->translucentPso);
+        for (const MeshSurface& surface : mesh.surfaces) {
+            if (surface.translucent) {
+                drawSurface(surface, impl_->translucentAlbedoVar, impl_->translucentSrb);
+            }
+        }
     }
 #else
     (void)mesh; (void)textures;
