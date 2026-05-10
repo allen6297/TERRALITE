@@ -10,6 +10,7 @@ struct GLFWwindow;
 
 namespace voxel {
 struct ChunkMesh;
+class TextureManager;
 
 class DiligentRenderBackend {
 public:
@@ -27,7 +28,7 @@ public:
     void present();
     void setPerspective(float fovYDegrees, float aspect, float nearPlane, float farPlane);
     void applyCameraView(const Vec3& eye, const Vec3& lookDirection);
-    void renderMesh(const ChunkMesh& mesh);
+    void renderMesh(const ChunkMesh& mesh, const TextureManager* textures = nullptr);
     RenderBufferHandle createVertexBuffer(std::size_t byteCount, const void* data);
     void destroyBuffer(RenderBufferHandle& buffer);
     RenderTextureHandle createTexture2D(int width, int height, int channelCount, const unsigned char* pixels);
