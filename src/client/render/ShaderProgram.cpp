@@ -137,16 +137,16 @@ void ShaderProgram::useSurface(
 
     glActiveTextureARB(GL_TEXTURE0_ARB);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, albedo->handle.id);
+    glBindTexture(GL_TEXTURE_2D, albedo->handle.openGlId());
     glUniform1iARB(albedoUniform_, 0);
 
     glActiveTextureARB(GL_TEXTURE1_ARB);
     glEnable(GL_TEXTURE_2D);
     if (emissive != nullptr) {
-        glBindTexture(GL_TEXTURE_2D, emissive->handle.id);
+        glBindTexture(GL_TEXTURE_2D, emissive->handle.openGlId());
         glUniform1iARB(hasEmissiveUniform_, 1);
     } else {
-        glBindTexture(GL_TEXTURE_2D, fallbackBlack.handle.id);
+        glBindTexture(GL_TEXTURE_2D, fallbackBlack.handle.openGlId());
         glUniform1iARB(hasEmissiveUniform_, 0);
     }
     glUniform1iARB(emissiveUniform_, 1);

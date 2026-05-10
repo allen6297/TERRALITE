@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <chrono>
 #include <csignal>
@@ -16,6 +17,7 @@
 #include "client/game/Game.hpp"
 #include "common/network/NetworkManager.hpp"
 #include "client/pack/AssetPackManager.hpp"
+#include "client/render/Mesh.hpp"
 #include "common/pack/PackManager.hpp"
 #include "common/pack/ScriptManager.hpp"
 #include "server/HeadlessServer.hpp"
@@ -23,6 +25,9 @@
 #include "platform/glfw/GlfwClientWindow.hpp"
 #include "platform/glfw/GlfwInput.hpp"
 #include "client/ui/GameUI.hpp"
+#if TERRALITE_ENABLE_DILIGENT
+#    include "client/render/DiligentRenderBackend.hpp"
+#endif
 
 namespace {
 constexpr std::uint16_t kDefaultMultiplayerPort = 27015;
@@ -101,6 +106,51 @@ int runDedicatedServer(int argc, char** argv) {
     }
     return 0;
 }
+
+int runDiligentProof(voxel::GlfwClientWindow& window, const int frameLimit) {
+#if TERRALITE_ENABLE_DILIGENT
+    int fbWidth = 0, fbHeight = 0;
+    window.framebufferSize(fbWidth, fbHeight);
+
+    voxel::DiligentRenderBackend backend;
+    backend.initialize(window.handle(), fbWidth, fbHeight);
+    voxel::ChunkMesh proofMesh;
+    proofMesh.surfaces.push_back({});
+    proofMesh.surfaces.back().vertices = {
+        {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, 0.0f, 0.0f},
+        {{ 0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, 1.0f, 0.0f},
+        {{ 0.0f,  0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}, 0.5f, 1.0f}
+    };
+    const std::array<unsigned char, 4> proofPixel {255, 255, 255, 255};
+    const bool proofMeshUploaded = backend.uploadChunkMeshSurface(proofMesh, 0);
+    voxel::RenderTextureHandle proofTexture = backend.createTexture2D(
+        1,
+        1,
+        4,
+        proofPixel.data()
+    );
+    if (!proofMeshUploaded || !proofMesh.surfaces.front().vertexBuffer.isValid() || !proofTexture.isValid()) {
+        throw std::runtime_error("Diligent proof-of-life resource creation failed.");
+    }
+    std::cout << "Running " << backend.name() << " proof-of-life clear loop. Close the window to exit.\n";
+
+    int renderedFrames = 0;
+    while (!window.shouldClose() && (frameLimit <= 0 || renderedFrames < frameLimit)) {
+        window.framebufferSize(fbWidth, fbHeight);
+        backend.resize(fbWidth, fbHeight);
+        backend.clearFrame({0.08f, 0.10f, 0.14f});
+        backend.present();
+        window.pollEvents();
+        ++renderedFrames;
+    }
+    backend.destroyChunkMesh(proofMesh);
+    backend.destroyTexture(proofTexture);
+    return 0;
+#else
+    (void)window;
+    throw std::runtime_error("--diligent-proof requires TERRALITE_ENABLE_DILIGENT=ON.");
+#endif
+}
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -116,6 +166,9 @@ int main(int argc, char** argv) {
     try {
         const voxel::ClientOptions clientOptions = voxel::parseClientOptions(argc, argv);
         voxel::GlfwClientWindow window(clientOptions.window);
+        if (clientOptions.diligentProof) {
+            return runDiligentProof(window, clientOptions.diligentProofFrames);
+        }
 
         // ── Pack system ───────────────────────────────────────────────────────
         const std::filesystem::path projectRoot = findClientProjectRoot();

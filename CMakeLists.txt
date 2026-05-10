@@ -258,6 +258,7 @@ add_library(voxel_client_support STATIC
     src/client/render/Mesh.cpp
     src/platform/glfw/GlfwClientWindow.cpp
     src/platform/glfw/GlfwInput.cpp
+    src/client/render/DiligentRenderBackend.cpp
     src/client/render/ModelManager.cpp
     src/client/render/OpenGLRenderBackend.cpp
     src/client/render/Renderer.cpp

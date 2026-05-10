@@ -99,9 +99,9 @@ RenderTextureHandle OpenGLRenderBackend::createTexture2D(
     const int channelCount,
     const unsigned char* pixels
 ) const {
-    RenderTextureHandle texture;
-    glGenTextures(1, &texture.id);
-    glBindTexture(GL_TEXTURE_2D, texture.id);
+    GLuint textureId = 0;
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -119,13 +119,14 @@ RenderTextureHandle OpenGLRenderBackend::createTexture2D(
         pixels
     );
     glBindTexture(GL_TEXTURE_2D, 0);
-    return texture;
+    return RenderTextureHandle::openGl(textureId);
 }
 
 void OpenGLRenderBackend::destroyTexture(RenderTextureHandle& texture) const {
-    if (texture.id != 0) {
-        glDeleteTextures(1, &texture.id);
-        texture.id = 0;
+    GLuint textureId = texture.openGlId();
+    if (textureId != 0) {
+        glDeleteTextures(1, &textureId);
+        texture.reset();
     }
 }
 
@@ -146,8 +147,10 @@ bool OpenGLRenderBackend::uploadChunkMeshSurface(ChunkMesh& mesh, const std::siz
     }
 
     surface.vertexCount = static_cast<int>(surface.vertices.size());
-    glGenBuffers(1, &surface.vertexBuffer.id);
-    glBindBuffer(GL_ARRAY_BUFFER, surface.vertexBuffer.id);
+    GLuint bufferId = 0;
+    glGenBuffers(1, &bufferId);
+    surface.vertexBuffer = RenderBufferHandle::openGl(bufferId);
+    glBindBuffer(GL_ARRAY_BUFFER, bufferId);
     glBufferData(GL_ARRAY_BUFFER,
                  static_cast<GLsizeiptr>(surface.vertices.size() * sizeof(MeshVertex)),
                  surface.vertices.data(), GL_STATIC_DRAW);
@@ -159,9 +162,10 @@ bool OpenGLRenderBackend::uploadChunkMeshSurface(ChunkMesh& mesh, const std::siz
 
 void OpenGLRenderBackend::destroyChunkMesh(ChunkMesh& mesh) const {
     for (auto& surface : mesh.surfaces) {
-        if (surface.vertexBuffer.id != 0) {
-            glDeleteBuffers(1, &surface.vertexBuffer.id);
-            surface.vertexBuffer.id = 0;
+        GLuint bufferId = surface.vertexBuffer.openGlId();
+        if (bufferId != 0) {
+            glDeleteBuffers(1, &bufferId);
+            surface.vertexBuffer.reset();
             surface.vertexCount = 0;
         }
     }

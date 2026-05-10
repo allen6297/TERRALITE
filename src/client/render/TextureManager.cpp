@@ -113,7 +113,7 @@ const TextureResource* TextureManager::find(const std::string& relativePath) con
 }
 
 const TextureResource& TextureManager::blackFallback() const {
-    if (blackFallback_.handle.id == 0) {
+    if (!blackFallback_.handle.isValid()) {
         static constexpr unsigned char kBlackPixel[4] = {0, 0, 0, 255};
         blackFallback_ = createTexture(1, 1, 4, kBlackPixel);
     }

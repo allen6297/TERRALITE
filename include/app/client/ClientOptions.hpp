@@ -25,6 +25,8 @@ struct ClientOptions {
     std::string playerName = "Player";
     GlfwClientWindowConfig window;
     ClientNetworkOptions network;
+    bool diligentProof = false;
+    int diligentProofFrames = 0;
 };
 
 ClientOptions parseClientOptions(int argc, char** argv);
